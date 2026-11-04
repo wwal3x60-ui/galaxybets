@@ -1,0 +1,11 @@
+<% if (locals.error) { %>
+    <p>This Discord account is already linked to another GalaxyBets account.</p>
+<% } else { %>
+    <p>You successfully linked your Discord account <%= discordUser.username %> to GalaxyBets.</p>
+
+    <script>
+        window.opener.postMessage({
+            type: "discord"
+        }, "*");
+    </script>
+<% } %>

@@ -1,0 +1,17 @@
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+*.log
+logs/*
+!logs/.gitkeep
+.idea/
+.vscode/
+utils/proxies/proxies.txt
+*.pem
+*.key
+*.sqlite
+*.sql.gz
+db-dumps/
+tools/items-failed.json
