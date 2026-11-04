@@ -29,7 +29,6 @@
     "bezier-easing": "^2.1.0",
     "body-parser": "^2.4.0",
     "chance": "^1.1.11",
-    "coinpayments": "^2.2.0",
     "cookie": "^2.0.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
