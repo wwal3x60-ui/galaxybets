@@ -124,8 +124,6 @@ const { cacheRains } = require('./socketio/rain');
 const { cacheBattles } = require('./routes/games/battles/functions');
 const { cacheCases, cacheDrops } = require('./routes/games/cases/functions');
 const { cacheCrash } = require('./routes/games/crash/functions');
-const { cacheCryptos } = require('./routes/trading/crypto/deposit/functions');
-const { cacheWithdrawalCoins } = require('./routes/trading/crypto/withdraw/functions');
 const { cacheJackpot } = require('./routes/games/jackpot/functions');
 const { cacheRoulette } = require('./routes/games/roulette/functions');
 const { cacheCoinflips } = require('./routes/games/coinflip/functions');
@@ -142,8 +140,6 @@ async function start() {
         cacheCases,
         // cacheDrops,
         cacheCrash,
-        cacheCryptos,
-        cacheWithdrawalCoins,
         cacheJackpot,
         cacheRoulette,
         cacheCoinflips,
