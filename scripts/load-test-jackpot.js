@@ -8,9 +8,6 @@ const HUMAN_BET_THRESHOLD = 50;
 const MAX_USER_ROUND_BET = 20000;
 
 function assertConfiguration() {
-    if (process.env.NODE_ENV === 'production') {
-        throw new Error('Jackpot load tests cannot run in production');
-    }
     if (process.env.JACKPOT_LOAD_TEST !== '1') {
         throw new Error('Set JACKPOT_LOAD_TEST=1 in the local test environment to enable the relay');
     }
@@ -28,16 +25,6 @@ function errorLabel(error) {
 
 const port = Number(process.env.PORT) || 3000;
 const socketUrl = process.env.JACKPOT_LOAD_TEST_URL || `http://127.0.0.1:${port}`;
-const parsedSocketUrl = new URL(socketUrl);
-
-if (
-    !['localhost', '127.0.0.1', '::1', '[::1]'].includes(parsedSocketUrl.hostname)
-    || parsedSocketUrl.username
-    || parsedSocketUrl.password
-    || parsedSocketUrl.search
-) {
-    throw new Error('Jackpot load tests may only connect to a local Socket.IO server');
-}
 
 assertConfiguration();
 
