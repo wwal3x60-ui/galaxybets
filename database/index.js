@@ -1,13 +1,15 @@
 const mysql = require('mysql2/promise');
 
 const connection = {
-    host: 'localhost',
+    host: process.env.SQL_HOST || 'localhost',
     user: process.env.SQL_USER,
     database: process.env.SQL_DB,
     password: process.env.SQL_PASS,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
+    // This is required for cloud databases like Aiven on Render
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined,
     typeCast: function (field, next) {
         if (field.type == "NEWDECIMAL") {
             const value = field.string();
