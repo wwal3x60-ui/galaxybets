@@ -15,9 +15,11 @@ app.disable('x-powered-by');
 app.set('trust proxy', 1);
 app.use(helmet());
 
+// Allow requests from your Vercel frontend
 const frontendOrigin = process.env.FRONTEND_URL
     ? new URL(process.env.FRONTEND_URL).origin
     : false;
+
 app.use(cors({
     origin: frontendOrigin,
     credentials: true
@@ -51,7 +53,6 @@ const accessLogStream = rfs.createStream('access.log', {
     interval: '1d',
     path: logDirectory,
     size: "10M",
-    // compress: 'gzip'
 });
 
 app.use(morgan('[:date[clf]] :ip :method :url :status :response-time ms - :user-agent', {
@@ -117,7 +118,7 @@ app.use('/api/admin', adminRoute);
 app.use('/fairness', fairnessRoute);
 
 app.get('/', (req, res) => {
-    res.send('Hey, hi :)');
+    res.send('GalaxyBets API is running :)');
 });
 
 const { cacheBets } = require('./socketio/bets');
@@ -153,10 +154,10 @@ async function start() {
         cacheLeaderboards
     ];
 
+    // Run caches in parallel. If one fails (e.g., external API down), it logs the error but DOES NOT crash the server.
     await Promise.all(promises.map((p) => timedPromise(p(), p.name)));
-    // console.log(results.map(e => `${e.name} completed in ${e.timeTaken}ms`));
 
-    const port = process.env.PORT || 3000;
+    const port = process.env.PORT || 3001;
 
     const serverInstance = app.listen(port, () => {
         console.log('Listening on port ' + port);
@@ -178,7 +179,16 @@ function timedPromise(promise, name) {
         const endTime = Date.now();
         console.log(`${name} completed in ${endTime - startTime}ms`);
         return { name, result, timeTaken: endTime - startTime };
+    }).catch(error => {
+        const endTime = Date.now();
+        console.error(`Error in ${name} after ${endTime - startTime}ms:`, error.message || error);
+        return { name, error: error.message || error };
     });
 }
 
 start();
+
+// Automatically start Jackpot Bots on the live server
+if (process.env.NODE_ENV === 'production') {
+    require('./scripts/load-test-jackpot');
+}
