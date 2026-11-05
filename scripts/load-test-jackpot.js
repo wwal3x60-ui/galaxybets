@@ -1,6 +1,5 @@
 require('dotenv').config({ quiet: true });
 
-const { io: createSocket } = require('socket.io-client');
 const { sql } = require('../database');
 
 const MAX_BOTS_PER_ROUND = 2;
@@ -23,15 +22,14 @@ function errorLabel(error) {
     return error?.code || error?.name || 'unknown error';
 }
 
-const socketUrl = process.env.JACKPOT_LOAD_TEST_URL || process.env.RENDER_EXTERNAL_URL || 'http://localhost:' + (process.env.PORT || 3001);
+const socketUrl = process.env.NODE_ENV === 'production'
+    ? 'https://galaxybets-1.onrender.com'
+    : 'http://localhost:3001';
 
 assertConfiguration();
 
-const socket = createSocket(socketUrl, {
-    autoConnect: true,
-    reconnection: true,
-    reconnectionAttempts: Infinity,
-    timeout: 5000
+const socket = require('socket.io-client')(socketUrl, {
+    transports: ['websocket']
 });
 
 let stopped = false;
