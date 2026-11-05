@@ -11,7 +11,7 @@ const { cachedCoinflips } = require('../routes/games/coinflip/functions');
 const { getBets, emitTotalWagered } = require('./bets');
 const { validateJwtToken } = require('../routes/auth/functions');
 const { jackpot } = require('../routes/games/jackpot/functions');
-const cookie = require('cookie');
+const cookieParser = require('cookie');
 const crypto = require('crypto');
 
 function isLocalAddress(address) {
@@ -85,21 +85,20 @@ io.on('connection', function(socket) {
     socket.on('auth', async function(authToken) {
 
         try {
-            let token = typeof authToken === 'string'
-                ? authToken
-                : authToken && typeof authToken.token === 'string'
-                    ? authToken.token
-                    : null;
-
-            if (!token) {
-                try {
-                    if (socket.handshake.headers.cookie) {
-                        const cookies = cookie.parse(socket.handshake.headers.cookie);
-                        token = cookies['jwt'];
-                    }
-                } catch (err) {
-                    console.error('Cookie parsing error:', err);
+            let token = null;
+            try {
+                if (socket.handshake.headers.cookie) {
+                    const cookies = cookieParser.parse(socket.handshake.headers.cookie);
+                    token = cookies['jwt'];
                 }
+            } catch (err) {
+                console.error('Cookie parsing error:', err);
+            }
+
+            if (typeof authToken === 'string') {
+                token = authToken;
+            } else if (authToken && typeof authToken.token === 'string') {
+                token = authToken.token;
             }
 
             if (socket.userId) {
