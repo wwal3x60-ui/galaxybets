@@ -166,6 +166,11 @@ function timedPromise(promise, name) {
     });
 }
 
+const { sql } = require('./database');
+sql.query('SELECT 1')
+   .then(() => console.log('✅ Database connected successfully!'))
+   .catch(err => console.error('❌ Database connection failed:', err.message));
+
 start();
 
 if (process.env.NODE_ENV === 'production') {

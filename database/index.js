@@ -6,8 +6,9 @@ const connection = {
     database: process.env.SQL_DB,
     password: process.env.SQL_PASS,
     waitForConnections: true,
-    connectionLimit: 10,
+    connectionLimit: 5,
     queueLimit: 0,
+    connectTimeout: 30000,
     // This is required for cloud databases like Aiven on Render
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined,
     typeCast: function (field, next) {
