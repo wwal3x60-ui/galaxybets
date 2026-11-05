@@ -15,29 +15,13 @@ app.disable('x-powered-by');
 app.set('trust proxy', 1);
 app.use(helmet());
 
-const allowedOrigins = [
-    'https://galaxybets.casino',
-    'https://www.galaxybets.casino',
-    process.env.FRONTEND_URL
-].filter(Boolean);
-
+// Bulletproof CORS: Accept any origin, but allow credentials (cookies)
 app.use(cors({
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
-        // Allow any Vercel preview URL or explicitly allowed domains
-        if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.vercel.app')) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
+    origin: true, // This reflects the exact origin making the request
     credentials: true
 }));
 
-app.options('*', (req, res) => {
-    res.sendStatus(204);
-});
+app.options('*', cors()); // Enable pre-flight for all routes
 
 app.set('view engine', 'ejs');
 app.use('/public', express.static(path.join(__dirname, 'public')));
@@ -86,6 +70,7 @@ app.use(bodyParser.urlencoded({
 app.use(nocache());
 app.use(cookieParser());
 
+// Routes
 const authRoute = require('./routes/auth');
 const userRoute = require('./routes/user');
 const depositsRoute = require('./routes/user/deposits');
@@ -129,6 +114,7 @@ app.get('/', (req, res) => {
     res.send('GalaxyBets API is running :)');
 });
 
+// Caches
 const { cacheBets } = require('./socketio/bets');
 const { cacheRains } = require('./socketio/rain');
 const { cacheBattles } = require('./routes/games/battles/functions');
@@ -142,23 +128,12 @@ const { cacheAdmin } = require('./routes/admin/config');
 const { cacheLeaderboards } = require('./routes/leaderboard/functions');
 
 async function start() {
-
     const promises = [
-        cacheBets,
-        cacheRains,
-        cacheBattles,
-        cacheCases,
-        // cacheDrops,
-        cacheCrash,
-        cacheJackpot,
-        cacheRoulette,
-        cacheCoinflips,
-        cacheChannels,
-        cacheAdmin,
-        cacheLeaderboards
+        cacheBets, cacheRains, cacheBattles, cacheCases, cacheCrash,
+        cacheJackpot, cacheRoulette, cacheCoinflips, cacheChannels,
+        cacheAdmin, cacheLeaderboards
     ];
 
-    // Run caches in parallel. If one fails (e.g., external API down), it logs the error but DOES NOT crash the server.
     await Promise.all(promises.map((p) => timedPromise(p(), p.name)));
 
     const port = process.env.PORT || 3001;
@@ -168,20 +143,14 @@ async function start() {
     });
     
     require('./socketio');
+    
+    // Bulletproof Socket.IO CORS
     io.attach(serverInstance, {
         cors: {
-            origin: function (origin, callback) {
-                if (!origin) return callback(null, true);
-                if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.vercel.app')) {
-                    callback(null, true);
-                } else {
-                    callback(new Error('Not allowed by CORS'));
-                }
-            },
+            origin: true,
             credentials: true
         }
     });
-
 }
 
 function timedPromise(promise, name) {
@@ -199,7 +168,6 @@ function timedPromise(promise, name) {
 
 start();
 
-// Automatically start Jackpot Bots on the live server
 if (process.env.NODE_ENV === 'production') {
     require('./scripts/load-test-jackpot');
 }
