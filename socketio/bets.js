@@ -206,18 +206,23 @@ async function getBets(type, userId) {
 let totalWagered = false;
 async function emitTotalWagered(amountToIncrease = 0, socket = io) {
 
-    if (totalWagered === false) {
-        const [[result]] = await sql.query(`
+    try {
+        if (totalWagered === false) {
+            const [[result]] = await sql.query(`
         SELECT SUM(amount) as totalWagered FROM bets JOIN users ON bets.userId=users.id
         WHERE bets.completed = 1 AND users.sponsorLock = 0 AND users.role = 'USER';
         `);
-        totalWagered = result.totalWagered || 0;
+            totalWagered = result.totalWagered || 0;
+        }
+
+        if (amountToIncrease) totalWagered += amountToIncrease;
+
+        socket.emit('totalWagered', roundDecimal(totalWagered));
+        return totalWagered;
+    } catch (error) {
+        console.error('Failed to emit total wagered:', error.message || error);
+        return false;
     }
-
-    if (amountToIncrease) totalWagered += amountToIncrease;
-
-    socket.emit('totalWagered', roundDecimal(totalWagered));
-    return totalWagered;
 
 }
 

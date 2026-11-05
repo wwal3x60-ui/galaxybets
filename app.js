@@ -15,16 +15,8 @@ app.disable('x-powered-by');
 app.set('trust proxy', 1);
 app.use(helmet());
 
-// Bulletproof CORS: Accept any origin, but allow credentials (cookies)
-app.use(cors({
-    origin: true, // This reflects the exact origin making the request
-    credentials: true
-}));
-
-app.options('*', cors({
-    origin: true,
-    credentials: true
-})); // Enable pre-flight for all routes
+app.use(cors({ origin: true, credentials: true }));
+app.options('*', cors());
 
 app.set('view engine', 'ejs');
 app.use('/public', express.static(path.join(__dirname, 'public')));

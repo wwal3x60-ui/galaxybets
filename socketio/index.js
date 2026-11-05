@@ -11,7 +11,7 @@ const { cachedCoinflips } = require('../routes/games/coinflip/functions');
 const { getBets, emitTotalWagered } = require('./bets');
 const { validateJwtToken } = require('../routes/auth/functions');
 const { jackpot } = require('../routes/games/jackpot/functions');
-const cookie = require('cookie');
+const { parse: parseCookie } = require('cookie');
 const crypto = require('crypto');
 
 function isLocalAddress(address) {
@@ -82,25 +82,30 @@ function socketLogin(socket, token) {
 
 io.on('connection', function(socket) {
 
-    socket.on('auth', function(token) {
-        
-        if (!token) {
-            const cookieHeader = socket.handshake.headers.cookie;
-            if (cookieHeader) {
-                const cookies = cookie.parse(cookieHeader);
-                token = cookies['jwt'];
+    socket.on('auth', async function(token) {
+
+        try {
+            if (!token) {
+                const cookieHeader = socket.handshake.headers.cookie;
+                if (cookieHeader) {
+                    const cookies = parseCookie(cookieHeader);
+                    token = cookies['jwt'];
+                }
             }
+
+            if (socket.userId) {
+                socket.leave(socket.userId);
+                socket.userId = null;
+            }
+
+            const first = socket.userId == undefined;
+
+            socketLogin(socket, token);
+            if (first) await newSocket(socket);
+        } catch (error) {
+            console.error('Socket authentication failed:', error.message || error);
+            socket.emit('auth', { error: 'AUTH_ERROR' });
         }
-
-        if (socket.userId) {
-            socket.leave(socket.userId);
-            socket.userId = null;
-        }
-
-        const first = socket.userId == undefined;
-
-        socketLogin(socket, token);
-        if (first) newSocket(socket);
 
     });
 
