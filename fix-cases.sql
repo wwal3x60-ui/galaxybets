@@ -1,4 +1,4 @@
-CREATE TABLE cases (
+CREATE TABLE IF NOT EXISTS cases (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, -- INFERRED from routes/games/cases/functions.js:17
     name VARCHAR(128) NOT NULL, -- INFERRED from routes/games/cases/functions.js:17
     slug VARCHAR(128) NOT NULL, -- INFERRED from routes/games/cases/functions.js:17
@@ -7,7 +7,7 @@ CREATE TABLE cases (
     UNIQUE KEY uq_cases_slug (slug)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE caseVersions (
+CREATE TABLE IF NOT EXISTS caseVersions (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, -- INFERRED from routes/games/cases/functions.js:17
     caseId BIGINT UNSIGNED NOT NULL, -- INFERRED from routes/games/cases/functions.js:18
     -- REPRICE in phase 4
@@ -18,7 +18,7 @@ CREATE TABLE caseVersions (
     KEY idx_caseVersions_case_ended_id (caseId, endedAt, id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE caseItems (
+CREATE TABLE IF NOT EXISTS caseItems (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, -- INFERRED from routes/games/cases/functions.js:22
     caseVersionId BIGINT UNSIGNED NOT NULL, -- INFERRED from routes/games/cases/functions.js:22
     robloxId BIGINT UNSIGNED NOT NULL, -- INFERRED from routes/games/cases/functions.js:22
