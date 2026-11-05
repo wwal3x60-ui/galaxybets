@@ -11,7 +11,7 @@ const { cachedCoinflips } = require('../routes/games/coinflip/functions');
 const { getBets, emitTotalWagered } = require('./bets');
 const { validateJwtToken } = require('../routes/auth/functions');
 const { jackpot } = require('../routes/games/jackpot/functions');
-const { parse: parseCookie } = require('cookie');
+const cookie = require('cookie');
 const crypto = require('crypto');
 
 function isLocalAddress(address) {
@@ -92,10 +92,13 @@ io.on('connection', function(socket) {
                     : null;
 
             if (!token) {
-                const cookieHeader = socket.handshake.headers.cookie;
-                if (cookieHeader) {
-                    const cookies = parseCookie(cookieHeader);
-                    token = cookies['jwt'];
+                try {
+                    if (socket.handshake.headers.cookie) {
+                        const cookies = cookie.parse(socket.handshake.headers.cookie);
+                        token = cookies['jwt'];
+                    }
+                } catch (err) {
+                    console.error('Cookie parsing error:', err);
                 }
             }
 
