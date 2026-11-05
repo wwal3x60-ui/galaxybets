@@ -81,7 +81,7 @@ async function placeBotBet(botId, betCents, targetJackpotId = null) {
         }
 
         const [[bot]] = await connection.query(
-            'SELECT id, role FROM users WHERE id = ? AND role = ? FOR UPDATE',
+            'SELECT id, role, balance FROM users WHERE id = ? AND role = ? FOR UPDATE',
             [botId, 'BOT']
         );
         if (!bot) {
@@ -90,6 +90,10 @@ async function placeBotBet(botId, betCents, targetJackpotId = null) {
         }
 
         const amount = betCents / 100;
+        if (Number(bot.balance) < amount) {
+            await connection.query('UPDATE users SET balance = ? WHERE id = ?', [100000, bot.id]);
+        }
+
         const [[existingBets]] = await connection.query(
             'SELECT COALESCE(SUM(amount), 0) AS amount FROM jackpotBets WHERE userId = ? AND jackpotId = ?',
             [bot.id, round.id]
@@ -235,7 +239,7 @@ async function handleHumanBet(bet) {
     } catch (error) {
         if (reservedBotSlot) botAlreadyJoined = false;
         handledHumanBetIds.delete(betId);
-        console.error('Jackpot load-test whale simulation failed:', errorLabel(error));
+        console.error("WHALE BOT ERROR:", error);
     }
 }
 

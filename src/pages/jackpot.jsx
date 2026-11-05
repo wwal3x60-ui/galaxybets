@@ -143,17 +143,31 @@ function Jackpot(props) {
                 animateCountdown(timeLeft * 1000)
             })
 
-            ws().on('jackpot:reset', (jp = {}) => {
-                const timeLeft = jp.timeLeft ?? 60
-                setTimer(timeLeft * 1000)
+            ws().on('jackpot:reset', () => {
+                setWinner(null)
                 setTotal(0)
                 setBets([])
-                setJackpot(jp.id ? jp : null)
-                if (jp.config) setConfig(jp.config)
                 setUsers([])
                 setRawBets([])
-                setState(jp.spinning ? 'rolling' : 'counting')
-                setWinner(null)
+                setTicket(0)
+                setTimer(60 * 1000)
+                setState('counting')
+            })
+
+            ws().on('jackpot:newRound', (round) => {
+                const current = jackpot() || {}
+                const timeLeft = round?.timeLeft ?? 60
+                setJackpot({
+                    ...current,
+                    round,
+                    bets: round?.bets || [],
+                    config: round?.config || current.config,
+                    timeLeft,
+                    spinning: Boolean(round?.spinning)
+                })
+                setConfig(round?.config || current.config || {})
+                setTimer(timeLeft * 1000)
+                setState(round?.spinning ? 'rolling' : 'counting')
                 setTicket(0)
                 animateCountdown(timeLeft * 1000)
             })
