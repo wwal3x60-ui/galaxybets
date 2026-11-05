@@ -37,7 +37,9 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.disable('x-powered-by');
-app.use(helmet());
+app.use(helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' }
+}));
 
 app.get('/health', (req, res) => {
     res.status(200).json({ ok: true });
