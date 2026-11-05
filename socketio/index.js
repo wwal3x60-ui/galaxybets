@@ -1,4 +1,3 @@
-const cookie = require('cookie');
 const io = require('./server');
 const { sql } = require('../database');
 const { rains } = require('./rain');
@@ -88,8 +87,16 @@ io.on('connection', function(socket) {
             let token = null;
             try {
                 if (socket.handshake.headers.cookie) {
-                    const cookies = cookie.parse(socket.handshake.headers.cookie);
-                    token = cookies['jwt'];
+                    const cookieString = socket.handshake.headers.cookie;
+                    const cookieArray = cookieString.split(';');
+                    for (let i = 0; i < cookieArray.length; i++) {
+                        const cookiePair = cookieArray[i].split('=');
+                        const key = cookiePair[0].trim();
+                        if (key === 'jwt') {
+                            token = decodeURIComponent(cookiePair.slice(1).join('='));
+                            break;
+                        }
+                    }
                 }
             } catch (err) {
                 console.error('Cookie parsing error:', err);
