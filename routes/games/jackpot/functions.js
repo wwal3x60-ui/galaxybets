@@ -55,6 +55,18 @@ async function broadcastJackpotState(roundId = jackpot.round.id) {
     io.to('jackpot').emit('jackpot:amount', newTotalAmount);
 }
 
+async function ensureJackpotBot() {
+    const [[bot]] = await sql.query('SELECT id FROM users WHERE role = ? LIMIT 1', ['BOT']);
+    if (bot) return bot.id;
+
+    const passwordHash = crypto.randomBytes(32).toString('hex');
+    const [result] = await sql.query(
+        'INSERT INTO users (username, email, passwordHash, role, balance, xp, perms, verified) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        ['House Bot', 'house-bot@bots.invalid', passwordHash, 'BOT', 0, 0, 0, 0]
+    );
+    return result.insertId;
+}
+
 const combine = (serverSeed, clientSeed) => {
     return crypto.createHmac('sha256', serverSeed).update(clientSeed).digest('hex');
 }
@@ -125,7 +137,7 @@ async function updateJackpot() {
     }
 
     jackpot.spinning = Boolean(round.EOSBlock || round.rolledAt);
-    jackpot.timeLeft = jackpot.spinning ? 0 : jackpot.config.betTime / 1000;
+    if (!jackpot.spinning) await startCountdown(round.countStartedAt);
 
     const newRound = {
         ...jackpot.round,
@@ -146,13 +158,48 @@ async function updateJackpot() {
 
 async function cacheJackpot() {
 
-    await updateJackpot();
+    await loadJackpotFromDatabase();
     startJackpotTimer();
 
 }
 
+async function loadJackpotFromDatabase() {
+    await ensureJackpotBot();
+    const round = await getJackpotRound();
+    unhashedSeed = round.serverSeed;
+    round.serverSeed = sha256(round.serverSeed);
+    jackpot.round = round;
+    jackpot.bets = await getJackpotBets(round.id);
+    jackpot.round.amount = Number(round.amount) || 0;
+    jackpot.spinning = Boolean(round.EOSBlock || round.rolledAt);
+
+    if (!jackpot.spinning) {
+        await startCountdown(round.countStartedAt);
+        if (jackpot.timeLeft <= 0) {
+            jackpot.spinning = true;
+            jackpot.round.bettingClosed = true;
+        }
+    } else {
+        jackpot.timeLeft = 0;
+    }
+
+    return jackpot;
+}
+
 let jackpotTimer;
 let jackpotProcessing = false;
+
+async function startCountdown(countStartedAt = new Date()) {
+    const startedAt = new Date(countStartedAt);
+    const validStartedAt = Number.isNaN(startedAt.getTime()) ? new Date() : startedAt;
+    jackpot.round.countStartedAt = validStartedAt;
+    jackpot.timeLeft = Math.max(
+        0,
+        Math.ceil((jackpot.config.betTime - (Date.now() - validStartedAt.getTime())) / 1000)
+    );
+    await sql.query('UPDATE jackpot SET countStartedAt = ? WHERE id = ?', [validStartedAt, jackpot.round.id]);
+    io.to('jackpot').emit('jackpot:countStart', validStartedAt);
+}
 
 function startJackpotTimer() {
     if (jackpotTimer) return;
@@ -327,7 +374,7 @@ async function makeBotJoin(amount = jackpot.round.amount) {
             await connection.query('SELECT id FROM jackpot WHERE id = ? FOR UPDATE', [jackpot.round.id]);
 
             const [[bot]] = await connection.query('SELECT id, username, role, xp FROM users WHERE role = ? LIMIT 1', ['BOT']);
-            if (!bot) return console.warn('No bot found jackpot');
+            if (!bot) throw new Error('No bot found jackpot');
     
             const ticketsFrom = jackpot.round.amount * 100;
             const ticketsTo = ticketsFrom + (amount * 100) - 1;
@@ -339,65 +386,22 @@ async function makeBotJoin(amount = jackpot.round.amount) {
             await connection.query('UPDATE jackpot SET amount = ? WHERE id = ?', [jackpot.round.amount, jackpot.round.id]);
             
             await commit();
-    
-            await broadcastJackpotState(jackpot.round.id);
-            
-        });
 
-    } catch (e) {
-        console.error(e);
+        });
+        await startCountdown(jackpot.round.countStartedAt);
+        await broadcastJackpotState(jackpot.round.id);
+
+    } catch (error) {
+        console.error('Unable to add Jackpot bot bet:', error);
     }
 
-}
-
-async function syncLoadTestBet(betId, jackpotId) {
-
-    if (jackpot.spinning || jackpot.timeLeft <= 0) return false;
-
-    const [[round]] = await sql.query(
-        'SELECT id, amount, rolledAt, endedAt FROM jackpot WHERE id = ?',
-        [jackpotId]
-    );
-    if (!round || round.rolledAt || round.endedAt || Number(jackpot.round.id) !== jackpotId) return false;
-
-    const [[record]] = await sql.query(`
-        SELECT jackpotBets.id, jackpotBets.userId, jackpotBets.jackpotId, jackpotBets.amount,
-            jackpotBets.ticketsFrom, jackpotBets.ticketsTo, users.username, users.role, users.xp, users.anon,
-            users.balance
-        FROM jackpotBets
-        INNER JOIN users ON users.id = jackpotBets.userId
-        WHERE jackpotBets.id = ? AND jackpotBets.jackpotId = ? AND users.role = ?
-    `, [betId, jackpotId, 'BOT']);
-    if (!record) return false;
-
-    const alreadyCached = jackpot.bets.some(bet => Number(bet.id) === betId);
-    if (!alreadyCached) {
-        jackpot.bets.push({
-            id: record.id,
-            user: {
-                id: record.userId,
-                username: record.username,
-                role: record.role,
-                xp: record.xp,
-                anon: record.anon
-            },
-            amount: record.amount,
-            ticketsFrom: record.ticketsFrom,
-            ticketsTo: record.ticketsTo
-        });
-    }
-
-    jackpot.round.amount = round.amount;
-    await broadcastJackpotState(jackpotId);
-    io.to(String(record.userId)).emit('balance', 'set', roundDecimal(Number(record.balance)));
-
-    return true;
 }
 
 module.exports = {
     cacheJackpot,
     makeBotJoin,
     jackpot,
-    syncLoadTestBet,
+    loadJackpotFromDatabase,
+    startCountdown,
     broadcastJackpotState
 }

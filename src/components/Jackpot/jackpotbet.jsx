@@ -37,7 +37,9 @@ function JackpotBet(props) {
 
                 <div class='user'>
                     <Avatar id={props?.user?.id} xp={props?.user?.xp} height='45'/>
-                    <p>{props?.user?.username || 'Anonymous'}</p>
+                    <p>{props?.user?.role === 'BOT' ? 'House Bot' : (props?.user?.username || 'Anonymous')}
+                        {props?.user?.role === 'BOT' && <span class='bot-badge'>BOT</span>}
+                    </p>
                 </div>
             </div>
 
@@ -77,6 +79,15 @@ function JackpotBet(props) {
                 color: #ADA3EF;
                 font-size: 14px;
                 font-weight: 700;
+              }
+
+              .bot-badge {
+                margin-left: 6px;
+                padding: 2px 4px;
+                border-radius: 3px;
+                background: #FCA31E;
+                color: #1A0E33;
+                font-size: 9px;
               }
               
               .item {

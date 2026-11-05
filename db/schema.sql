@@ -395,6 +395,7 @@ CREATE TABLE jackpot (
     clientSeed VARCHAR(255) NULL, -- INFERRED from routes/games/jackpot/functions.js:200
     EOSBlock BIGINT UNSIGNED NULL, -- INFERRED from routes/games/jackpot/functions.js:179
     createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, -- INFERRED from routes/games/jackpot/functions.js:41
+    countStartedAt DATETIME NULL,
     rolledAt DATETIME NULL, -- INFERRED from routes/games/jackpot/functions.js:200
     endedAt DATETIME NULL, -- INFERRED from routes/games/jackpot/functions.js:35
     PRIMARY KEY (id),

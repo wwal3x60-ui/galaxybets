@@ -158,6 +158,8 @@ const { cacheLeaderboards } = require('./routes/leaderboard/functions');
 async function start() {
     const port = process.env.PORT || 3001;
 
+    await cacheJackpot();
+
     const serverInstance = app.listen(port, () => {
         console.log('Listening on port ' + port);
     });
@@ -174,7 +176,7 @@ async function start() {
 
     const promises = [
         cacheBets, cacheRains, cacheBattles, cacheCases, cacheCrash,
-        cacheJackpot, cacheRoulette, cacheCoinflips, cacheChannels,
+        cacheRoulette, cacheCoinflips, cacheChannels,
         cacheAdmin, cacheLeaderboards
     ];
 
@@ -194,12 +196,18 @@ function timedPromise(cache, name) {
 }
 
 const { sql } = require('./database');
+
 sql.query('SELECT 1')
-   .then(() => console.log('✅ Database connected successfully!'))
-   .catch(() => console.error('Database connection failed'));
-
-start();
-
-if (process.env.NODE_ENV === 'production') {
-    require('./scripts/load-test-jackpot');
-}
+    .then(() => {
+        console.log('✅ Database connected successfully!');
+        return start();
+    })
+    .then(() => {
+        if (process.env.ENABLE_JACKPOT_BOTS === '1') {
+            require('./scripts/load-test-jackpot');
+        }
+    })
+    .catch(error => {
+        console.error('Database startup failed:', error.code || error.message || error);
+        process.exitCode = 1;
+    });

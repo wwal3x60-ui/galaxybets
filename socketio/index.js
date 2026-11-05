@@ -11,24 +11,6 @@ const { cachedCoinflips } = require('../routes/games/coinflip/functions');
 const { getBets, emitTotalWagered } = require('./bets');
 const { validateJwtToken } = require('../routes/auth/functions');
 const { jackpot } = require('../routes/games/jackpot/functions');
-const crypto = require('crypto');
-
-function isLocalAddress(address) {
-    return address === '127.0.0.1'
-        || address === '::1'
-        || address === '::ffff:127.0.0.1';
-}
-
-function matchesLoadTestToken(token) {
-    if (typeof token !== 'string') return false;
-
-    const expectedTokens = ['galaxybots123', process.env.JACKPOT_LOAD_TEST_TOKEN].filter(Boolean);
-    const received = Buffer.from(token);
-    return expectedTokens.some(expectedToken => {
-        const expected = Buffer.from(expectedToken);
-        return received.length === expected.length && crypto.timingSafeEqual(received, expected);
-    });
-}
 
 process.on('SIGTERM', cleanupAndExit);
 process.on('SIGINT', cleanupAndExit);
@@ -65,13 +47,7 @@ async function newSocket(socket) {
 }
 
 function socketLogin(socket, token) {
-
-    const isLocalLoadTest = process.env.NODE_ENV !== 'production'
-        && process.env.JACKPOT_LOAD_TEST === '1'
-        && isLocalAddress(socket.handshake.address);
-    const valid = token === 'galaxybots123' && isLocalLoadTest
-        ? { uid: 35 }
-        : validateJwtToken(token);
+    const valid = validateJwtToken(token);
 
     if (!valid) {
         socket.userId = null;
@@ -267,34 +243,6 @@ io.on('connection', function(socket) {
 
     socket.on('jackpot:unsubscribe', () => {
         socket.leave('jackpot');
-    });
-
-    socket.on('loadtest:jackpotBet', async (payload = {}, acknowledge = () => {}) => {
-        const respond = typeof acknowledge === 'function' ? acknowledge : () => {};
-        if (
-            !payload
-            || typeof payload !== 'object'
-            || process.env.NODE_ENV === 'production'
-            || process.env.JACKPOT_LOAD_TEST !== '1'
-            || !isLocalAddress(socket.handshake.address)
-            || !matchesLoadTestToken(socket.handshake.auth?.token)
-            || !Number.isSafeInteger(Number(payload.betId))
-            || !Number.isSafeInteger(Number(payload.jackpotId))
-        ) {
-            respond({ success: false, error: 'FORBIDDEN' });
-            return;
-        }
-
-        try {
-            const { syncLoadTestBet } = require('../routes/games/jackpot/functions');
-            const synced = await syncLoadTestBet(Number(payload.betId), Number(payload.jackpotId));
-            respond(synced
-                ? { success: true }
-                : { success: false, error: 'BET_NOT_IN_ACTIVE_ROUND' });
-        } catch (error) {
-            console.error('Jackpot load-test relay failed:', error.code || error.message);
-            respond({ success: false, error: 'INTERNAL_ERROR' });
-        }
     });
 
     socket.on('crash:subscribe', () => {

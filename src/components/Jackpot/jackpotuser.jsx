@@ -51,6 +51,7 @@ function JackpotUser(props) {
         <>
             <div class={'jackpot-user ' + (props?.won ? 'won big ' : '')} ref={jpUser}>
                 <p class='percent'>{((props?.percent || 0) * 100)?.toFixed(2)}%</p>
+                {props?.user?.role === 'BOT' && <span class='bot-badge'>BOT</span>}
                 <img src={props?.id ? `${import.meta.env.VITE_SERVER_URL}/user/${props?.id}/img` : '/assets/icons/anon.png'} alt='' height='48' width='48'/>
                 <div class='bar' style={{background: props?.color}}/>
             </div>
@@ -121,6 +122,18 @@ function JackpotUser(props) {
                 background: rgba(90, 84, 153, 0.35);
                 border-radius: 3px;
                 margin: auto 0;
+              }
+
+              .bot-badge {
+                position: absolute;
+                top: 3px;
+                right: 3px;
+                padding: 2px 4px;
+                border-radius: 3px;
+                background: #FCA31E;
+                color: #1A0E33;
+                font-size: 8px;
+                font-weight: 700;
               }
               
               .bar {

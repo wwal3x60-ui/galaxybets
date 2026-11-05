@@ -83,11 +83,13 @@ function Jackpot(props) {
     const spinnerContent = {
         winners: () => <div class='winner fadein'>
             <JackpotUser color={winner()?.color} id={winner()?.user?.id}
+                         user={winner()?.user}
                          percent={(winner()?.chance || 0) / 100}
                          won={true}/>
             <div>
                 <p class='details'>
-                    <span class='white bold'>{winner()?.user?.username}</span>
+                    <span class='white bold'>{winner()?.user?.role === 'BOT' ? 'House Bot' : winner()?.user?.username}</span>
+                    {winner()?.user?.role === 'BOT' && <span class='bot-badge'>BOT</span>}
                     <Level xp={winner()?.user?.xp}/>
                     WON
                     <img src='/assets/icons/coin.svg' height='17' width='17'/>
@@ -107,14 +109,17 @@ function Jackpot(props) {
             <div class='spinner' ref={spinnerRef}>
                 <For each={users()}>{(bet, index) => <JackpotUser color={bet?.color} id={bet?.user?.id}
                                                                   percent={chancePercent(bet?.amount || 0, totalWeight(), bet?.user?.role) / 100}
+                                                                  user={bet?.user}
                                                                   state={state()}
                                                                   index={index()}/>}</For>
             </div>
         </>,
         counting: () => <For each={bets()}>{(bet, index) => <JackpotUser color={bet?.color} id={bet?.user?.id}
-                                                                         percent={chancePercent(bet?.amount || 0, totalWeight(), bet?.user?.role) / 100}/>}</For>,
+                                                                         percent={chancePercent(bet?.amount || 0, totalWeight(), bet?.user?.role) / 100}
+                                                                         user={bet?.user}/>}</For>,
         waiting: () => <For each={bets()}>{(bet, index) => <JackpotUser color={bet?.color} id={bet?.user?.id}
-                                                                        percent={chancePercent(bet?.amount || 0, totalWeight(), bet?.user?.role) / 100}/>}</For>
+                                                                        percent={chancePercent(bet?.amount || 0, totalWeight(), bet?.user?.role) / 100}
+                                                                        user={bet?.user}/>}</For>
     }
 
     createEffect(() => {
