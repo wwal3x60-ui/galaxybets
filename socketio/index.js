@@ -1,3 +1,4 @@
+const cookie = require('cookie');
 const io = require('./server');
 const { sql } = require('../database');
 const { rains } = require('./rain');
@@ -11,7 +12,6 @@ const { cachedCoinflips } = require('../routes/games/coinflip/functions');
 const { getBets, emitTotalWagered } = require('./bets');
 const { validateJwtToken } = require('../routes/auth/functions');
 const { jackpot } = require('../routes/games/jackpot/functions');
-const cookieParser = require('cookie');
 const crypto = require('crypto');
 
 function isLocalAddress(address) {
@@ -88,8 +88,8 @@ io.on('connection', function(socket) {
             let token = null;
             try {
                 if (socket.handshake.headers.cookie) {
-                    const cookies = cookieParser.parse(socket.handshake.headers.cookie);
-                    token = cookies['jwt'];
+                    const parsed = cookie.parse(socket.handshake.headers.cookie);
+                    token = parsed['jwt'];
                 }
             } catch (err) {
                 console.error('Cookie parsing error:', err);
