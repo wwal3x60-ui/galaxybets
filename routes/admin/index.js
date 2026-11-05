@@ -54,8 +54,19 @@ router.post('/2fa', apiLimiter, async (req, res) => {
 router.get('/unpossess', async (req, res) => {
 
     if (!req.cookies['admjwt']) return res.redirect('/');
-    res.cookie('jwt', req.cookies['admjwt'], { maxAge: expiresIn * 1000 });
-    res.clearCookie('admjwt');
+    res.cookie('jwt', req.cookies['admjwt'], {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        maxAge: expiresIn * 1000,
+        path: '/'
+    });
+    res.clearCookie('admjwt', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        path: '/'
+    });
 
     res.redirect('/');
 

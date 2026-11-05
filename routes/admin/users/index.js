@@ -108,8 +108,16 @@ router.get('/:id/possess', async (req, res) => {
 
     const jwt = generateJwtToken(user.id);
 
-    res.cookie('jwt', jwt, { maxAge: expiresIn * 1000 });
-    res.cookie('admjwt', getReqToken(req), { maxAge: expiresIn * 1000 });
+    const cookieOptions = {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        maxAge: expiresIn * 1000,
+        path: '/'
+    };
+
+    res.cookie('jwt', jwt, cookieOptions);
+    res.cookie('admjwt', getReqToken(req), cookieOptions);
 
     res.redirect('/');
     sendLog('admin', `[\`${req.userId}\`] *${req.user.username}* possesed \`${userId}\`.`)

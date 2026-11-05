@@ -21,7 +21,10 @@ app.use(cors({
     credentials: true
 }));
 
-app.options('*', cors()); // Enable pre-flight for all routes
+app.options('*', cors({
+    origin: true,
+    credentials: true
+})); // Enable pre-flight for all routes
 
 app.set('view engine', 'ejs');
 app.use('/public', express.static(path.join(__dirname, 'public')));

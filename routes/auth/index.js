@@ -70,8 +70,8 @@ function issueSession(res, user) {
 
     res.cookie('jwt', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        secure: true,
+        sameSite: 'none',
         maxAge: 7 * 24 * 60 * 60 * 1000,
         path: '/'
     });
@@ -200,8 +200,8 @@ router.post('/logout', isAuthed, async (req, res) => {
 
     res.clearCookie('jwt', {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        secure: true,
+        sameSite: 'none',
         path: '/'
     });
     res.json({ success: true });
