@@ -27,16 +27,24 @@ function Coinflips(props) {
 
     let hasConnected = false
 
-    function updateFlip(flip, index) {
-        if (viewing()?.id === flip.id) {
-            setViewing(flip)
-        }
+    function updateFlip(id, updates) {
+        const index = flips().findIndex(flip => flip.id === id)
+        const currentFlip = index >= 0
+            ? flips()[index]
+            : viewing()?.id === id
+                ? viewing()
+                : null
+        if (!currentFlip) return
 
-        setFlips([
-            ...flips().slice(0, index),
-            flip,
-            ...flips().slice(index + 1)
-        ])
+        const updatedFlip = {...currentFlip, ...updates}
+        if (viewing()?.id === id) setViewing(updatedFlip)
+        if (index >= 0) {
+            setFlips([
+                ...flips().slice(0, index),
+                updatedFlip,
+                ...flips().slice(index + 1)
+            ])
+        }
     }
 
     createEffect(() => {
@@ -55,37 +63,22 @@ function Coinflips(props) {
             })
 
             ws().on('coinflip:join', (cfId, side, user) => {
-                let index = flips().findIndex(cf => cf.id === cfId)
-                if (index < 0) return
-
-                let newFlip = {...flips()[index]}
-                newFlip[side] = user
-
-                updateFlip(newFlip, index)
+                updateFlip(cfId, {[side]: user})
             })
 
             ws().on('coinflip:commit', (cfId, block) => {
-                let index = flips().findIndex(cf => cf.id === cfId)
-                if (index < 0) return
-
-                let newFlip = {...flips()[index]}
-                newFlip.EOSBlock = block
-
-                updateFlip(newFlip, index)
+                updateFlip(cfId, {EOSBlock: block})
             })
 
             ws().on('coinflip:started', (cfId, client, server, side) => {
-                let index = flips().findIndex(cf => cf.id === cfId)
-                if (index < 0) return
-
-                let newFlip = {...flips()[index]}
-                newFlip.winnerSide = side
-                newFlip.serverSeed = server
-                newFlip.clientSeed = client
-                newFlip.startedAt = Date.now()
-                newFlip.endsAt = Date.now() + END_DELAY
-
-                updateFlip(newFlip, index)
+                const startedAt = Date.now()
+                updateFlip(cfId, {
+                    winnerSide: side,
+                    serverSeed: server,
+                    clientSeed: client,
+                    startedAt,
+                    endsAt: startedAt + END_DELAY
+                })
             })
 
             hasConnected = true

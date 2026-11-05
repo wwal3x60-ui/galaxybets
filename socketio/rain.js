@@ -13,7 +13,7 @@ const rains = {
     system: false,
     joinTime: 60000 * 2,
     systemRainDuration: 60000 * 30,
-    systemRainAmount: 200
+    systemRainAmount: 3
 }
 
 async function getSystemRain() {
@@ -165,7 +165,7 @@ async function rainInterval(rain) {
                     io.to(user.id).emit('balance', 'set', user.amount + user.balance);
                 });
 
-                sendLog('rain', `Rain #${rain.id} ended, :robux: R$${rain.amount} were distributed amongst ${users.length} users.`);
+                sendLog('rain', `Rain #${rain.id} ended, $${Number(rain.amount).toFixed(2)} were distributed amongst ${users.length} users.`);
                 if (rain.host) delete rains.user;
 
             });
