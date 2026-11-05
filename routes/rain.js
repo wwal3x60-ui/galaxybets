@@ -13,6 +13,11 @@ const { rains } = require('../socketio/rain');
 const { newMessage } = require('../socketio/chat/functions');
 const { enabledFeatures, checkAccountLock } = require('./admin/config');
 
+function safeRoundDecimal(amount) {
+    const numericAmount = Number(amount);
+    return roundDecimal(Number.isFinite(numericAmount) ? numericAmount : 0);
+}
+
 router.use((req, res, next) => {
     if (!enabledFeatures.rain) return res.status(400).json({ error: 'DISABLED' });
     next();
@@ -104,8 +109,8 @@ router.post('/join', [isAuthed, apiLimiter], async (req, res) => {
 
 router.post('/tip', [isAuthed, apiLimiter], async (req, res) => {
     
-    if (!req.body.amount || typeof req.body.amount !== 'number') return res.status(400).json({ error: 'INVALID_AMOUNT' });
-    const amount = roundDecimal(req.body.amount);
+    if (!req.body.amount || typeof req.body.amount !== 'number' || !Number.isFinite(req.body.amount)) return res.status(400).json({ error: 'INVALID_AMOUNT' });
+    const amount = safeRoundDecimal(req.body.amount);
 
     if (amount < 1) return res.status(400).json({ error: 'MIN_RAIN_TIP' });
     if (amount > 3500) return res.status(400).json({ error: 'INVALID_AMOUNT' });
@@ -158,7 +163,7 @@ router.post('/tip', [isAuthed, apiLimiter], async (req, res) => {
 
             rain.amount += amount;
             io.emit('rain:pot', rain.amount);
-            io.to(user.id).emit('balance', 'set', roundDecimal(user.balance - amount));
+            io.to(user.id).emit('balance', 'set', safeRoundDecimal(user.balance - amount));
 
             res.json({ success: true });
             sendLog('rain', `*${user.username}* (\`${user.id}\`) tipped :robux: R$${amount} to rain #${rain.id}.`);
