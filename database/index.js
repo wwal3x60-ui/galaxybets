@@ -2,14 +2,14 @@ const mysql = require('mysql2/promise');
 
 const connection = {
     host: process.env.SQL_HOST || 'localhost',
+    port: process.env.SQL_PORT || 3306, // <--- THIS WAS MISSING!
     user: process.env.SQL_USER,
     database: process.env.SQL_DB,
     password: process.env.SQL_PASS,
     waitForConnections: true,
-    connectionLimit: 5,
+    connectionLimit: 10,
     queueLimit: 0,
     connectTimeout: 30000,
-    // This is required for cloud databases like Aiven on Render
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined,
     typeCast: function (field, next) {
         if (field.type == "NEWDECIMAL") {
@@ -22,30 +22,9 @@ const connection = {
 
 const pool = mysql.createPool(connection);
 
-// pool.on('connection', function (connection) {
-//     console.log('Connection established');
-// });
-
-// pool.on('acquire', function (connection) {
-//     console.log('Connection %d acquired', connection.threadId);
-// });
-
-// pool.on('release', function (connection) {
-//     console.log('Connection %d released', connection.threadId);
-// });
-
-// pool.on('enqueue', function () {
-//     console.log('Waiting for available connection slot');
-// });
-
-// pool.on('error', function (err) {
-//     console.error('Pool error', err);
-// });
-
 async function doTransaction(transactionLogic) {
 
     const connection = await pool.getConnection();
-    // if (!connection) throw new Error('Could not get connection from pool.');
 
     let hasEnded = false;
 
@@ -68,7 +47,6 @@ async function doTransaction(transactionLogic) {
     }
 
     try {
-
         const [txResult] = await connection.beginTransaction();
         if (txResult && txResult.warningStatus) {
             throw new Error('Transaction err: ' + txResult.warningStatus);
