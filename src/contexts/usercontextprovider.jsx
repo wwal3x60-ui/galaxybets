@@ -41,7 +41,6 @@ export function UserProvider(props) {
 
     async function getUser() {
         if (!getJWT()) {
-            mutate(null)
             setFetched(true)
             return null
         }
@@ -50,12 +49,10 @@ export function UserProvider(props) {
             let data = await fetchUser()
             if (data?.status === 401) clearJWT()
             const currentUser = data?.error ? null : data
-            mutate(currentUser)
             setFetched(true)
 
             return currentUser
         } catch (e) {
-            mutate(null)
             setFetched(true)
             console.log(e)
             return null
