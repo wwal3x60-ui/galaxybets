@@ -15,13 +15,23 @@ app.disable('x-powered-by');
 app.set('trust proxy', 1);
 app.use(helmet());
 
-// Allow requests from your Vercel frontend
-const frontendOrigin = process.env.FRONTEND_URL
-    ? new URL(process.env.FRONTEND_URL).origin
-    : false;
+const allowedOrigins = [
+    'https://galaxybets.casino',
+    'https://www.galaxybets.casino',
+    process.env.FRONTEND_URL
+].filter(Boolean);
 
 app.use(cors({
-    origin: frontendOrigin,
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        // Allow any Vercel preview URL or explicitly allowed domains
+        if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.vercel.app')) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
 }));
 
@@ -160,7 +170,14 @@ async function start() {
     require('./socketio');
     io.attach(serverInstance, {
         cors: {
-            origin: frontendOrigin,
+            origin: function (origin, callback) {
+                if (!origin) return callback(null, true);
+                if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.vercel.app')) {
+                    callback(null, true);
+                } else {
+                    callback(new Error('Not allowed by CORS'));
+                }
+            },
             credentials: true
         }
     });
