@@ -1,9 +1,17 @@
 import Level from "../Level/level";
 import {formatUSD} from "../../util/numbers";
 import {authedAPI, getRandomNumber} from "../../util/api";
-import {createEffect, createSignal} from "solid-js";
+import {createEffect, createSignal, onCleanup} from "solid-js";
 
 function CoinflipModal(props) {
+
+  const opponentCoin = props?.cf?.ownerSide === 'fire' ? 'ice' : 'fire'
+  const creator = props?.cf[props?.cf?.ownerSide]
+  const [opponent, setOpponent] = createSignal(props?.cf[opponentCoin])
+  const [animation, setAnimation] = createSignal(null)
+  const [isFlipping, setIsFlipping] = createSignal(false)
+  const [displayedWinnerSide, setDisplayedWinnerSide] = createSignal(null)
+  const [timer, setTimer] = createSignal(-1)
 
   createEffect(() => {
     setOpponent(props?.cf[opponentCoin])
@@ -11,9 +19,8 @@ function CoinflipModal(props) {
     if (props?.cf?.winnerSide && !animation()) {
       const randomAnimation = getRandomNumber(1, 3)
       setAnimation(props?.cf?.winnerSide + randomAnimation)
-      setIsSpinning(true)
 
-      setTimer(5)
+      setTimer(3)
       let int = setInterval(() => {
         setTimer((t) => t - 1)
         if (timer() <= 0) {
@@ -23,16 +30,22 @@ function CoinflipModal(props) {
     }
   })
 
-  const opponentCoin = props?.cf?.ownerSide === 'fire' ? 'ice' : 'fire'
-  const creator = props?.cf[props?.cf?.ownerSide]
-  const [opponent, setOpponent] = createSignal(props?.cf[opponentCoin])
-  const [animation, setAnimation] = createSignal(null)
-  const [isSpinning, setIsSpinning] = createSignal(false)
-  const [timer, setTimer] = createSignal(-1)
+  createEffect(() => {
+    const winnerSide = props?.cf?.winnerSide
+    if (!winnerSide || displayedWinnerSide() === winnerSide) return
+
+    setIsFlipping(true)
+    const timeout = setTimeout(() => {
+      setDisplayedWinnerSide(winnerSide)
+      setIsFlipping(false)
+    }, 3000)
+
+    onCleanup(() => clearTimeout(timeout))
+  })
 
   function isLoser(side) {
-    if (!props?.cf?.endsAt || timer() > 0 || isSpinning() || (props?.time < props?.cf?.endsAt)) return false
-    return side !== props?.cf?.winnerSide
+    if (!displayedWinnerSide()) return false
+    return side !== displayedWinnerSide()
   }
 
   return (
@@ -50,7 +63,7 @@ function CoinflipModal(props) {
                 <img class={'avatar ' + (isLoser(props?.cf?.ownerSide) ? 'gray' : '')} src={`${import.meta.env.VITE_SERVER_URL}/user/${creator?.id}/img`}
                      height='90' width='90' alt=''/>
 
-                <img class={'coin ' + (isLoser(props?.cf?.ownerSide) ? 'gray' : '')} src={`/assets/icons/${props?.cf?.ownerSide}coin.svg`} height='35' width='35'
+                <img class={'coin ' + (isLoser(props?.cf?.ownerSide) ? 'gray' : '') + (isFlipping() ? ' flipping' : '')} src={`/assets/icons/${props?.cf?.ownerSide}coin.svg`} height='35' width='35'
                      alt={props?.cf?.ownerSide}/>
               </div>
 
@@ -63,8 +76,7 @@ function CoinflipModal(props) {
               {animation() && timer() > 0 ? (
                 <p>{timer()} s</p>
               ) : animation() ? (
-                <video class='anim' src={`/assets/animations/${animation()}.webm`}
-                       autoPlay={true} onEnded={() => setIsSpinning(false)}></video>
+                <video class='anim' src={`/assets/animations/${animation()}.webm`} autoPlay={true}></video>
               ) : null}
             </div>
 
@@ -81,7 +93,7 @@ function CoinflipModal(props) {
                   <p class='nouser'>?</p>
                 )}
 
-                <img class={'coin left ' + (isLoser(opponentCoin) ? 'gray' : '')} src={`/assets/icons/${opponentCoin}coin.svg`} height='35'
+                <img class={'coin left ' + (isLoser(opponentCoin) ? 'gray' : '') + (isFlipping() ? ' flipping' : '')} src={`/assets/icons/${opponentCoin}coin.svg`} height='35'
                      width='35' alt={opponentCoin}/>
               </div>
 
@@ -270,6 +282,16 @@ function CoinflipModal(props) {
           top: 6px;
           right: 6px;
           border-radius: 50%;
+        }
+
+        .coin.flipping {
+          animation: coinflip-spin 3s ease-in-out;
+        }
+
+        @keyframes coinflip-spin {
+          to {
+            transform: rotate(360deg);
+          }
         }
 
         .coin.left {

@@ -110,7 +110,11 @@ router.post('/:id/open', [isAuthed, apiLimiter], async (req, res) => {
             if (user.balance < price) return res.status(400).json({ error: 'INSUFFICIENT_BALANCE' });
     
             const [items] = await connection.query(`
-                SELECT id, robloxId, name, img, price, rangeFrom, rangeTo FROM caseItems WHERE caseVersionId = ? ORDER BY price DESC;
+                SELECT \`caseItems\`.\`id\`, \`caseItems\`.\`robloxId\`, \`caseItems\`.\`name\`, \`caseItems\`.\`img\`,
+                    \`caseItems\`.\`price\`, \`caseItems\`.\`rangeFrom\`, \`caseItems\`.\`rangeTo\`
+                FROM \`caseItems\`
+                WHERE \`caseItems\`.\`caseVersionId\` = ?
+                ORDER BY \`caseItems\`.\`price\` DESC;
             `, [caseInfo.revId]);
     
             const seeds = await getUserSeeds(user.id, connection, true);
@@ -195,8 +199,8 @@ router.post('/:id/open', [isAuthed, apiLimiter], async (req, res) => {
             
         });
 
-    } catch (e) {
-        console.error(e);
+    } catch (error) {
+        console.error("CASE OPEN ERROR:", error);
         res.status(500).json({ error: 'INTERNAL_ERROR' });
     }
 });

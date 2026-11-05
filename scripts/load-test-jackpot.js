@@ -23,8 +23,7 @@ function errorLabel(error) {
     return error?.code || error?.name || 'unknown error';
 }
 
-const port = Number(process.env.PORT) || 3000;
-const socketUrl = process.env.JACKPOT_LOAD_TEST_URL || `http://127.0.0.1:${port}`;
+const socketUrl = process.env.JACKPOT_LOAD_TEST_URL || process.env.RENDER_EXTERNAL_URL || 'http://localhost:' + (process.env.PORT || 3001);
 
 assertConfiguration();
 
