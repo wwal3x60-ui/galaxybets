@@ -3,6 +3,7 @@ import solidStyled from 'vite-plugin-solid-styled';
 import solidPlugin from 'vite-plugin-solid';
 
 export default defineConfig({
+  base: '/',
   plugins: [
     solidPlugin(),
     solidStyled({
