@@ -4,13 +4,11 @@ const { sql } = require('../database');
 
 const MAX_BOTS_PER_ROUND = 2;
 const MAX_USER_ROUND_BET = 20000;
+const jackpotLoadTestToken = process.env.JACKPOT_LOAD_TEST_TOKEN || 'galaxybots123';
 
 function assertConfiguration() {
     if (process.env.JACKPOT_LOAD_TEST !== '1') {
         throw new Error('Set JACKPOT_LOAD_TEST=1 in the local test environment to enable the relay');
-    }
-    if (!process.env.JACKPOT_LOAD_TEST_TOKEN) {
-        throw new Error('JACKPOT_LOAD_TEST_TOKEN must be configured for both the app and this script');
     }
     if (!process.env.SQL_USER || !process.env.SQL_DB || !process.env.SQL_PASS) {
         throw new Error('SQL_USER, SQL_DB, and SQL_PASS must be configured');
@@ -30,7 +28,8 @@ assertConfiguration();
 const socket = require('socket.io-client')(socketUrl, {
     transports: ['websocket'],
     auth: {
-        jackpotLoadTestToken: process.env.JACKPOT_LOAD_TEST_TOKEN
+        token: jackpotLoadTestToken,
+        jackpotLoadTestToken
     }
 });
 

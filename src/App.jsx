@@ -69,7 +69,7 @@ function App() {
 
   const location = useLocation()
   const [searchParams, setSearchParams] = useSearchParams()
-  const [user, {hasFetched, setBalance, setXP, getUser}] = useUser()
+  const [user, {hasFetched, mutateUser, setXP, getUser}] = useUser()
   const [ws] = useWebsocket()
   const [chat, setChat] = createSignal(false)
   const [initialLoaderExpired, setInitialLoaderExpired] = createSignal(false)
@@ -106,13 +106,18 @@ function App() {
     if (ws() && ws().connected) {
       ws().on('balance', (type, amount, delay) => {
         if (type === 'set') {
-          setTimeout(() => setBalance(amount), +delay || 0)
+          setTimeout(() => {
+            const currentUser = user()
+            if (!currentUser) return
+            mutateUser({...currentUser, balance: amount})
+          }, +delay || 0)
         }
 
         if (type === 'add') {
           setTimeout(() => {
-            const currentBalance = user()?.balance
-            setBalance(currentBalance == null ? amount : currentBalance + amount)
+            const currentUser = user()
+            if (!currentUser) return
+            mutateUser({...currentUser, balance: currentUser.balance + amount})
           }, +delay || 0)
         }
       })
@@ -498,7 +503,9 @@ function App() {
 
         .center {
           height: 100vh;
-          width: 100%;
+          width: auto;
+          min-width: 0;
+          flex: 1;
           position: relative;
           overflow: auto;
           scrollbar-color: transparent transparent;

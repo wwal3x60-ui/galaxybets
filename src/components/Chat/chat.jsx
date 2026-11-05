@@ -1,4 +1,4 @@
-import {createEffect, createSignal, For, Show} from "solid-js";
+import {createEffect, createSignal, For} from "solid-js";
 import ChatMessage from "./message";
 import RainEnd from "./rainend";
 import SystemMessage from "./systemmessage";
@@ -15,7 +15,6 @@ function Chat(props) {
 
     const [user] = useUser()
     const [text, setText] = createSignal('')
-    const [isChatOpen, setIsChatOpen] = createSignal(false)
 
     const [top, setTop] = createSignal(0)
     const [scroll, setScroll] = createSignal(true)
@@ -26,12 +25,7 @@ function Chat(props) {
     addDropdown(setEmojisOpen)
 
     createEffect(() => {
-        if (replying() || !replying()) // just to proc the effect
-            if (isChatOpen() && sendRef) sendRef.select()
-    })
-
-    createEffect(() => {
-        if (!isChatOpen() || !chatRef) return
+        if (!chatRef) return
 
         chatRef.onscroll = (e) => {
             let maxScroll = e.target.scrollHeight - e.target.clientHeight
@@ -51,7 +45,7 @@ function Chat(props) {
     })
 
     createEffect(() => {
-        if (!isChatOpen() || props.messages.length === 0 || !scroll() || !messagesRef || !chatRef) return
+        if (props.messages.length === 0 || !scroll() || !messagesRef || !chatRef) return
 
         messagesRef.scrollIntoView({block: 'nearest', inline: 'end', behavior: hasLoaded ? 'smooth' : 'instant'})
         setTop(chatRef.scrollTop)
@@ -103,18 +97,9 @@ function Chat(props) {
 
     return (
         <>
-            <Show when={isChatOpen()} fallback={
-                <button class='chat-toggle' type='button' aria-label='Open chat' onClick={() => setIsChatOpen(true)}>
-                    <svg width='20' height='20' viewBox='0 0 24 24' fill='none' aria-hidden='true'>
-                        <path d='M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-5 4v-4.1a2.5 2.5 0 0 1-2-2.4v-8Z' stroke='currentColor' stroke-width='1.8' stroke-linejoin='round'/>
-                    </svg>
-                    <span>Message</span>
-                </button>
-            }>
             <div class='chat-container'>
                 <div class='chat-header'>
                     <span>Chat</span>
-                    <button class='chat-close' type='button' aria-label='Close chat' onClick={() => setIsChatOpen(false)}>X</button>
                 </div>
                 <div class='messages' ref={chatRef}>
                     <div class='pusher'/>
@@ -188,49 +173,21 @@ function Chat(props) {
                     </div>
                 </div>
             </div>
-            </Show>
 
             <style jsx>{`
-              .chat-toggle {
-                position: fixed;
-                right: 20px;
-                bottom: 20px;
-                z-index: 9998;
-                min-height: 54px;
-                padding: 0 18px;
-                display: flex;
-                align-items: center;
-                gap: 9px;
-                border: 1px solid #c77dff;
-                border-radius: 28px;
-                background: #9d4edd;
-                box-shadow: 0 0 18px rgba(157, 78, 221, 0.45);
-                color: white;
-                font-family: 'Geogrotesque Wide', sans-serif;
-                font-size: 15px;
-                font-weight: 700;
-                cursor: pointer;
-              }
-
               .chat-container {
-                position: fixed;
-                right: 20px;
-                bottom: 20px;
-                z-index: 9998;
-                width: min(300px, calc(100vw - 40px));
-                height: min(500px, calc(100vh - 40px));
-
+                position: relative;
+                width: 100%;
+                min-height: 0;
+                flex: 1 1 auto;
                 padding: 0 0 20px;
-
                 display: flex;
                 flex-direction: column;
                 box-sizing: border-box;
-
                 gap: 5px;
                 overflow: hidden;
                 border: 1px solid #3E3771;
                 background: #0b0414;
-                box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
               }
 
               .chat-header {
@@ -244,20 +201,10 @@ function Chat(props) {
                 font-weight: 700;
               }
 
-              .chat-close {
-                width: 28px;
-                height: 28px;
-                border: 0;
-                border-radius: 4px;
-                background: rgba(199, 125, 255, 0.12);
-                color: #c77dff;
-                font-weight: 700;
-                cursor: pointer;
-              }
-
               .messages {
                 width: 100%;
-                height: 100%;
+                min-height: 0;
+                flex: 1 1 auto;
 
                 padding: 0 15px;
 
@@ -434,13 +381,6 @@ function Chat(props) {
                 cursor: pointer;
               }
 
-              @media (max-width: 768px) {
-                .chat-toggle,
-                .chat-container {
-                  right: 20px;
-                  bottom: 20px;
-                }
-              }
             `}</style>
         </>
     );
