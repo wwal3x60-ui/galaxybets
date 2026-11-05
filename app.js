@@ -156,22 +156,14 @@ const { cacheAdmin } = require('./routes/admin/config');
 const { cacheLeaderboards } = require('./routes/leaderboard/functions');
 
 async function start() {
-    const promises = [
-        cacheBets, cacheRains, cacheBattles, cacheCases, cacheCrash,
-        cacheJackpot, cacheRoulette, cacheCoinflips, cacheChannels,
-        cacheAdmin, cacheLeaderboards
-    ];
-
-    await Promise.all(promises.map((p) => timedPromise(p(), p.name)));
-
     const port = process.env.PORT || 3001;
 
     const serverInstance = app.listen(port, () => {
         console.log('Listening on port ' + port);
     });
-    
+
     require('./socketio');
-    
+
     io.attach(serverInstance, {
         cors: {
             origin: allowedOrigins,
@@ -179,19 +171,26 @@ async function start() {
         },
         transports: ['websocket', 'polling']
     });
+
+    const promises = [
+        cacheBets, cacheRains, cacheBattles, cacheCases, cacheCrash,
+        cacheJackpot, cacheRoulette, cacheCoinflips, cacheChannels,
+        cacheAdmin, cacheLeaderboards
+    ];
+
+    promises.forEach((cache) => timedPromise(cache, cache.name));
 }
 
-function timedPromise(promise, name) {
+function timedPromise(cache, name) {
     const startTime = Date.now();
-    return promise.then(result => {
-        const endTime = Date.now();
-        console.log(`${name} completed in ${endTime - startTime}ms`);
-        return { name, result, timeTaken: endTime - startTime };
-    }).catch(error => {
-        const endTime = Date.now();
-        console.error(`Error in ${name} after ${endTime - startTime}ms:`, error.message || error);
-        return { name, error: error.message || error };
-    });
+    Promise.resolve()
+        .then(() => cache())
+        .then(() => {
+            console.log(`${name} completed in ${Date.now() - startTime}ms`);
+        })
+        .catch(error => {
+            console.error(`Error in ${name} after ${Date.now() - startTime}ms:`, error.message || error);
+        });
 }
 
 const { sql } = require('./database');

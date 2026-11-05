@@ -1,5 +1,5 @@
 import {Routes, Route, useSearchParams, useLocation} from '@solidjs/router'
-import {createEffect, createSignal, ErrorBoundary, lazy, Suspense} from "solid-js";
+import {createEffect, createSignal, ErrorBoundary, lazy, onCleanup, Suspense} from "solid-js";
 import {useUser} from "./contexts/usercontextprovider";
 import Sidebar from "./components/SideBar/sidebar";
 import {authedAPI, closeDropdowns, createNotification, getJWT} from "./util/api";
@@ -72,6 +72,29 @@ function App() {
   const [user, {hasFetched, setBalance, setXP, getUser}] = useUser()
   const [ws] = useWebsocket()
   const [chat, setChat] = createSignal(false)
+  const [initialLoaderExpired, setInitialLoaderExpired] = createSignal(false)
+  const [isConnected, setIsConnected] = createSignal(false)
+
+  const initialLoaderTimeout = setTimeout(() => setInitialLoaderExpired(true), 2000)
+  onCleanup(() => clearTimeout(initialLoaderTimeout))
+
+  createEffect(() => {
+    const socket = ws()
+    if (!socket) {
+      setIsConnected(false)
+      return
+    }
+
+    const updateConnection = () => setIsConnected(socket.connected)
+    updateConnection()
+    socket.on('connect', updateConnection)
+    socket.on('disconnect', updateConnection)
+
+    onCleanup(() => {
+      socket.off('connect', updateConnection)
+      socket.off('disconnect', updateConnection)
+    })
+  })
 
   createEffect(() => {
     if (location.pathname && pageContent) {
@@ -156,13 +179,20 @@ function App() {
 
   return (
     <>
-      {!hasFetched() ? (
+      {!hasFetched() && !initialLoaderExpired() ? (
         <LoadingScreen/>
       ) : (
         <>
           <Toaster
             position='bottom-right'
           />
+
+          {(!isConnected() || !hasFetched()) && (
+            <div class='connection-status' role='status'>
+              <span class='connection-status-dot'/>
+              {!isConnected() ? 'Connecting...' : 'Loading account...'}
+            </div>
+          )}
 
           <SupportWidget/>
 
@@ -434,6 +464,36 @@ function App() {
           position: relative;
           overflow: hidden;
           scrollbar-color: transparent transparent;
+        }
+
+        .connection-status {
+          position: fixed;
+          right: 16px;
+          bottom: 16px;
+          z-index: 1100;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 12px;
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          border-radius: 6px;
+          background: #262342;
+          color: #ADA3EF;
+          font-size: 12px;
+        }
+
+        .connection-status-dot {
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          background: #F9AC39;
+          animation: connection-pulse 1.2s ease-in-out infinite;
+        }
+
+        @keyframes connection-pulse {
+          50% {
+            opacity: 0.35;
+          }
         }
 
         .center {
