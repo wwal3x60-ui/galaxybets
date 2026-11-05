@@ -88,8 +88,8 @@ io.on('connection', function(socket) {
             let token = null;
             try {
                 if (socket.handshake.headers.cookie) {
-                    const parsed = cookie.parse(socket.handshake.headers.cookie);
-                    token = parsed['jwt'];
+                    const cookies = cookie.parse(socket.handshake.headers.cookie);
+                    token = cookies['jwt'];
                 }
             } catch (err) {
                 console.error('Cookie parsing error:', err);
