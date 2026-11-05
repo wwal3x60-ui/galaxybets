@@ -68,18 +68,11 @@ function issueSession(res, user) {
     const userId = String(user.id);
     const token = generateJwtToken(userId);
 
-    res.cookie('jwt', token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        path: '/'
-    });
-
     return res.status(200).json({
         expiresIn,
         userId,
-        username: user.username
+        username: user.username,
+        token
     });
 }
 
@@ -199,9 +192,7 @@ router.post('/logout', isAuthed, async (req, res) => {
     lastLogouts[req.userId] = Date.now();
 
     res.clearCookie('jwt', {
-        httpOnly: true,
         secure: true,
-        sameSite: 'none',
         path: '/'
     });
     res.json({ success: true });

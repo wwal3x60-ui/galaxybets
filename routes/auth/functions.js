@@ -12,7 +12,12 @@ const apiLimiter = rateLimit({
     keyGenerator: (req, res) => `${req.path}:${req.userId || req.headers['cf-connecting-ip']}`
 })
 
-const secret = process.env.JWT_SECRET || 'secret';
+if (typeof process.env.JWT_SECRET !== 'string' || process.env.JWT_SECRET.length < 32) {
+    console.error('JWT_SECRET must be set and at least 32 characters long.');
+    process.exit(1);
+}
+
+const secret = process.env.JWT_SECRET;
 
 const expiresIn = 7 * 24 * 60 * 60;
 

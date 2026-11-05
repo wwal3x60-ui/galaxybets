@@ -2,15 +2,17 @@ const mysql = require('mysql2/promise');
 
 const connection = {
     host: process.env.SQL_HOST || 'localhost',
-    port: process.env.SQL_PORT || 3306, // <--- THIS WAS MISSING!
+    port: Number(process.env.SQL_PORT || 3306),
     user: process.env.SQL_USER,
     database: process.env.SQL_DB,
     password: process.env.SQL_PASS,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
-    connectTimeout: 30000,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined,
+    connectTimeout: 20000,
+    ssl: process.env.SQL_CA
+        ? { ca: process.env.SQL_CA, rejectUnauthorized: true }
+        : { rejectUnauthorized: false },
     typeCast: function (field, next) {
         if (field.type == "NEWDECIMAL") {
             const value = field.string();
@@ -21,6 +23,9 @@ const connection = {
 };
 
 const pool = mysql.createPool(connection);
+pool.on('error', (error) => {
+    console.error('Database pool error:', error.code || 'UNKNOWN');
+});
 
 async function doTransaction(transactionLogic) {
 

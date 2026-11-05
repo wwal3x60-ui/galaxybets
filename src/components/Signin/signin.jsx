@@ -1,6 +1,6 @@
 import {createSignal} from "solid-js";
 import {A, useSearchParams} from "@solidjs/router";
-import {api, authedAPI, createNotification, fetchUser} from "../../util/api";
+import {api, authedAPI, createNotification, fetchUser, storeJWT, getJWT} from "../../util/api";
 import {useUser} from "../../contexts/usercontextprovider";
 
 function SignIn(props) {
@@ -19,12 +19,14 @@ function SignIn(props) {
     }
 
     async function handleLoginData(data) {
+        storeJWT(data.token)
+
         if (props?.ws() && props?.ws()?.connected) {
-            props?.ws().emit('auth')
+            props?.ws().emit('auth', getJWT())
         }
 
         let user = await fetchUser()
-        mutateUser(user)
+        mutateUser(user?.error ? null : user)
 
         let code = localStorage.getItem('aff')
         if (code) {
@@ -84,11 +86,15 @@ function SignIn(props) {
             )
 
             if (!data) {
-                createNotification('error', 'There was an error processing your request. Please try again later.')
                 return
             }
             if (data.error) return
             if (!data.userId) {
+                createNotification('error', 'There was an error processing your request. Please try again later.')
+                return
+            }
+
+            if (typeof data.token !== 'string' || !data.token) {
                 createNotification('error', 'There was an error processing your request. Please try again later.')
                 return
             }

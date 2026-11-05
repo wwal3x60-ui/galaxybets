@@ -82,9 +82,15 @@ function socketLogin(socket, token) {
 
 io.on('connection', function(socket) {
 
-    socket.on('auth', async function(token) {
+    socket.on('auth', async function(authToken) {
 
         try {
+            let token = typeof authToken === 'string'
+                ? authToken
+                : authToken && typeof authToken.token === 'string'
+                    ? authToken.token
+                    : null;
+
             if (!token) {
                 const cookieHeader = socket.handshake.headers.cookie;
                 if (cookieHeader) {

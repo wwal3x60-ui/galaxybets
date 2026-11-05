@@ -1,3 +1,11 @@
+process.on('unhandledRejection', (reason) => {
+    console.error('Unhandled promise rejection:', reason);
+});
+
+process.on('uncaughtException', (error) => {
+    console.error('Uncaught exception:', error);
+});
+
 require('dotenv').config();
 const express = require('express');
 const nocache = require("nocache");
@@ -11,12 +19,29 @@ const helmet = require('helmet');
 const cors = require('cors');
 
 const app = express();
-app.disable('x-powered-by');
 app.set('trust proxy', 1);
+const allowedOrigins = [
+    'https://www.galaxybets.casino',
+    'https://galaxybets.casino',
+    process.env.FRONTEND_URL,
+    'http://localhost:3000',
+    'http://127.0.0.1:3000'
+].filter(Boolean);
+const corsOptions = {
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    maxAge: 86400
+};
+app.use(cors(corsOptions));
+
+app.disable('x-powered-by');
 app.use(helmet());
 
-app.use(cors({ origin: true, credentials: true }));
-app.options('*', cors());
+app.get('/health', (req, res) => {
+    res.status(200).json({ ok: true });
+});
 
 app.set('view engine', 'ejs');
 app.use('/public', express.static(path.join(__dirname, 'public')));
@@ -109,6 +134,12 @@ app.get('/', (req, res) => {
     res.send('GalaxyBets API is running :)');
 });
 
+app.use((error, req, res, next) => {
+    console.error('Request error:', error);
+    if (res.headersSent) return next(error);
+    return res.status(500).json({ error: 'SERVER_ERROR' });
+});
+
 // Caches
 const { cacheBets } = require('./socketio/bets');
 const { cacheRains } = require('./socketio/rain');
@@ -139,12 +170,12 @@ async function start() {
     
     require('./socketio');
     
-    // Bulletproof Socket.IO CORS
     io.attach(serverInstance, {
         cors: {
-            origin: true,
+            origin: allowedOrigins,
             credentials: true
-        }
+        },
+        transports: ['websocket', 'polling']
     });
 }
 
@@ -164,7 +195,7 @@ function timedPromise(promise, name) {
 const { sql } = require('./database');
 sql.query('SELECT 1')
    .then(() => console.log('✅ Database connected successfully!'))
-   .catch(err => console.error('❌ Database connection failed:', err.message));
+   .catch(() => console.error('Database connection failed'));
 
 start();
 

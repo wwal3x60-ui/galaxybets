@@ -1,7 +1,12 @@
 import {createContext, useContext, createResource} from "solid-js";
 import io from "socket.io-client";
+import {getJWT} from "../util/api";
 
 const WebsocketContext = createContext();
+
+function stripTrailingSlashes(url) {
+    return (url || '').replace(/\/+$/, '')
+}
 
 export function WebsocketProvider(props) {
 
@@ -9,11 +14,12 @@ export function WebsocketProvider(props) {
 
     async function connectSocket() {
 
-        let tempWs = io(import.meta.env.VITE_SOCKET_URL + '', { transports: ['websocket', 'polling'], reconnection: true, reconnectionDelay: 1000, reconnectionAttempts: 10, withCredentials: true})
+        const socketUrl = stripTrailingSlashes(import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_SERVER_URL)
+        let tempWs = io(socketUrl, { transports: ['websocket', 'polling'], reconnection: true, reconnectionDelay: 1000, withCredentials: true})
 
         tempWs.on('connect', () => {
             console.log('Connected to WS')
-            tempWs.emit('auth')
+            tempWs.emit('auth', getJWT())
             mutate(tempWs)
         })
 
@@ -21,11 +27,8 @@ export function WebsocketProvider(props) {
             if (reason !== 'io server disconnect') return
 
             mutate(null)
-            let retrying = setInterval(() => {
-                tempWs.removeAllListeners()
-                tempWs = io(import.meta.env.VITE_SERVER_URL, { transports: ['websocket', 'polling'], reconnection: true, reconnectionDelay: 1000, reconnectionAttempts: 10, withCredentials: true})
-                mutate(tempWs)
-                clearInterval(retrying)
+            setTimeout(() => {
+                if (!tempWs.connected) tempWs.connect()
             }, 1000)
         })
 

@@ -2,7 +2,7 @@ import {Routes, Route, useSearchParams, useLocation} from '@solidjs/router'
 import {createEffect, createSignal, ErrorBoundary, lazy, Suspense} from "solid-js";
 import {useUser} from "./contexts/usercontextprovider";
 import Sidebar from "./components/SideBar/sidebar";
-import {authedAPI, closeDropdowns, createNotification} from "./util/api";
+import {authedAPI, closeDropdowns, createNotification, getJWT} from "./util/api";
 import Navbar from "./components/NavBar/navbar";
 import {Toaster} from "solid-toast";
 import Loader from "./components/Loader/loader";
@@ -119,7 +119,7 @@ function App() {
     }
 
     if (reauthenticationPending && currentUser && socket) {
-      socket.emit('auth')
+      socket.emit('auth', getJWT())
       reauthenticationPending = false
     }
 

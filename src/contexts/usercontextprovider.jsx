@@ -1,4 +1,4 @@
-import {api, authedAPI, createNotification, fetchUser} from "../util/api";
+import {api, authedAPI, createNotification, fetchUser, getJWT, clearJWT} from "../util/api";
 import {createContext, createResource, createSignal, useContext} from "solid-js";
 
 const UserContext = createContext();
@@ -40,12 +40,20 @@ export function UserProvider(props) {
     }]
 
     async function getUser() {
+        if (!getJWT()) {
+            mutate(null)
+            setFetched(true)
+            return null
+        }
+
         try {
             let data = await fetchUser()
-            mutate(data)
+            if (data?.status === 401) clearJWT()
+            const currentUser = data?.error ? null : data
+            mutate(currentUser)
             setFetched(true)
 
-            return data
+            return currentUser
         } catch (e) {
             mutate(null)
             setFetched(true)
