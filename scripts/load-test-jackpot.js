@@ -169,7 +169,7 @@ async function runRound(jackpotId) {
             }
         }
     } catch (error) {
-        console.error('Jackpot load-test round failed:', errorLabel(error));
+        console.error("BOT ROUND ERROR:", error);
     }
 }
 

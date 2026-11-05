@@ -146,7 +146,7 @@ function GamesList() {
 
               .game-grid {
                 display: grid;
-                grid-template-columns: repeat(3, minmax(0, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
                 gap: 20px;
               }
 
@@ -233,17 +233,6 @@ function GamesList() {
                 object-fit: cover;
               }
 
-              @media only screen and (max-width: 1000px) {
-                .game-grid {
-                  grid-template-columns: repeat(2, minmax(0, 1fr));
-                }
-              }
-
-              @media only screen and (max-width: 600px) {
-                .game-grid {
-                  grid-template-columns: 1fr;
-                }
-              }
             `}</style>
         </>
     );

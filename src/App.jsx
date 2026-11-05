@@ -546,7 +546,7 @@ function App() {
 
         @media only screen and (max-width: 1000px) {
           .center {
-            padding-bottom: 50px;
+            padding-bottom: 60px;
           }
         }
       `}</style>
