@@ -19,6 +19,42 @@ const jackpot = {
     }
 };
 
+async function getJackpotBets(roundId) {
+    const [bets] = await sql.query(`
+        SELECT jackpotBets.userId, users.username, users.role, users.xp, users.anon,
+            jackpotBets.ticketsFrom, jackpotBets.ticketsTo, jackpotBets.amount, jackpotBets.id
+        FROM jackpotBets
+        INNER JOIN users ON users.id = jackpotBets.userId
+        WHERE jackpotBets.jackpotId = ?
+        ORDER BY jackpotBets.id ASC
+    `, [roundId]);
+
+    return bets.map(bet => ({
+        id: bet.id,
+        user: {
+            id: bet.userId,
+            username: bet.username,
+            role: bet.role,
+            xp: bet.xp,
+            anon: bet.anon
+        },
+        amount: bet.amount,
+        ticketsFrom: bet.ticketsFrom,
+        ticketsTo: bet.ticketsTo
+    }));
+}
+
+async function broadcastJackpotState(roundId = jackpot.round.id) {
+    const [rounds] = await sql.query('SELECT amount FROM jackpot WHERE id = ?', [roundId]);
+    const updatedBets = await getJackpotBets(roundId);
+    const newTotalAmount = rounds[0]?.amount ?? 0;
+
+    jackpot.bets = updatedBets;
+    jackpot.round.amount = newTotalAmount;
+    io.to('jackpot').emit('jackpot:bets', updatedBets);
+    io.to('jackpot').emit('jackpot:amount', newTotalAmount);
+}
+
 const combine = (serverSeed, clientSeed) => {
     return crypto.createHmac('sha256', serverSeed).update(clientSeed).digest('hex');
 }
@@ -75,26 +111,10 @@ async function updateJackpot() {
     
     if (!jackpot.round.new) {
 
-        const [bets] = await sql.query(`
-            SELECT jackpotBets.userId, users.username, users.role, users.xp, users.anon, jackpotBets.ticketsFrom, jackpotBets.ticketsTo,
-            jackpotBets.amount, jackpotBets.id FROM jackpotBets
-            INNER JOIN users ON users.id = jackpotBets.userId WHERE jackpotId = ? ORDER BY jackpotBets.id ASC
-        `, [round.id]);
+        const bets = await getJackpotBets(round.id);
 
         if (bets.length) {
-            jackpot.bets = bets.map(bet => ({
-                id: bet.id,
-                user: {
-                    id: bet.userId,
-                    username: bet.username,
-                    role: bet.role,
-                    xp: bet.xp,
-                    anon: bet.anon
-                },
-                amount: bet.amount,
-                ticketsFrom: bet.ticketsFrom,
-                ticketsTo: bet.ticketsTo
-            }));
+            jackpot.bets = bets;
         } else {
             jackpot.bets = [];
         }
@@ -320,21 +340,7 @@ async function makeBotJoin(amount = jackpot.round.amount) {
             
             await commit();
     
-            const bet = {
-                id: jackpotBetResult.insertId,
-                user: {
-                    id: bot.id,
-                    username: bot.username,
-                    role: bot.role,
-                    xp: bot.xp
-                },
-                ticketsFrom,
-                ticketsTo,
-                amount
-            };
-        
-            jackpot.bets.push(bet);
-            io.to('jackpot').emit('jackpot:bets', [bet]);
+            await broadcastJackpotState(jackpot.round.id);
             
         });
 
@@ -365,9 +371,8 @@ async function syncLoadTestBet(betId, jackpotId) {
     if (!record) return false;
 
     const alreadyCached = jackpot.bets.some(bet => Number(bet.id) === betId);
-    let newBet;
     if (!alreadyCached) {
-        newBet = {
+        jackpot.bets.push({
             id: record.id,
             user: {
                 id: record.userId,
@@ -379,12 +384,11 @@ async function syncLoadTestBet(betId, jackpotId) {
             amount: record.amount,
             ticketsFrom: record.ticketsFrom,
             ticketsTo: record.ticketsTo
-        };
-        jackpot.bets.push(newBet);
+        });
     }
 
     jackpot.round.amount = round.amount;
-    if (newBet) io.to('jackpot').emit('jackpot:bets', [newBet]);
+    await broadcastJackpotState(jackpotId);
     io.to(String(record.userId)).emit('balance', 'set', roundDecimal(Number(record.balance)));
 
     return true;
@@ -394,5 +398,6 @@ module.exports = {
     cacheJackpot,
     makeBotJoin,
     jackpot,
-    syncLoadTestBet
+    syncLoadTestBet,
+    broadcastJackpotState
 }

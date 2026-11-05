@@ -6,7 +6,7 @@ const { doTransaction } = require('../../../database');
 const { isAuthed, apiLimiter } = require('../../auth/functions');
 const { roundDecimal, xpChanged } = require('../../../utils');
 const io = require('../../../socketio/server');
-const { jackpot } = require('./functions');
+const { jackpot, broadcastJackpotState } = require('./functions');
 const { enabledFeatures, xpMultiplier } = require('../../admin/config');
 
 router.use((req, res, next) => {
@@ -82,23 +82,7 @@ async function joinJackpot(req, res) {
             const updatedBalance = roundDecimal(user.balance - amount);
             io.to(String(req.userId)).emit('balance', 'set', updatedBalance);
 
-            const bet = {
-                id: jackpotBetResult.insertId,
-                user: {
-                    id: user.id,
-                    username: user.username,
-                    role: user.role,
-                    xp: user.xp,
-                    anon: user.anon
-                },
-                ticketsFrom,
-                ticketsTo,
-                amount
-            };
-        
-            jackpot.bets.push(bet);
-
-            io.to('jackpot').emit('jackpot:bets', [bet]);
+            await broadcastJackpotState(jackpot.round.id);
             res.json({ success: true });    
 
         });

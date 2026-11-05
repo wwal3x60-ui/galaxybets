@@ -129,6 +129,7 @@ function Jackpot(props) {
             ws().off('jackpot:newRound')
             ws().off('jackpot:reset')
             ws().off('jackpot:tick')
+            ws().off('jackpot:amount')
             ws().off('jackpot:commit')
             ws().off('jackpot:roll')
 
@@ -178,15 +179,17 @@ function Jackpot(props) {
                 if (state() !== 'rolling' && state() !== 'winners') setState('counting')
             })
 
-            ws().on('jackpot:bets', (bets) => {
-                let newJP = {...jackpot()}
+            ws().on('jackpot:bets', (updatedBets) => {
+                const nextBets = Array.isArray(updatedBets) ? updatedBets : []
+                const newJP = {...(jackpot() || {}), bets: nextBets}
 
-                if (!Array.isArray(newJP.bets)) newJP.bets = []
-                newJP.bets.push(...bets)
-
-                congregateBets(newJP.bets)
+                congregateBets(nextBets)
                 setJackpot(newJP)
-                setRawBets((b) => [...b, ...bets])
+                setRawBets(nextBets)
+            })
+
+            ws().on('jackpot:amount', (amount) => {
+                setTotal(Number(amount) || 0)
             })
 
             ws().on('jackpot:commit', (commitTo) => {
