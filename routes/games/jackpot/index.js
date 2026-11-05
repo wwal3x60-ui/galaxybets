@@ -79,7 +79,8 @@ async function joinJackpot(req, res) {
             await xpChanged(user.id, user.xp, roundDecimal(user.xp + xp), connection);
             await commit();
 
-            io.to(user.id).emit('balance', 'set', roundDecimal(user.balance - amount));
+            const updatedBalance = roundDecimal(user.balance - amount);
+            io.to(String(req.userId)).emit('balance', 'set', updatedBalance);
 
             const bet = {
                 id: jackpotBetResult.insertId,

@@ -3,7 +3,6 @@ require('dotenv').config({ quiet: true });
 const { sql } = require('../database');
 
 const MAX_BOTS_PER_ROUND = 2;
-const HUMAN_BET_THRESHOLD = 50;
 const MAX_USER_ROUND_BET = 20000;
 
 function assertConfiguration() {
@@ -35,6 +34,7 @@ const socket = require('socket.io-client')(socketUrl, {
 let stopped = false;
 let currentRoundId = null;
 let roundTimeLeft = 0;
+let botAlreadyJoined = false;
 const handledRoundIds = new Set();
 const handledHumanBetIds = new Set();
 
@@ -180,47 +180,60 @@ async function handleHumanBet(bet) {
         || !Number.isSafeInteger(betId)
         || bet?.user?.role === 'BOT'
         || !Number.isFinite(Number(bet?.amount))
-        || Number(bet.amount) < HUMAN_BET_THRESHOLD
+        || Number(bet.amount) < 50
         || handledHumanBetIds.has(betId)
     ) return;
 
     handledHumanBetIds.add(betId);
+    let reservedBotSlot = false;
     try {
-        const [[humanBet]] = await sql.query(`
+        const [[humanBetRecord]] = await sql.query(`
             SELECT jb.jackpotId, jb.amount
             FROM jackpotBets jb
             INNER JOIN users u ON u.id = jb.userId
             WHERE jb.id = ? AND u.role <> ?
         `, [betId, 'BOT']);
         if (
-            !humanBet
-            || Number(humanBet.amount) < HUMAN_BET_THRESHOLD
-            || Number(humanBet.jackpotId) !== currentRoundId
+            !humanBetRecord
+            || Number(humanBetRecord.jackpotId) !== currentRoundId
             || roundTimeLeft <= 0
         ) return;
 
         const [[round]] = await sql.query(
             'SELECT id FROM jackpot WHERE id = ? AND endedAt IS NULL AND rolledAt IS NULL',
-            [humanBet.jackpotId]
+            [humanBetRecord.jackpotId]
         );
         if (!round) return;
 
-        const [bots] = await sql.query(
-            'SELECT id FROM users WHERE role = ? ORDER BY RAND() LIMIT 1',
-            ['BOT']
-        );
-        if (!bots.length) return;
+        const humanBet = Number(humanBetRecord.amount);
+        if (!Number.isFinite(humanBet)) return;
+        if (humanBet >= 50 && !botAlreadyJoined) {
+            botAlreadyJoined = true;
+            reservedBotSlot = true;
 
-        const humanAmount = Number(humanBet.amount);
-        if (!Number.isFinite(humanAmount)) return;
-        const botAmount = humanAmount * (0.8 + Math.random() * 0.4);
-        const botBetCents = Math.round(botAmount * 100);
-        const placed = await placeBotBet(bots[0].id, botBetCents, Number(humanBet.jackpotId));
+            const [bots] = await sql.query(
+                'SELECT id FROM users WHERE role = ? ORDER BY RAND() LIMIT 1',
+                ['BOT']
+            );
+            if (!bots.length) {
+                botAlreadyJoined = false;
+                reservedBotSlot = false;
+                return;
+            }
 
-        if (placed) {
-            console.log(`Simulated local high-bet concurrency for Jackpot bet ${betId}`);
+            const botAmount = Math.round((humanBet * (0.8 + Math.random() * 0.4)) * 100) / 100;
+            const botBetCents = Math.round(botAmount * 100);
+            const placed = await placeBotBet(bots[0].id, botBetCents, Number(humanBetRecord.jackpotId));
+
+            if (placed) {
+                console.log("WHALE BOT JOINED WITH: $", botAmount);
+            } else {
+                botAlreadyJoined = false;
+                reservedBotSlot = false;
+            }
         }
     } catch (error) {
+        if (reservedBotSlot) botAlreadyJoined = false;
         handledHumanBetIds.delete(betId);
         console.error('Jackpot load-test whale simulation failed:', errorLabel(error));
     }
@@ -247,12 +260,14 @@ socket.on('connect', () => {
 socket.on('jackpot:set', jackpot => {
     currentRoundId = Number(jackpot?.round?.id);
     roundTimeLeft = Number(jackpot?.timeLeft ?? 60);
+    botAlreadyJoined = false;
     void runRound(currentRoundId);
 });
 
 socket.on('jackpot:newRound', round => {
     currentRoundId = Number(round?.id);
     roundTimeLeft = Number(round?.timeLeft ?? 60);
+    botAlreadyJoined = false;
     void runRound(currentRoundId);
 });
 

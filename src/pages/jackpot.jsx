@@ -143,12 +143,12 @@ function Jackpot(props) {
                 animateCountdown(timeLeft * 1000)
             })
 
-            ws().on('jackpot:reset', (jp) => {
+            ws().on('jackpot:reset', (jp = {}) => {
                 const timeLeft = jp.timeLeft ?? 60
                 setTimer(timeLeft * 1000)
                 setTotal(0)
                 setBets([])
-                setJackpot(jp)
+                setJackpot(jp.id ? jp : null)
                 if (jp.config) setConfig(jp.config)
                 setUsers([])
                 setRawBets([])

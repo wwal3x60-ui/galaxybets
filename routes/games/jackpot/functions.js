@@ -173,6 +173,12 @@ async function finishJackpotRound() {
     const round = jackpot.round;
     if (!round.id) throw new Error('Cannot finish a Jackpot round without an id');
 
+    if (round.endedAt) {
+        await updateJackpot();
+        io.to('jackpot').emit('jackpot:tick', jackpot.timeLeft);
+        return;
+    }
+
     if (!round.rolledAt && jackpot.bets.length) {
         let commitTo = round.EOSBlock;
 
@@ -276,12 +282,12 @@ async function finishJackpotRound() {
             );
 
             await commit();
+            round.endedAt = endedAt;
             if (winnerBalance) {
                 io.to(winnerBalance.userId).emit('balance', 'add', winnerBalance.amount);
             }
             newBets(socketBets);
         });
-        round.endedAt = endedAt;
     } else {
         const endedAt = new Date();
         await sql.query('UPDATE jackpot SET endedAt = ? WHERE id = ?', [endedAt, round.id]);

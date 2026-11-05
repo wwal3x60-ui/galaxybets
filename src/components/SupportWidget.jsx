@@ -146,6 +146,13 @@ function SupportWidget() {
             height: 54px;
           }
         }
+
+        @media (max-width: 768px) {
+          .support-widget {
+            bottom: 80px !important;
+            right: 20px !important;
+          }
+        }
       `}</style>
     </>
   )
