@@ -103,35 +103,39 @@ function App() {
   })
 
   createEffect(() => {
-    if (ws() && ws().connected) {
-      ws().on('balance', (type, amount, delay) => {
+    const socket = ws()
+    if (socket?.connected) {
+      const handleBalance = (type, amount) => {
+        const currentUser = user()
+        if (!currentUser) return
+
         if (type === 'set') {
-          setTimeout(() => {
-            const currentUser = user()
-            if (!currentUser) return
-            mutateUser({...currentUser, balance: amount})
-          }, +delay || 0)
+          mutateUser({...currentUser, balance: amount})
+        } else if (type === 'add') {
+          mutateUser({...currentUser, balance: Number(currentUser.balance) + Number(amount)})
         }
+      }
 
-        if (type === 'add') {
-          setTimeout(() => {
-            const currentUser = user()
-            if (!currentUser) return
-            mutateUser({...currentUser, balance: currentUser.balance + amount})
-          }, +delay || 0)
-        }
-      })
+      socket.on('balance', handleBalance)
 
-      ws().on('xp', (xp) => {
+      const handleXP = (xp) => {
         setXP(xp)
-      })
+      }
+      socket.on('xp', handleXP)
 
-      ws().on('coinflip:own:started', (flip) => {
+      const handleOwnCoinflip = (flip) => {
         if (!user()) return
         let isCreator = flip[flip.ownerSide]?.id === user()?.id
         let creatorWon = flip.winnerSide === flip.ownerSide
 
         if ((isCreator && !creatorWon) || (!isCreator && creatorWon)) return
+      }
+      socket.on('coinflip:own:started', handleOwnCoinflip)
+
+      onCleanup(() => {
+        socket.off('balance', handleBalance)
+        socket.off('xp', handleXP)
+        socket.off('coinflip:own:started', handleOwnCoinflip)
       })
     }
   })

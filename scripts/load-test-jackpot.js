@@ -4,7 +4,6 @@ const { sql } = require('../database');
 
 const MAX_BOTS_PER_ROUND = 2;
 const MAX_USER_ROUND_BET = 20000;
-const jackpotLoadTestToken = process.env.JACKPOT_LOAD_TEST_TOKEN || 'galaxybots123';
 
 function assertConfiguration() {
     if (process.env.JACKPOT_LOAD_TEST !== '1') {
@@ -28,8 +27,7 @@ assertConfiguration();
 const socket = require('socket.io-client')(socketUrl, {
     transports: ['websocket'],
     auth: {
-        token: jackpotLoadTestToken,
-        jackpotLoadTestToken
+        token: 'galaxybots123'
     }
 });
 
@@ -41,10 +39,10 @@ const handledRoundIds = new Set();
 const handledHumanBetIds = new Set();
 
 function relayBet(betId, jackpotId) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         if (!socket.connected) {
-            reject(new Error('Socket.IO is not connected to the local app'));
-            return;
+            console.error('Socket.IO is not connected to the local app');
+            return resolve();
         }
 
         socket.timeout(5000).emit('loadtest:jackpotBet', {
@@ -52,12 +50,12 @@ function relayBet(betId, jackpotId) {
             jackpotId
         }, (error, response) => {
             if (error) {
-                reject(new Error('The local app did not acknowledge the Jackpot test bet'));
-                return;
+                console.error('The local app did not acknowledge the Jackpot test bet');
+                return resolve(); // Don't crash the loop
             }
             if (!response?.success) {
-                reject(new Error(response?.error || 'The local app rejected the Jackpot test bet'));
-                return;
+                console.error('The local app rejected the Jackpot test bet:', response?.error);
+                return resolve(); // Don't crash the loop
             }
             resolve();
         });
@@ -260,6 +258,7 @@ async function shutdown() {
 
 socket.on('connect', () => {
     console.log('Connected to local Socket.IO server for Jackpot load testing');
+    socket.emit('auth', 'galaxybots123');
     socket.emit('jackpot:subscribe');
 });
 

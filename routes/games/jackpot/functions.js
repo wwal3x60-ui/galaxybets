@@ -114,7 +114,6 @@ async function updateJackpot() {
         timeLeft: jackpot.timeLeft,
         spinning: jackpot.spinning
     };
-    io.emit('jackpot:reset', newRound);
     io.to('jackpot').emit('jackpot:newRound', newRound);
     io.to('jackpot').emit('jackpot:new', newRound);
     io.to('jackpot').emit('jackpot:tick', jackpot.timeLeft);
@@ -294,6 +293,7 @@ async function finishJackpotRound() {
         round.endedAt = endedAt;
     }
 
+    io.emit('jackpot:reset');
     await updateJackpot();
     io.to('jackpot').emit('jackpot:tick', jackpot.timeLeft);
 }
