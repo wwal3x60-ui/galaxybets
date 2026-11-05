@@ -356,7 +356,8 @@ async function syncLoadTestBet(betId, jackpotId) {
 
     const [[record]] = await sql.query(`
         SELECT jackpotBets.id, jackpotBets.userId, jackpotBets.jackpotId, jackpotBets.amount,
-            jackpotBets.ticketsFrom, jackpotBets.ticketsTo, users.username, users.role, users.xp, users.anon
+            jackpotBets.ticketsFrom, jackpotBets.ticketsTo, users.username, users.role, users.xp, users.anon,
+            users.balance
         FROM jackpotBets
         INNER JOIN users ON users.id = jackpotBets.userId
         WHERE jackpotBets.id = ? AND jackpotBets.jackpotId = ? AND users.role = ?
@@ -384,6 +385,7 @@ async function syncLoadTestBet(betId, jackpotId) {
 
     jackpot.round.amount = round.amount;
     if (newBet) io.to('jackpot').emit('jackpot:bets', [newBet]);
+    io.to(String(record.userId)).emit('balance', 'set', roundDecimal(Number(record.balance)));
 
     return true;
 }

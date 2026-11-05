@@ -28,7 +28,10 @@ const socketUrl = process.env.NODE_ENV === 'production'
 assertConfiguration();
 
 const socket = require('socket.io-client')(socketUrl, {
-    transports: ['websocket']
+    transports: ['websocket'],
+    auth: {
+        jackpotLoadTestToken: process.env.JACKPOT_LOAD_TEST_TOKEN
+    }
 });
 
 let stopped = false;
@@ -46,7 +49,6 @@ function relayBet(betId, jackpotId) {
         }
 
         socket.timeout(5000).emit('loadtest:jackpotBet', {
-            token: process.env.JACKPOT_LOAD_TEST_TOKEN,
             betId,
             jackpotId
         }, (error, response) => {
@@ -93,6 +95,7 @@ async function placeBotBet(botId, betCents, targetJackpotId = null) {
         if (Number(bot.balance) < amount) {
             await connection.query('UPDATE users SET balance = ? WHERE id = ?', [100000, bot.id]);
         }
+        await connection.query('UPDATE users SET balance = balance - ? WHERE id = ?', [amount, bot.id]);
 
         const [[existingBets]] = await connection.query(
             'SELECT COALESCE(SUM(amount), 0) AS amount FROM jackpotBets WHERE userId = ? AND jackpotId = ?',

@@ -261,7 +261,7 @@ io.on('connection', function(socket) {
             || process.env.NODE_ENV === 'production'
             || process.env.JACKPOT_LOAD_TEST !== '1'
             || !isLocalAddress(socket.handshake.address)
-            || !matchesLoadTestToken(payload.token)
+            || !matchesLoadTestToken(socket.handshake.auth?.jackpotLoadTestToken)
             || !Number.isSafeInteger(Number(payload.betId))
             || !Number.isSafeInteger(Number(payload.jackpotId))
         ) {
