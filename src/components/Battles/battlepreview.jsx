@@ -55,13 +55,6 @@ function BattlePreview(props) {
             <p>{getType()}</p>
           </div>
 
-          {props?.battle?.gamemode === 'crazy' && (
-            <div class='crazy'>
-              <img src='/assets/icons/crazy.svg' height='14' alt=''/>
-              <p>CRAZY</p>
-            </div>
-          )}
-
           {props?.battle?.ownerFunding > 0 && (
             <div className='funding'>
               <p>-{props?.battle?.ownerFunding}%</p>
@@ -254,7 +247,7 @@ function BattlePreview(props) {
           position: relative;
         }
 
-        .mode, .crazy, .funding {
+        .mode, .funding {
           width: 70px;
           height: 30px;
           position: absolute;
@@ -279,14 +272,8 @@ function BattlePreview(props) {
           background: url("/assets/art/stripes.png"), linear-gradient(0deg, rgba(89, 232, 120, 0.25) 0%, rgba(89, 232, 120, 0.25) 100%), linear-gradient(230deg, #1A0E33 0%, #423C7A 100%);
         }
 
-        .mode p, .crazy p {
+        .mode p {
           margin-top: -2px;
-        }
-
-        .crazy {
-          left: 80px;
-          color: #FFF;
-          background: url("/assets/art/stripes.png"), #69452B;
         }
 
         .funding {

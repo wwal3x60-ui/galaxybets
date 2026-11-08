@@ -24,12 +24,14 @@ router.use((req, res, next) => {
 
 router.post('/create', isAuthed, apiLimiter, async (req, res) => {
 
+    if (req.body.gamemode === 'crazy') return res.status(400).json({ error: 'GAMEMODE_DISABLED' });
+
     const casesIds = req.body.cases;
     if (!Array.isArray(casesIds)) return res.status(400).json({ error: 'MISSING_CASES' });
     if (!casesIds.length || casesIds.length > 50 || casesIds.some((e) => !Number.isInteger(e))) return res.status(400).json({ error: 'INVALID_CASES' });
 
     const gamemode = req.body.gamemode;
-    if (!['standard', 'crazy', 'group'].includes(gamemode)) return res.status(400).json({ error: 'INVALID_GAMEMODE' });
+    if (!['standard', 'group'].includes(gamemode)) return res.status(400).json({ error: 'INVALID_GAMEMODE' });
     
     const teams = req.body.teams;
     if (!Number.isInteger(teams)) return res.status(400).json({ error: 'MISSING_TEAMS' });

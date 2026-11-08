@@ -52,12 +52,6 @@ function BattleHeader(props) {
                         <p>{getType()}</p>
                     </div>
 
-                    {props?.battle?.gamemode === 'crazy' && (
-                        <div class='crazy'>
-                            <img src='/assets/icons/crazy.svg' height='14' alt=''/>
-                            <p>CRAZY</p>
-                        </div>
-                    )}
                 </div>
 
                 <div class='header-section'>
@@ -159,7 +153,7 @@ function BattleHeader(props) {
                 margin-top: -2px;
               }
 
-              .mode, .crazy {
+              .mode {
                 width: 80px;
                 height: 30px;
                 background: url("/assets/art/stripes.png"), #1F1D39;
@@ -181,14 +175,8 @@ function BattleHeader(props) {
                 background: url("/assets/art/stripes.png"), linear-gradient(0deg, rgba(89, 232, 120, 0.25) 0%, rgba(89, 232, 120, 0.25) 100%), linear-gradient(230deg, #1A0E33 0%, #423C7A 100%);
               }
 
-              .mode p, .crazy p {
+              .mode p {
                 margin-top: -2px;
-              }
-
-              .crazy {
-                left: 80px;
-                color: #FFF;
-                background: url("/assets/art/stripes.png"), #69452B;
               }
 
               @media only screen and (max-width: 540px) {
