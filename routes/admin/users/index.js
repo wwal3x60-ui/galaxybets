@@ -188,7 +188,7 @@ router.post('/:id', [
                 const [[user]] = await connection.query('SELECT id, perms, role, username, balance FROM users WHERE id = ? FOR UPDATE', [userId]);
                 if (!user) return res.status(404).json({ error: 'USER_NOT_FOUND' });
         
-                if (user.id != req.userId && (user.role == 'BOT' || (req.user.perms < 4 && user.perms >= req.user.perms))) return res.status(400).json({ error: 'CANNOT_EDIT_USER' });
+                if (user.id != req.userId && user.role === 'OWNER') return res.status(400).json({ error: 'CANNOT_EDIT_USER' });
                 if (req.body.banned && user.id == req.userId) return res.status(400).json({ error: 'CANNOT_BAN_SELF' });
     
                 const allowedFields = ['banned', 'rainBan', 'leaderboardBan', 'tipBan', 'accountLock', 'balance', 'sponsorLock', 'mutedUntil', 'maxPerTip', 'maxTipPerUser', 'rainTipAllowance', 'tipAllowance', 'cryptoAllowance', 'xp', 'role', 'perms'];
