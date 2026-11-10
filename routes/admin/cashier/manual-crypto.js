@@ -7,7 +7,9 @@ router.get('/pending', async (req, res) => {
     try {
         const [transactions] = await sql.query(
             `SELECT transactions.id, transactions.userId, users.username, transactions.type,
-                    transactions.amount, transactions.coin, transactions.txHash, transactions.status,
+                    transactions.amount, transactions.coin,
+                    CASE WHEN transactions.type='crypto_withdraw' THEN COALESCE(transactions.methodId,transactions.txHash) ELSE transactions.txHash END AS txHash,
+                    transactions.status,
                     transactions.createdAt
              FROM transactions
              JOIN users ON users.id = transactions.userId
@@ -89,7 +91,7 @@ router.post('/approve-withdraw', async (req, res) => {
                 );
             } else {
                 await connection.query(
-                    'UPDATE transactions SET status = ?, txHash = ? WHERE id = ?',
+                    'UPDATE transactions SET status = ?, methodId = COALESCE(methodId, txHash), txHash = ? WHERE id = ?',
                     ['approved', txHash.trim(), transaction.id]
                 );
             }
