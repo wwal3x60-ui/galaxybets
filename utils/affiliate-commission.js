@@ -153,6 +153,7 @@ async function creditAffiliateGameBets(connection, game, gameIds) {
     if (!Array.isArray(gameIds)) throw new Error('Expected game IDs');
     const ids = [...new Set(gameIds.map(positiveId))];
     if (!ids.length) return [];
+    await require('./cashier-wagering').creditGameWagers(connection,game,ids);
     const [bets] = await connection.query(
         `SELECT CAST(id AS CHAR) AS id FROM bets
          WHERE game = ? AND gameId IN (?) AND completed = 1 AND id >= ?

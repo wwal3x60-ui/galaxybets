@@ -7,6 +7,7 @@ const { withdrawalCryptoLimiter } = require('./limiters');
 
 const { coins, validAddress } = require('../../utils/withdrawal-coins');
 const crypto = require('crypto');
+const {units,decimal}=require('../../utils/cashier-money');
 
 router.post('/crypto', withdrawalCryptoLimiter, isAuthed, apiLimiter, async (req, res) => {
     const { amount, coin: rawCoin, address: rawAddress, requestId } = req.body || {};
@@ -16,6 +17,7 @@ router.post('/crypto', withdrawalCryptoLimiter, isAuthed, apiLimiter, async (req
     if (typeof amount !== 'number' || !Number.isFinite(amount) || amount <= 0 || Math.round(amount * 100) / 100 !== amount) {
         return res.status(400).json({ error: 'INVALID_AMOUNT' });
     }
+    if (amount < 15) return res.status(400).json({error:'MIN_WITHDRAWAL_FIFTEEN_DOLLARS'});
     if (!Object.hasOwn(coins, coin)) return res.status(400).json({ error: 'INVALID_COIN' });
     if (!validAddress(coin, address)) {
         return res.status(400).json({ error: 'INVALID_ADDRESS' });
@@ -40,7 +42,7 @@ router.post('/crypto', withdrawalCryptoLimiter, isAuthed, apiLimiter, async (req
                     return true;
                 }
             }
-            const [[account]] = await connection.query('SELECT role,banned,accountLock,wagerRequirement,wagerProgress FROM users WHERE id=? FOR UPDATE',[req.userId]);
+            const [[account]] = await connection.query('SELECT role,banned,accountLock,CAST(wagerRequirement AS CHAR) AS wagerRequirement,CAST(wagerProgress AS CHAR) AS wagerProgress FROM users WHERE id=? FOR UPDATE',[req.userId]);
             if (!account || String(account.role).trim().toUpperCase()==='BOT' || account.banned || account.accountLock) throw Object.assign(new Error('WITHDRAWAL_RESTRICTED'),{status:403});
             if (Number(account.wagerProgress)<Number(account.wagerRequirement)) throw Object.assign(new Error('WAGER_REQUIREMENT_NOT_MET'),{status:403});
 
@@ -61,7 +63,8 @@ router.post('/crypto', withdrawalCryptoLimiter, isAuthed, apiLimiter, async (req
         });
 
         if (!hasBalance) return res.status(400).json({ error: 'INSUFFICIENT_BALANCE' });
-        return res.json({ success: true, transactionId });
+        const [[wallet]]=await sql.query('SELECT CAST(balance AS CHAR) AS balance FROM users WHERE id=?',[req.userId]);
+        return res.json({ success: true, transactionId, balance:wallet.balance });
     } catch (error) {
         if (error.status) return res.status(error.status).json({error:error.message});
         if (error.code === 'ER_DUP_ENTRY') {
@@ -70,6 +73,16 @@ router.post('/crypto', withdrawalCryptoLimiter, isAuthed, apiLimiter, async (req
         console.error(error);
         return res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
     }
+});
+
+// Read-only wallet eligibility; no balance is reserved until POST /crypto succeeds.
+router.get('/eligibility',isAuthed,async(req,res)=>{
+    try {
+        const [[user]]=await sql.query('SELECT role,banned,accountLock,CAST(balance AS CHAR) AS balance,CAST(wagerRequirement AS CHAR) AS required,CAST(wagerProgress AS CHAR) AS progress FROM users WHERE id=?',[req.userId]);
+        if(!user)return res.status(401).json({error:'UNAUTHORIZED'});
+        const remaining=units(user.required)>units(user.progress)?units(user.required)-units(user.progress):0n;
+        return res.json({balance:user.balance,required:user.required,progress:user.progress,remaining:decimal(remaining),minWithdrawal:'15.00',minDeposit:'5.00',canWithdraw:remaining===0n&&!user.banned&&!user.accountLock&&String(user.role).toUpperCase()!=='BOT'});
+    } catch(error){console.error('Withdrawal eligibility:',error.code||error.message);return res.status(500).json({error:'INTERNAL_SERVER_ERROR'});}
 });
 
 // List of the logged-in user's crypto withdrawals (for the Withdrawals history page)

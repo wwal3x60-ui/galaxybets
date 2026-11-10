@@ -8,14 +8,13 @@ const { depositCryptoLimiter } = require('./limiters');
 const allowedCoins = ['SOL', 'USDT', 'TRX', 'TRX (Tron)', 'LTC', 'DOGE', 'ETH', 'BNB', 'USDC'];
 
 router.post('/crypto', depositCryptoLimiter, isAuthed, apiLimiter, async (req, res) => {
-    console.log("DEPOSIT ROUTE HIT:", req.body);
-    console.log("DEPOSIT REQUEST:", req.body, "USER:", req.userId);
     const { amount, coin, txHash } = req.body || {};
     const normalizedCoin = coin === 'TRX (Tron)' ? 'TRX' : coin;
 
     if (typeof amount !== 'number' || !Number.isFinite(amount) || amount <= 0 || Math.round(amount * 100) / 100 !== amount) {
         return res.status(400).json({ error: 'INVALID_AMOUNT' });
     }
+    if (amount < 5) return res.status(400).json({error:'MIN_DEPOSIT_FIVE_DOLLARS'});
     if (!allowedCoins.includes(coin)) return res.status(400).json({ error: 'INVALID_COIN' });
     if (typeof txHash !== 'string' || !txHash.trim() || txHash.length > 255) {
         return res.status(400).json({ error: 'INVALID_TX_HASH' });

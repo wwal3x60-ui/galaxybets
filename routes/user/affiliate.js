@@ -36,6 +36,7 @@ async function getAffiliateData(userId) {
         lastClaim: info.lastClaimDate,
         unclaimedEarnings: info.unclaimedEarnings,
         totalWagered: info.totalWagered,
+        totalDeposited: info.totalDeposited,
         totalEarnings: info.totalEarnings,
         totalCredited: info.totalCredited,
         legacyUnclaimedEarnings: info.legacyUnclaimedEarnings,
@@ -396,12 +397,20 @@ async function getAffiliateInfo(userId, offsetAmount, connection = sql) {
          FROM affiliates
          INNER JOIN users ON users.id = affiliates.userId
          LEFT JOIN bets ON bets.userId = users.id
-            AND bets.createdAt >= affiliates.createdAt AND bets.id >= affiliates.firstBetId AND bets.completed = 1
+            AND bets.createdAt >= affiliates.createdAt AND bets.completed = 1
          WHERE affiliates.affiliateId = ?
          GROUP BY users.id, users.username, users.xp
          ORDER BY totalEdge DESC`,
         [affiliateFirstEligibleBetId, lastClaimDate, userId]
     );
+
+    const [deposits] = await connection.query(
+        `SELECT a.userId,COALESCE(SUM(t.amount),0) AS totalDeposited,COUNT(t.id) AS depositCount
+         FROM affiliates a LEFT JOIN transactions t ON t.userId=a.userId
+           AND t.createdAt>=a.createdAt AND t.status='approved' AND t.type IN ('deposit','crypto_deposit')
+         WHERE a.affiliateId=? GROUP BY a.userId`,[userId]
+    );
+    const depositsByUser=new Map(deposits.map(row=>[String(row.userId),row]));
 
     // Aggregate separately so joining bets cannot multiply earnings.
     const [commissions] = await connection.query(
@@ -443,6 +452,8 @@ async function getAffiliateInfo(userId, offsetAmount, connection = sql) {
     users.forEach(user => {
         const commission = byUser.get(String(user.id));
 
+        user.totalDeposited = Number(depositsByUser.get(String(user.id))?.totalDeposited || 0);
+        user.depositCount = Number(depositsByUser.get(String(user.id))?.depositCount || 0);
         user.totalWagered = Number(user.totalWagered);
         user.totalEdge = Number(user.totalEdge);
 
@@ -470,6 +481,7 @@ async function getAffiliateInfo(userId, offsetAmount, connection = sql) {
     return {
         lastClaimDate,
         totalWagered: roundDecimal(totalWagered),
+        totalDeposited: roundDecimal(users.reduce((sum,u)=>sum+u.totalDeposited,0)),
         totalEarnings: roundDecimal(Number(totals.totalEarnings), 8),
         totalCredited: roundDecimal(Number(totals.totalCredited) + Number(withdrawals.total)),
         unclaimedEarnings: wallet?.available || '0.00',

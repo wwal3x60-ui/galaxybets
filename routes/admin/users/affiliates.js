@@ -85,8 +85,8 @@ router.get('/:id', async (req, res) => {
         users.affiliateCodeLock,
         users.affiliateEarningsOffset,
         (SELECT COUNT(DISTINCT userId) FROM affiliates WHERE affiliates.affiliateId = users.id) AS affiliatedUsersCount,
-        (SELECT COALESCE(SUM(transactions.amount), 0) FROM affiliates JOIN transactions ON affiliates.userId = transactions.userId WHERE affiliates.affiliateId = users.id AND transactions.createdAt >= affiliates.createdAt AND transactions.type = 'deposit') AS affiliatedUsersDepositedCount,
-        (SELECT COALESCE(SUM(transactions.amount), 0) FROM affiliates JOIN transactions ON affiliates.userId = transactions.userId WHERE affiliates.affiliateId = users.id AND transactions.createdAt >= affiliates.createdAt AND transactions.type = 'withdraw') AS affiliatedUsersWithdrawedCount,
+        (SELECT COALESCE(SUM(transactions.amount), 0) FROM affiliates JOIN transactions ON affiliates.userId = transactions.userId WHERE affiliates.affiliateId = users.id AND transactions.createdAt >= affiliates.createdAt AND transactions.status = 'approved' AND transactions.type IN ('deposit','crypto_deposit')) AS affiliatedUsersDepositedCount,
+        (SELECT COALESCE(SUM(transactions.amount), 0) FROM affiliates JOIN transactions ON affiliates.userId = transactions.userId WHERE affiliates.affiliateId = users.id AND transactions.createdAt >= affiliates.createdAt AND transactions.status = 'approved' AND transactions.type IN ('withdraw','crypto_withdraw')) AS affiliatedUsersWithdrawedCount,
         (
           SELECT COALESCE(SUM(bets.amount), 0) 
           FROM affiliates 

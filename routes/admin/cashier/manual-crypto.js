@@ -41,6 +41,8 @@ router.post('/approve-deposit', async (req, res) => {
             if (transaction.status !== 'pending') return 'NOT_PENDING';
             if (transaction.type !== 'crypto_deposit') return 'INVALID_TYPE';
 
+            await require('../../../utils/cashier-wagering').addDepositRequirement(connection, transaction.userId, transaction.id, String(transaction.amount));
+
             const [creditResult] = await connection.query('UPDATE users SET balance = balance + ? WHERE id = ?', [
                 transaction.amount,
                 transaction.userId

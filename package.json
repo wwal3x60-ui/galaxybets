@@ -14,7 +14,9 @@
     "seed:features": "node scripts/seed-features.js",
     "seed:bots": "node scripts/seed-bots.js",
     "seed:leaderboard": "node scripts/seed-leaderboard.js",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "build:media": "node scripts/build-media.js",
+    "postinstall": "node scripts/build-media.js"
   },
   "license": "MIT",
   "devDependencies": {

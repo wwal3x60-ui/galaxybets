@@ -42,10 +42,17 @@ app.use(helmet({
 }));
 
 app.get('/health', (req, res) => {
-    res.status(200).json({ ok: true });
+    res.status(200).json({ ok: true, cashierVersion: 'cashier-mobile-v1' });
 });
 
 app.set('view engine', 'ejs');
+app.use('/public/optimized-v1', express.static(path.join(__dirname, 'public', 'optimized-v1'), {maxAge:'7d',etag:true}), (req,res,next)=>{
+    const match=req.path.match(/^\/(packs|drop-images|drop-cutouts)\/([A-Za-z0-9_.-]+\.(?:png|jpe?g|webp|avif))\.webp$/i);
+    if(!match)return next();
+    // Newly uploaded catalog art can use its original until the next media build.
+    res.set('Cache-Control','no-store');
+    return res.redirect(302,'/public/'+match[1]+'/'+match[2]);
+});
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/assets', express.static(path.join(__dirname, 'dist', 'assets')));
 
@@ -160,6 +167,7 @@ const { cacheAdmin } = require('./routes/admin/config');
 const { cacheLeaderboards } = require('./routes/leaderboard/functions');
 
 async function start() {
+    await require('./utils/cashier-wagering').boundary(sql);
     const port = process.env.PORT || 3001;
 
     await cacheAdmin();
