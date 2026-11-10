@@ -86,7 +86,7 @@ router.post('/create', isAuthed, apiLimiter, async (req, res) => {
     const battleCost = cases.reduce((acc, cur) => acc + cur.price, 0);
 
     let quote;try{quote=require('../../../utils/funded-battles').quote(battleCost,teams*playersPerTeam,fundingPercentage);}catch(e){return res.status(e.status||400).json({error:e.publicError||'INVALID_FUNDING'});}
-    const {sponsorOnly,cost,entryPrice,sponsorPaid}=quote;
+    const {sponsorOnly,cost,entryPrice,sponsorPaid,creatorStake}=quote;
     if(cost<(sponsorOnly ? 0.01 : 0.15))return res.status(400).json({error:'INVALID_AMOUNT'});
 
     try {
@@ -107,8 +107,8 @@ router.post('/create', isAuthed, apiLimiter, async (req, res) => {
                 if (total >= 3) return res.status(400).json({ error: 'TOO_MANY_BATTLES' });
             }
 
-            const restriction=await require('../../../utils/funded-battles').affiliate(connection,req.body.affiliateCode,sponsorOnly);
-            const xp=sponsorOnly?0:roundDecimal(cost*xpMultiplier);
+            const restriction=await require('../../../utils/funded-battles').affiliate(connection,req.body.affiliateCode,fundingPercentage>0);
+            const xp=Math.round(creatorStake*xpMultiplier);
             await connection.query(`UPDATE users SET balance = balance - ?, xp = xp + ? WHERE id = ?`, [cost, xp, user.id, cost]);
     
             io.to(String(user.id)).emit('balance', 'set', roundDecimal(user.balance - cost));
@@ -129,9 +129,10 @@ router.post('/create', isAuthed, apiLimiter, async (req, res) => {
                 [cases.map((e, i) => [battleId, e.revId, i + 1])]
             );
         
-            if(sponsorOnly){await connection.query("INSERT INTO transactions(userId,amount,type,method,methodId,status) VALUES (?,?,'out','battle_funding',?,'approved')",[user.id,sponsorPaid,String(battleId)]);}else{
+            if(sponsorPaid>0){await connection.query("INSERT INTO transactions(userId,amount,type,method,methodId,status) VALUES (?,?,'out','battle_funding',?,'approved')",[user.id,sponsorPaid,String(battleId)]);}
+            if(!sponsorOnly){
             await connection.query(`INSERT INTO battlePlayers (battleId, userId, slot, team) VALUES (?, ?, ?, ?)`, [battleId, user.id, 1, 1]);
-            await connection.query('INSERT INTO bets (userId, amount, edge, game, gameId, completed) VALUES (?, ?, ?, ?, ?, ?)', [user.id, cost, roundDecimal(cost * 0.1), 'battle', battleId, false]);
+            await connection.query('INSERT INTO bets (userId, amount, edge, game, gameId, completed) VALUES (?, ?, ?, ?, ?, ?)', [user.id, creatorStake, roundDecimal(creatorStake * 0.1), 'battle', battleId, false]);
             }
         
             await commit();
@@ -236,7 +237,7 @@ async function joinBattle(req, res, bot = false) {
                 } else {
 
                     if (battle.privKey && battle.privKey != req.body.privKey) return res.status(400).json({ error: 'INVALID_PRIV_KEY' });
-                    if (!battle.sponsorOnly && battle.entryPrice > 0 && battle.entryPrice < 0.15) {
+                    if (!battle.sponsorOnly && !require('../../../utils/funded-battles').isPlayerFunded(battle) && battle.entryPrice > 0 && battle.entryPrice < 0.15) {
                         return res.status(400).json({ error: 'INVALID_AMOUNT' });
                     }
 

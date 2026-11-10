@@ -42,7 +42,7 @@ app.use(helmet({
 }));
 
 app.get('/health', (req, res) => {
-    res.status(200).json({ ok: true, cashierVersion: 'cashier-mobile-v1' });
+    res.status(200).json({ ok: true, cashierVersion: 'cashier-mobile-v1', fundedBattleVersion: 'creator-player1-v1' });
 });
 
 app.set('view engine', 'ejs');
