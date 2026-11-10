@@ -1,3 +1,4 @@
+const { creditAffiliateGameBets, emitAffiliateCredits, withAffiliateSettlement } = require('../../../utils/affiliate-commission');
 const { sql, doTransaction } = require('../../../database');
 const io = require('../../../socketio/server');
 const { sha256 } = require('../../../fairness');
@@ -132,7 +133,12 @@ async function startCoinflip(coinflip) {
 
         const winner = coinflip[winnerSide];
 
-        await doTransaction(async (connection, commit) => {
+        const settled = await withAffiliateSettlement(async (connection, commit) => {
+            const [[saved]] = await connection.query(
+                'SELECT winnerSide FROM coinflips WHERE id = ? FOR UPDATE', [coinflip.id]
+            );
+            if (!saved) throw new Error('Coinflip no longer exists');
+            if (saved.winnerSide) { await commit(); return false; }
 
             await connection.query("UPDATE coinflips SET clientSeed = ?, winnerSide = ?, startedAt = NOW() WHERE id = ?", [clientSeed, winnerSide, coinflip.id]);
             if (winner.role != 'BOT') await connection.query("UPDATE users SET balance = balance + ? WHERE id = ?", [winnings, winner.id]);
@@ -142,9 +148,12 @@ async function startCoinflip(coinflip) {
                 [winner.id, winnings, 'coinflip', coinflip.id]
             );
 
+            const credits = await creditAffiliateGameBets(connection, 'coinflip', [coinflip.id]);
             await commit();
-
+            emitAffiliateCredits(credits);
+            return true;
         });
+        if (!settled) return;
 
         newBets([coinflip.fire, coinflip.ice].map(user => {
             return {

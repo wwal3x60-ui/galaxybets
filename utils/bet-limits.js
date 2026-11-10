@@ -1,0 +1,1 @@
+'use strict';const MAX_BET_USD=10000,MAX_BET_CENTS=1000000;module.exports={MAX_BET_USD,MAX_BET_CENTS};

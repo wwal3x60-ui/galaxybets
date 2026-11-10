@@ -1,3 +1,4 @@
+const {MAX_BET_USD}=require('../../../utils/bet-limits');
 const express = require('express');
 const router = express.Router();
 
@@ -31,8 +32,10 @@ router.post('/create', isAuthed, apiLimiter, async (req, res) => {
     if (!casesIds.length || casesIds.length > 50 || casesIds.some((e) => !Number.isInteger(e))) return res.status(400).json({ error: 'INVALID_CASES' });
 
     const gamemode = req.body.gamemode;
-    if (!['standard', 'group'].includes(gamemode)) return res.status(400).json({ error: 'INVALID_GAMEMODE' });
+    if (!['standard', 'group', 'jackpot'].includes(gamemode)) return res.status(400).json({ error: 'INVALID_GAMEMODE' });
     
+    if(req.body.fastBattle!==undefined&&typeof req.body.fastBattle!=='boolean')return res.status(400).json({error:'INVALID_FAST_BATTLE'});
+    const fastBattle=req.body.fastBattle===true;
     const teams = req.body.teams;
     if (!Number.isInteger(teams)) return res.status(400).json({ error: 'MISSING_TEAMS' });
 
@@ -82,19 +85,16 @@ router.post('/create', isAuthed, apiLimiter, async (req, res) => {
     const cases = casesIds.map(id => uniqueCases.find(e => e.id == id));
     const battleCost = cases.reduce((acc, cur) => acc + cur.price, 0);
 
-    const fundingAmount = battleCost * ((teams * playersPerTeam) - 1) * (fundingPercentage / 100);
-    const cost = roundDecimal(battleCost + fundingAmount);
-    if (cost < 0.2) return res.status(400).json({ error: 'INVALID_AMOUNT' });
-    const entryPrice = roundDecimal(battleCost * (1 - (fundingPercentage / 100)));
-    if (entryPrice > 0 && entryPrice < 0.2) {
-        return res.status(400).json({ error: 'INVALID_AMOUNT' });
-    }
+    let quote;try{quote=require('../../../utils/funded-battles').quote(battleCost,teams*playersPerTeam,fundingPercentage);}catch(e){return res.status(e.status||400).json({error:e.publicError||'INVALID_FUNDING'});}
+    const {sponsorOnly,cost,entryPrice,sponsorPaid}=quote;
+    if(cost<(sponsorOnly ? 0.01 : 0.2))return res.status(400).json({error:'INVALID_AMOUNT'});
 
     try {
 
         await doTransaction(async (connection, commit) => {
 
-            const [[user]] = await connection.query('SELECT id, username, xp, balance, role, sponsorLock, perms FROM users WHERE id = ? FOR UPDATE', [req.userId]);
+            const [[user]] = await connection.query('SELECT id, username, xp, balance, role, banned, accountLock, sponsorLock, perms FROM users WHERE id = ? FOR UPDATE', [req.userId]);
+            if(!user||user.banned||user.accountLock||String(user.role).toUpperCase()==='BOT')return res.status(403).json({error:'ACCOUNT_RESTRICTED'});
             if (cost > user.balance) return res.status(400).json({ error: 'INSUFFICIENT_BALANCE' });
             
             if (user.sponsorLock && fundingPercentage != 0) return res.status(400).json({ error: 'SPONSOR_LOCK_FUNDING' });
@@ -107,7 +107,8 @@ router.post('/create', isAuthed, apiLimiter, async (req, res) => {
                 if (total >= 3) return res.status(400).json({ error: 'TOO_MANY_BATTLES' });
             }
 
-            const xp = roundDecimal(cost * xpMultiplier);
+            const restriction=await require('../../../utils/funded-battles').affiliate(connection,req.body.affiliateCode,sponsorOnly);
+            const xp=sponsorOnly?0:roundDecimal(cost*xpMultiplier);
             await connection.query(`UPDATE users SET balance = balance - ?, xp = xp + ? WHERE id = ?`, [cost, xp, user.id, cost]);
     
             io.to(String(user.id)).emit('balance', 'set', roundDecimal(user.balance - cost));
@@ -117,8 +118,8 @@ router.post('/create', isAuthed, apiLimiter, async (req, res) => {
             const serverSeed = generateServerSeed();
              
             const [battleResult] = await connection.query(
-                `INSERT INTO battles (ownerId, ownerFunding, entryPrice, privKey, minLevel, teams, playersPerTeam, gamemode, serverSeed) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`,
-                [user.id, fundingPercentage, entryPrice, privKey, minLvl, teams, playersPerTeam, gamemode, serverSeed]
+                `INSERT INTO battles (ownerId, ownerFunding, entryPrice, privKey, minLevel, teams, playersPerTeam, gamemode, serverSeed, fastBattle, creatorXp, sponsorOnly, sponsorPaid, fundingAffiliateId, fundingCode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+                [user.id, fundingPercentage, entryPrice, privKey, minLvl, teams, playersPerTeam, gamemode, serverSeed, fastBattle, Math.round(xp), sponsorOnly, sponsorPaid, restriction?.id??null, restriction?.code??null]
             );
             
             const battleId = battleResult.insertId;
@@ -128,8 +129,10 @@ router.post('/create', isAuthed, apiLimiter, async (req, res) => {
                 [cases.map((e, i) => [battleId, e.revId, i + 1])]
             );
         
+            if(sponsorOnly){await connection.query("INSERT INTO transactions(userId,amount,type,method,methodId,status) VALUES (?,?,'out','battle_funding',?,'approved')",[user.id,sponsorPaid,String(battleId)]);}else{
             await connection.query(`INSERT INTO battlePlayers (battleId, userId, slot, team) VALUES (?, ?, ?, ?)`, [battleId, user.id, 1, 1]);
             await connection.query('INSERT INTO bets (userId, amount, edge, game, gameId, completed) VALUES (?, ?, ?, ?, ?, ?)', [user.id, cost, roundDecimal(cost * 0.1), 'battle', battleId, false]);
+            }
         
             await commit();
             res.json({ success: true, battleId, privKey });
@@ -150,12 +153,13 @@ router.post('/create', isAuthed, apiLimiter, async (req, res) => {
                 EOSBlock: null,
                 serverSeed: sha256(serverSeed),
                 gamemode: gamemode,
+                fastBattle,creatorXp:Math.round(xp),ownerId:user.id,sponsorOnly,sponsorPaid,fundingAffiliateId:restriction?.id??null,fundingCode:restriction?.code??null,
                 cases: uniqueCases.map(e => ({
                     ...e,
                     items: items.filter(i => i.caseVersionId == e.revId).map(e => mapItem(e))
                 })),
                 rounds: cases.map((e, i) => ({ caseId: e.id, round: i + 1, items: [] })),
-                players: [{
+                players: sponsorOnly?[]:[{
                     id: user.id,
                     username: user.username,
                     xp: user.xp,
@@ -179,13 +183,13 @@ router.post('/create', isAuthed, apiLimiter, async (req, res) => {
 
     } catch (e) {
         console.error(e);
-        res.status(500).json({ error: 'INTERNAL_ERROR' });
+        if(!res.headersSent)res.status(e.status||500).json({error:e.publicError||'INTERNAL_ERROR'});
     }
     
 });
 
 router.post('/:id/join', isAuthed, apiLimiter, async (req, res) => {
-    joinBattle(req, res);
+    return joinBattle(req, res);
 });
 
 async function joinBattle(req, res, bot = false) {
@@ -202,7 +206,9 @@ async function joinBattle(req, res, bot = false) {
                 const [[battle]] = await connection.query(`SELECT * FROM battles WHERE id = ? FOR UPDATE`, [battleId]);
                 if (!battle) return res.status(400).json({ error: 'INVALID_BATTLE_ID' });
 
-                if (battle.winnerTeam || battle.startedAt) return res.status(400).json({ error: 'ALREADY_STARTED' });
+                if (battle.cancelledAt || battle.endedAt || battle.EOSBlock || battle.winnerTeam || battle.startedAt) return res.status(400).json({ error: 'ALREADY_STARTED' });
+                await require('../../../utils/funded-battles').checkJoin(connection,battle,req.userId,bot);
+                if(Number(battle.entryPrice)>MAX_BET_USD)return res.status(400).json({error:'MAX_BET_BATTLE'});
                 const totalPlayers = battle.teams * battle.playersPerTeam;
 
                 const slot = parseInt(req.body.slot);
@@ -210,7 +216,7 @@ async function joinBattle(req, res, bot = false) {
                 if (slot < 1 || slot > totalPlayers) return res.status(400).json({ error: 'INVALID_SLOT' });
 
                 const [players] = await connection.query(`
-                    SELECT users.id, users.username, users.xp, users.anon, battlePlayers.slot, battlePlayers.team FROM battlePlayers
+                    SELECT users.id, users.username, users.xp, users.role, users.anon, battlePlayers.slot, battlePlayers.team FROM battlePlayers
                     INNER JOIN users ON users.id = battlePlayers.userId
                     WHERE battleId = ? ORDER BY slot ASC FOR UPDATE
                 `, [battleId]);
@@ -220,8 +226,9 @@ async function joinBattle(req, res, bot = false) {
                 if (bot) {
                     // console.log(battle.ownerId, req.userId)
                     if (battle.ownerId != req.userId) return res.status(403).json({ error: 'FORBIDDEN' });
-                    [[user]] = await connection.query('SELECT id, username, xp, role, anon FROM users WHERE id NOT IN(?) AND role = ? LIMIT 1 FOR UPDATE', [players.map(e => e.id), 'BOT']);
-                    if (!user) return res.status(500).json({ error: 'NO_BOTS_AVAILABLE' });
+                    [[user]] = await connection.query('SELECT id, username, xp, role, anon FROM users WHERE id NOT IN(?) AND role = ? AND banned=0 AND accountLock=0 AND (?=0 OR balance>=?) ORDER BY id LIMIT 1 FOR UPDATE', [players.map(e => e.id), 'BOT', battle.gamemode==='jackpot'?1:0, battle.entryPrice]);
+                    if (!user) return res.status(400).json({ error: battle.gamemode==='jackpot'?'NO_FUNDED_BOTS':'NO_BOTS_AVAILABLE' });
+                    if(battle.gamemode==='jackpot'){const [paid]=await connection.query('UPDATE users SET balance=balance-? WHERE id=? AND balance>=?',[battle.entryPrice,user.id,battle.entryPrice]);if(paid.affectedRows!==1)return res.status(400).json({error:'NO_FUNDED_BOTS'});}
 
                     const taken = players.find(e => e.slot == slot);
                     if (taken) return res.status(400).json({ error: 'SLOT_TAKEN' });
@@ -229,11 +236,12 @@ async function joinBattle(req, res, bot = false) {
                 } else {
 
                     if (battle.privKey && battle.privKey != req.body.privKey) return res.status(400).json({ error: 'INVALID_PRIV_KEY' });
-                    if (battle.entryPrice > 0 && battle.entryPrice < 0.2) {
+                    if (!battle.sponsorOnly && battle.entryPrice > 0 && battle.entryPrice < 0.2) {
                         return res.status(400).json({ error: 'INVALID_AMOUNT' });
                     }
 
-                    [[user]] = await connection.query('SELECT id, username, xp, balance, role, anon, perms, sponsorLock FROM users WHERE id = ? FOR UPDATE', [req.userId]);
+                    [[user]] = await connection.query('SELECT id, username, xp, balance, role, anon, perms, banned, accountLock, sponsorLock FROM users WHERE id = ? FOR UPDATE', [req.userId]);
+                    if(!user||user.banned||user.accountLock||String(user.role).toUpperCase()==='BOT')return res.status(403).json({error:'ACCOUNT_RESTRICTED'});
                     if (user.balance < battle.entryPrice) return res.status(400).json({ error: 'INSUFFICIENT_BALANCE' });
 
                     const level = getUserLevel(user.xp);
@@ -265,27 +273,36 @@ async function joinBattle(req, res, bot = false) {
                 newBattlePlayer(battleId, user, slot, team);
 
                 if (players.length + 1 != totalPlayers) return;
-                players.splice(slot - 1, 0, { id: user.id, username: user.username, xp: user.xp, slot: slot, team: team, anon: user.anon });
+                players.splice(slot - 1, 0, { id: user.id, username: user.username, xp: user.xp, role:user.role, slot: slot, team: team, anon: user.anon });
 
-                startBattle(battle, players);
+                startBattle(battle, players).catch(e=>console.error('Battle:',e.message));
 
             });
 
         } catch (e) {
             console.error(e);
-            res.status(500).json({ error: 'INTERNAL_ERROR' });
+            if(!res.headersSent)res.status(e.status||500).json({error:e.publicError||'INTERNAL_ERROR'});
         }
 
     });
 
 }
 
+
+router.post('/:id/cancel',isAuthed,apiLimiter,async(req,res)=>{
+ const id=String(req.params.id);if(!/^\d+$/.test(id))return res.status(400).json({error:'INVALID_BATTLE_ID'});
+ try{const value=await doTransaction(async(c,commit)=>{const result=await require('../../../utils/battle-cancel').cancelBattle(c,req.userId,id);await commit();return result;});
+ if(cachedBattles[id]){cachedBattles[id].cancelledAt=new Date();cachedBattles[id].endedAt=new Date();}
+ try{const [[u]]=await sql.query('SELECT balance,xp FROM users WHERE id=?',[req.userId]);io.to(String(req.userId)).emit('balance','set',Number(u.balance));io.to(String(req.userId)).emit('xp',Number(u.xp));io.to('battle:'+id).emit('battle:cancelled',id);io.to('battles').emit('battles:cancelled',id);}catch(e){console.error('Cancelled; refresh pending:',e.message);}res.json(value);
+ }catch(e){if(!e.publicError)console.error(e);res.status(e.status||500).json({error:e.publicError||'INTERNAL_ERROR'});}
+});
+
 router.post('/leave', isAuthed, apiLimiter, async (req, res) => {
     res.json({ error: 'DISABLED' });
 });
 
 router.post('/:id/bot', isAuthed, apiLimiter, async (req, res) => {
-    joinBattle(req, res, true);
+    return joinBattle(req, res, true);
 });
 
 module.exports = router;

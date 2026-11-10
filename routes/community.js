@@ -1,0 +1,4 @@
+'use strict';const router=require('express').Router(),{isAuthed}=require('./auth/functions'),{rateLimit}=require('express-rate-limit'),service=require('../utils/community-service');
+router.use(rateLimit({windowMs:60000,limit:120,standardHeaders:'draft-8',legacyHeaders:false}));const tipsLimiter=rateLimit({windowMs:60000,limit:10,keyGenerator:req=>String(req.userId),standardHeaders:'draft-8',legacyHeaders:false,message:{error:'SLOW_DOWN'}});
+const handler=fn=>async(req,res)=>{try{res.json(await fn(req));}catch(e){if(!e.publicError)console.error('Community:',e.message);res.status(e.status||500).json({error:e.publicError||'INTERNAL_ERROR'});}};
+router.get('/eligibility',isAuthed,handler(req=>service.eligibility(req.userId)));router.get('/profile/:username',handler(req=>service.profile(String(req.params.username).slice(0,32))));router.post('/tips',isAuthed,tipsLimiter,handler(req=>service.tip(req.userId,req.body||{})));module.exports=router;

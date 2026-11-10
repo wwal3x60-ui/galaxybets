@@ -1,0 +1,4693 @@
+{
+  "schemaVersion": 1,
+  "counts": {
+    "Pokemon": 10,
+    "CSGO": 10,
+    "IRL": 20
+  },
+  "targetHouseEdge": "0.10",
+  "targetReturn": "0.90",
+  "ticketCount": 100000,
+  "packs": [
+    {
+      "category": "Pokemon",
+      "name": "Starter Pull",
+      "slug": "pokemon-starter-pull",
+      "openingPriceUSD": "1.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Entry-level mixed Pok\u00e9mon card theme",
+      "items": [
+        {
+          "catalogId": "7000000000000",
+          "name": "Starter Pull \u2014 Common Card Credit",
+          "valueCents": 25,
+          "valueUSD": "0.25",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/pokemon-0.svg"
+        },
+        {
+          "catalogId": "7000000000001",
+          "name": "Starter Pull \u2014 Collector Credit",
+          "valueCents": 25,
+          "valueUSD": "0.25",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/pokemon-0.svg"
+        },
+        {
+          "catalogId": "7000000000002",
+          "name": "Starter Pull \u2014 Card Selection",
+          "valueCents": 80,
+          "valueUSD": "0.80",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/pokemon-1.svg"
+        },
+        {
+          "catalogId": "7000000000003",
+          "name": "Starter Pull \u2014 Holo Selection",
+          "valueCents": 80,
+          "valueUSD": "0.80",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/pokemon-1.svg"
+        },
+        {
+          "catalogId": "7000000000004",
+          "name": "Starter Pull \u2014 Rare Selection",
+          "valueCents": 200,
+          "valueUSD": "2.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/pokemon-2.svg"
+        },
+        {
+          "catalogId": "7000000000005",
+          "name": "Starter Pull \u2014 Collector Bundle",
+          "valueCents": 200,
+          "valueUSD": "2.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/pokemon-2.svg"
+        },
+        {
+          "catalogId": "7000000000006",
+          "name": "Starter Pull \u2014 Premium Selection",
+          "valueCents": 500,
+          "valueUSD": "5.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/pokemon-3.svg"
+        },
+        {
+          "catalogId": "7000000000007",
+          "name": "Starter Pull \u2014 Showcase Card",
+          "valueCents": 500,
+          "valueUSD": "5.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/pokemon-3.svg"
+        },
+        {
+          "catalogId": "7000000000008",
+          "name": "Starter Pull \u2014 Chase Selection",
+          "valueCents": 1500,
+          "valueUSD": "15.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/pokemon-4.svg"
+        },
+        {
+          "catalogId": "7000000000009",
+          "name": "Starter Pull \u2014 Collector Highlight",
+          "valueCents": 1500,
+          "valueUSD": "15.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/pokemon-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 100,
+      "image": "/public/packs/pokemon-starter-pull.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 90
+    },
+    {
+      "category": "Pokemon",
+      "name": "Prismatic Collection",
+      "slug": "pokemon-prismatic-collection",
+      "openingPriceUSD": "5.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Original prismatic collector-card theme",
+      "items": [
+        {
+          "catalogId": "7000000000100",
+          "name": "Prismatic Collection \u2014 Common Card Credit",
+          "valueCents": 125,
+          "valueUSD": "1.25",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/pokemon-0.svg"
+        },
+        {
+          "catalogId": "7000000000101",
+          "name": "Prismatic Collection \u2014 Collector Credit",
+          "valueCents": 125,
+          "valueUSD": "1.25",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/pokemon-0.svg"
+        },
+        {
+          "catalogId": "7000000000102",
+          "name": "Prismatic Collection \u2014 Card Selection",
+          "valueCents": 400,
+          "valueUSD": "4.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/pokemon-1.svg"
+        },
+        {
+          "catalogId": "7000000000103",
+          "name": "Prismatic Collection \u2014 Holo Selection",
+          "valueCents": 400,
+          "valueUSD": "4.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/pokemon-1.svg"
+        },
+        {
+          "catalogId": "7000000000104",
+          "name": "Prismatic Collection \u2014 Rare Selection",
+          "valueCents": 1000,
+          "valueUSD": "10.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/pokemon-2.svg"
+        },
+        {
+          "catalogId": "7000000000105",
+          "name": "Prismatic Collection \u2014 Collector Bundle",
+          "valueCents": 1000,
+          "valueUSD": "10.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/pokemon-2.svg"
+        },
+        {
+          "catalogId": "7000000000106",
+          "name": "Prismatic Collection \u2014 Premium Selection",
+          "valueCents": 2500,
+          "valueUSD": "25.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/pokemon-3.svg"
+        },
+        {
+          "catalogId": "7000000000107",
+          "name": "Prismatic Collection \u2014 Showcase Card",
+          "valueCents": 2500,
+          "valueUSD": "25.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/pokemon-3.svg"
+        },
+        {
+          "catalogId": "7000000000108",
+          "name": "Prismatic Collection \u2014 Chase Selection",
+          "valueCents": 7500,
+          "valueUSD": "75.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/pokemon-4.svg"
+        },
+        {
+          "catalogId": "7000000000109",
+          "name": "Prismatic Collection \u2014 Collector Highlight",
+          "valueCents": 7500,
+          "valueUSD": "75.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/pokemon-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 500,
+      "image": "/public/packs/pokemon-prismatic-collection.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 450
+    },
+    {
+      "category": "Pokemon",
+      "name": "Eevee",
+      "slug": "pokemon-eevee",
+      "openingPriceUSD": "8.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Eevee and evolution collectibles",
+      "items": [
+        {
+          "catalogId": "7000000000200",
+          "name": "Eevee \u2014 Common Card Credit",
+          "valueCents": 200,
+          "valueUSD": "2.00",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/pokemon-0.svg"
+        },
+        {
+          "catalogId": "7000000000201",
+          "name": "Eevee \u2014 Collector Credit",
+          "valueCents": 200,
+          "valueUSD": "2.00",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/pokemon-0.svg"
+        },
+        {
+          "catalogId": "7000000000202",
+          "name": "Eevee \u2014 Card Selection",
+          "valueCents": 640,
+          "valueUSD": "6.40",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/pokemon-1.svg"
+        },
+        {
+          "catalogId": "7000000000203",
+          "name": "Eevee \u2014 Holo Selection",
+          "valueCents": 640,
+          "valueUSD": "6.40",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/pokemon-1.svg"
+        },
+        {
+          "catalogId": "7000000000204",
+          "name": "Eevee \u2014 Rare Selection",
+          "valueCents": 1600,
+          "valueUSD": "16.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/pokemon-2.svg"
+        },
+        {
+          "catalogId": "7000000000205",
+          "name": "Eevee \u2014 Collector Bundle",
+          "valueCents": 1600,
+          "valueUSD": "16.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/pokemon-2.svg"
+        },
+        {
+          "catalogId": "7000000000206",
+          "name": "Eevee \u2014 Premium Selection",
+          "valueCents": 4000,
+          "valueUSD": "40.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/pokemon-3.svg"
+        },
+        {
+          "catalogId": "7000000000207",
+          "name": "Eevee \u2014 Showcase Card",
+          "valueCents": 4000,
+          "valueUSD": "40.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/pokemon-3.svg"
+        },
+        {
+          "catalogId": "7000000000208",
+          "name": "Eevee \u2014 Chase Selection",
+          "valueCents": 12000,
+          "valueUSD": "120.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/pokemon-4.svg"
+        },
+        {
+          "catalogId": "7000000000209",
+          "name": "Eevee \u2014 Collector Highlight",
+          "valueCents": 12000,
+          "valueUSD": "120.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/pokemon-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 800,
+      "image": "/public/packs/pokemon-eevee.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 720
+    },
+    {
+      "category": "Pokemon",
+      "name": "Team Rocket",
+      "slug": "pokemon-team-rocket",
+      "openingPriceUSD": "12.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Team Rocket collectible-card theme",
+      "items": [
+        {
+          "catalogId": "7000000000300",
+          "name": "Team Rocket \u2014 Common Card Credit",
+          "valueCents": 300,
+          "valueUSD": "3.00",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/pokemon-0.svg"
+        },
+        {
+          "catalogId": "7000000000301",
+          "name": "Team Rocket \u2014 Collector Credit",
+          "valueCents": 300,
+          "valueUSD": "3.00",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/pokemon-0.svg"
+        },
+        {
+          "catalogId": "7000000000302",
+          "name": "Team Rocket \u2014 Card Selection",
+          "valueCents": 960,
+          "valueUSD": "9.60",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/pokemon-1.svg"
+        },
+        {
+          "catalogId": "7000000000303",
+          "name": "Team Rocket \u2014 Holo Selection",
+          "valueCents": 960,
+          "valueUSD": "9.60",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/pokemon-1.svg"
+        },
+        {
+          "catalogId": "7000000000304",
+          "name": "Team Rocket \u2014 Rare Selection",
+          "valueCents": 2400,
+          "valueUSD": "24.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/pokemon-2.svg"
+        },
+        {
+          "catalogId": "7000000000305",
+          "name": "Team Rocket \u2014 Collector Bundle",
+          "valueCents": 2400,
+          "valueUSD": "24.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/pokemon-2.svg"
+        },
+        {
+          "catalogId": "7000000000306",
+          "name": "Team Rocket \u2014 Premium Selection",
+          "valueCents": 6000,
+          "valueUSD": "60.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/pokemon-3.svg"
+        },
+        {
+          "catalogId": "7000000000307",
+          "name": "Team Rocket \u2014 Showcase Card",
+          "valueCents": 6000,
+          "valueUSD": "60.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/pokemon-3.svg"
+        },
+        {
+          "catalogId": "7000000000308",
+          "name": "Team Rocket \u2014 Chase Selection",
+          "valueCents": 18000,
+          "valueUSD": "180.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/pokemon-4.svg"
+        },
+        {
+          "catalogId": "7000000000309",
+          "name": "Team Rocket \u2014 Collector Highlight",
+          "valueCents": 18000,
+          "valueUSD": "180.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/pokemon-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 1200,
+      "image": "/public/packs/pokemon-team-rocket.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 1080
+    },
+    {
+      "category": "Pokemon",
+      "name": "Kanto Classics",
+      "slug": "pokemon-kanto-classics",
+      "openingPriceUSD": "20.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Kanto-era Pok\u00e9mon collectibles",
+      "items": [
+        {
+          "catalogId": "7000000000400",
+          "name": "Kanto Classics \u2014 Common Card Credit",
+          "valueCents": 500,
+          "valueUSD": "5.00",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/pokemon-0.svg"
+        },
+        {
+          "catalogId": "7000000000401",
+          "name": "Kanto Classics \u2014 Collector Credit",
+          "valueCents": 500,
+          "valueUSD": "5.00",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/pokemon-0.svg"
+        },
+        {
+          "catalogId": "7000000000402",
+          "name": "Kanto Classics \u2014 Card Selection",
+          "valueCents": 1600,
+          "valueUSD": "16.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/pokemon-1.svg"
+        },
+        {
+          "catalogId": "7000000000403",
+          "name": "Kanto Classics \u2014 Holo Selection",
+          "valueCents": 1600,
+          "valueUSD": "16.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/pokemon-1.svg"
+        },
+        {
+          "catalogId": "7000000000404",
+          "name": "Kanto Classics \u2014 Rare Selection",
+          "valueCents": 4000,
+          "valueUSD": "40.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/pokemon-2.svg"
+        },
+        {
+          "catalogId": "7000000000405",
+          "name": "Kanto Classics \u2014 Collector Bundle",
+          "valueCents": 4000,
+          "valueUSD": "40.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/pokemon-2.svg"
+        },
+        {
+          "catalogId": "7000000000406",
+          "name": "Kanto Classics \u2014 Premium Selection",
+          "valueCents": 10000,
+          "valueUSD": "100.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/pokemon-3.svg"
+        },
+        {
+          "catalogId": "7000000000407",
+          "name": "Kanto Classics \u2014 Showcase Card",
+          "valueCents": 10000,
+          "valueUSD": "100.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/pokemon-3.svg"
+        },
+        {
+          "catalogId": "7000000000408",
+          "name": "Kanto Classics \u2014 Chase Selection",
+          "valueCents": 30000,
+          "valueUSD": "300.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/pokemon-4.svg"
+        },
+        {
+          "catalogId": "7000000000409",
+          "name": "Kanto Classics \u2014 Collector Highlight",
+          "valueCents": 30000,
+          "valueUSD": "300.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/pokemon-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 2000,
+      "image": "/public/packs/pokemon-kanto-classics.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 1800
+    },
+    {
+      "category": "Pokemon",
+      "name": "Shiny Hunt",
+      "slug": "pokemon-shiny-hunt",
+      "openingPriceUSD": "35.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Shiny and special-finish card theme",
+      "items": [
+        {
+          "catalogId": "7000000000500",
+          "name": "Shiny Hunt \u2014 Common Card Credit",
+          "valueCents": 875,
+          "valueUSD": "8.75",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/pokemon-0.svg"
+        },
+        {
+          "catalogId": "7000000000501",
+          "name": "Shiny Hunt \u2014 Collector Credit",
+          "valueCents": 875,
+          "valueUSD": "8.75",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/pokemon-0.svg"
+        },
+        {
+          "catalogId": "7000000000502",
+          "name": "Shiny Hunt \u2014 Card Selection",
+          "valueCents": 2800,
+          "valueUSD": "28.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/pokemon-1.svg"
+        },
+        {
+          "catalogId": "7000000000503",
+          "name": "Shiny Hunt \u2014 Holo Selection",
+          "valueCents": 2800,
+          "valueUSD": "28.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/pokemon-1.svg"
+        },
+        {
+          "catalogId": "7000000000504",
+          "name": "Shiny Hunt \u2014 Rare Selection",
+          "valueCents": 7000,
+          "valueUSD": "70.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/pokemon-2.svg"
+        },
+        {
+          "catalogId": "7000000000505",
+          "name": "Shiny Hunt \u2014 Collector Bundle",
+          "valueCents": 7000,
+          "valueUSD": "70.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/pokemon-2.svg"
+        },
+        {
+          "catalogId": "7000000000506",
+          "name": "Shiny Hunt \u2014 Premium Selection",
+          "valueCents": 17500,
+          "valueUSD": "175.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/pokemon-3.svg"
+        },
+        {
+          "catalogId": "7000000000507",
+          "name": "Shiny Hunt \u2014 Showcase Card",
+          "valueCents": 17500,
+          "valueUSD": "175.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/pokemon-3.svg"
+        },
+        {
+          "catalogId": "7000000000508",
+          "name": "Shiny Hunt \u2014 Chase Selection",
+          "valueCents": 52500,
+          "valueUSD": "525.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/pokemon-4.svg"
+        },
+        {
+          "catalogId": "7000000000509",
+          "name": "Shiny Hunt \u2014 Collector Highlight",
+          "valueCents": 52500,
+          "valueUSD": "525.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/pokemon-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 3500,
+      "image": "/public/packs/pokemon-shiny-hunt.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 3150
+    },
+    {
+      "category": "Pokemon",
+      "name": "Legendary Vault",
+      "slug": "pokemon-legendary-vault",
+      "openingPriceUSD": "60.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Legendary Pok\u00e9mon collectible-card theme",
+      "items": [
+        {
+          "catalogId": "7000000000600",
+          "name": "Legendary Vault \u2014 Common Card Credit",
+          "valueCents": 1500,
+          "valueUSD": "15.00",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/pokemon-0.svg"
+        },
+        {
+          "catalogId": "7000000000601",
+          "name": "Legendary Vault \u2014 Collector Credit",
+          "valueCents": 1500,
+          "valueUSD": "15.00",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/pokemon-0.svg"
+        },
+        {
+          "catalogId": "7000000000602",
+          "name": "Legendary Vault \u2014 Card Selection",
+          "valueCents": 4800,
+          "valueUSD": "48.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/pokemon-1.svg"
+        },
+        {
+          "catalogId": "7000000000603",
+          "name": "Legendary Vault \u2014 Holo Selection",
+          "valueCents": 4800,
+          "valueUSD": "48.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/pokemon-1.svg"
+        },
+        {
+          "catalogId": "7000000000604",
+          "name": "Legendary Vault \u2014 Rare Selection",
+          "valueCents": 12000,
+          "valueUSD": "120.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/pokemon-2.svg"
+        },
+        {
+          "catalogId": "7000000000605",
+          "name": "Legendary Vault \u2014 Collector Bundle",
+          "valueCents": 12000,
+          "valueUSD": "120.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/pokemon-2.svg"
+        },
+        {
+          "catalogId": "7000000000606",
+          "name": "Legendary Vault \u2014 Premium Selection",
+          "valueCents": 30000,
+          "valueUSD": "300.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/pokemon-3.svg"
+        },
+        {
+          "catalogId": "7000000000607",
+          "name": "Legendary Vault \u2014 Showcase Card",
+          "valueCents": 30000,
+          "valueUSD": "300.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/pokemon-3.svg"
+        },
+        {
+          "catalogId": "7000000000608",
+          "name": "Legendary Vault \u2014 Chase Selection",
+          "valueCents": 90000,
+          "valueUSD": "900.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/pokemon-4.svg"
+        },
+        {
+          "catalogId": "7000000000609",
+          "name": "Legendary Vault \u2014 Collector Highlight",
+          "valueCents": 90000,
+          "valueUSD": "900.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/pokemon-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 6000,
+      "image": "/public/packs/pokemon-legendary-vault.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 5400
+    },
+    {
+      "category": "Pokemon",
+      "name": "Charizard Chase",
+      "slug": "pokemon-charizard-chase",
+      "openingPriceUSD": "100.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Charizard collector theme",
+      "items": [
+        {
+          "catalogId": "7000000000700",
+          "name": "Charizard Chase \u2014 Common Card Credit",
+          "valueCents": 2500,
+          "valueUSD": "25.00",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/pokemon-0.svg"
+        },
+        {
+          "catalogId": "7000000000701",
+          "name": "Charizard Chase \u2014 Collector Credit",
+          "valueCents": 2500,
+          "valueUSD": "25.00",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/pokemon-0.svg"
+        },
+        {
+          "catalogId": "7000000000702",
+          "name": "Charizard Chase \u2014 Card Selection",
+          "valueCents": 8000,
+          "valueUSD": "80.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/pokemon-1.svg"
+        },
+        {
+          "catalogId": "7000000000703",
+          "name": "Charizard Chase \u2014 Holo Selection",
+          "valueCents": 8000,
+          "valueUSD": "80.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/pokemon-1.svg"
+        },
+        {
+          "catalogId": "7000000000704",
+          "name": "Charizard Chase \u2014 Rare Selection",
+          "valueCents": 20000,
+          "valueUSD": "200.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/pokemon-2.svg"
+        },
+        {
+          "catalogId": "7000000000705",
+          "name": "Charizard Chase \u2014 Collector Bundle",
+          "valueCents": 20000,
+          "valueUSD": "200.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/pokemon-2.svg"
+        },
+        {
+          "catalogId": "7000000000706",
+          "name": "Charizard Chase \u2014 Premium Selection",
+          "valueCents": 50000,
+          "valueUSD": "500.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/pokemon-3.svg"
+        },
+        {
+          "catalogId": "7000000000707",
+          "name": "Charizard Chase \u2014 Showcase Card",
+          "valueCents": 50000,
+          "valueUSD": "500.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/pokemon-3.svg"
+        },
+        {
+          "catalogId": "7000000000708",
+          "name": "Charizard Chase \u2014 Chase Selection",
+          "valueCents": 150000,
+          "valueUSD": "1500.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/pokemon-4.svg"
+        },
+        {
+          "catalogId": "7000000000709",
+          "name": "Charizard Chase \u2014 Collector Highlight",
+          "valueCents": 150000,
+          "valueUSD": "1500.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/pokemon-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 10000,
+      "image": "/public/packs/pokemon-charizard-chase.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 9000
+    },
+    {
+      "category": "Pokemon",
+      "name": "Trainer Elite",
+      "slug": "pokemon-trainer-elite",
+      "openingPriceUSD": "200.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Premium collector selections",
+      "items": [
+        {
+          "catalogId": "7000000000800",
+          "name": "Trainer Elite \u2014 Common Card Credit",
+          "valueCents": 5000,
+          "valueUSD": "50.00",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/pokemon-0.svg"
+        },
+        {
+          "catalogId": "7000000000801",
+          "name": "Trainer Elite \u2014 Collector Credit",
+          "valueCents": 5000,
+          "valueUSD": "50.00",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/pokemon-0.svg"
+        },
+        {
+          "catalogId": "7000000000802",
+          "name": "Trainer Elite \u2014 Card Selection",
+          "valueCents": 16000,
+          "valueUSD": "160.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/pokemon-1.svg"
+        },
+        {
+          "catalogId": "7000000000803",
+          "name": "Trainer Elite \u2014 Holo Selection",
+          "valueCents": 16000,
+          "valueUSD": "160.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/pokemon-1.svg"
+        },
+        {
+          "catalogId": "7000000000804",
+          "name": "Trainer Elite \u2014 Rare Selection",
+          "valueCents": 40000,
+          "valueUSD": "400.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/pokemon-2.svg"
+        },
+        {
+          "catalogId": "7000000000805",
+          "name": "Trainer Elite \u2014 Collector Bundle",
+          "valueCents": 40000,
+          "valueUSD": "400.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/pokemon-2.svg"
+        },
+        {
+          "catalogId": "7000000000806",
+          "name": "Trainer Elite \u2014 Premium Selection",
+          "valueCents": 100000,
+          "valueUSD": "1000.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/pokemon-3.svg"
+        },
+        {
+          "catalogId": "7000000000807",
+          "name": "Trainer Elite \u2014 Showcase Card",
+          "valueCents": 100000,
+          "valueUSD": "1000.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/pokemon-3.svg"
+        },
+        {
+          "catalogId": "7000000000808",
+          "name": "Trainer Elite \u2014 Chase Selection",
+          "valueCents": 300000,
+          "valueUSD": "3000.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/pokemon-4.svg"
+        },
+        {
+          "catalogId": "7000000000809",
+          "name": "Trainer Elite \u2014 Collector Highlight",
+          "valueCents": 300000,
+          "valueUSD": "3000.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/pokemon-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 20000,
+      "image": "/public/packs/pokemon-trainer-elite.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 18000
+    },
+    {
+      "category": "Pokemon",
+      "name": "Pokemon Master",
+      "slug": "pokemon-pokemon-master",
+      "openingPriceUSD": "500.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Top-tier Pok\u00e9mon collector selections",
+      "items": [
+        {
+          "catalogId": "7000000000900",
+          "name": "Pokemon Master \u2014 Common Card Credit",
+          "valueCents": 12500,
+          "valueUSD": "125.00",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/pokemon-0.svg"
+        },
+        {
+          "catalogId": "7000000000901",
+          "name": "Pokemon Master \u2014 Collector Credit",
+          "valueCents": 12500,
+          "valueUSD": "125.00",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/pokemon-0.svg"
+        },
+        {
+          "catalogId": "7000000000902",
+          "name": "Pokemon Master \u2014 Card Selection",
+          "valueCents": 40000,
+          "valueUSD": "400.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/pokemon-1.svg"
+        },
+        {
+          "catalogId": "7000000000903",
+          "name": "Pokemon Master \u2014 Holo Selection",
+          "valueCents": 40000,
+          "valueUSD": "400.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/pokemon-1.svg"
+        },
+        {
+          "catalogId": "7000000000904",
+          "name": "Pokemon Master \u2014 Rare Selection",
+          "valueCents": 100000,
+          "valueUSD": "1000.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/pokemon-2.svg"
+        },
+        {
+          "catalogId": "7000000000905",
+          "name": "Pokemon Master \u2014 Collector Bundle",
+          "valueCents": 100000,
+          "valueUSD": "1000.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/pokemon-2.svg"
+        },
+        {
+          "catalogId": "7000000000906",
+          "name": "Pokemon Master \u2014 Premium Selection",
+          "valueCents": 250000,
+          "valueUSD": "2500.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/pokemon-3.svg"
+        },
+        {
+          "catalogId": "7000000000907",
+          "name": "Pokemon Master \u2014 Showcase Card",
+          "valueCents": 250000,
+          "valueUSD": "2500.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/pokemon-3.svg"
+        },
+        {
+          "catalogId": "7000000000908",
+          "name": "Pokemon Master \u2014 Chase Selection",
+          "valueCents": 750000,
+          "valueUSD": "7500.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/pokemon-4.svg"
+        },
+        {
+          "catalogId": "7000000000909",
+          "name": "Pokemon Master \u2014 Collector Highlight",
+          "valueCents": 750000,
+          "valueUSD": "7500.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/pokemon-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 50000,
+      "image": "/public/packs/pokemon-pokemon-master.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 45000
+    },
+    {
+      "category": "CSGO",
+      "name": "Eco Round",
+      "slug": "csgo-eco-round",
+      "openingPriceUSD": "1.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Entry-level skin selections",
+      "items": [
+        {
+          "catalogId": "7000000001000",
+          "name": "Eco Round \u2014 Skin Credit",
+          "valueCents": 25,
+          "valueUSD": "0.25",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/csgo-0.svg"
+        },
+        {
+          "catalogId": "7000000001001",
+          "name": "Eco Round \u2014 Loadout Credit",
+          "valueCents": 25,
+          "valueUSD": "0.25",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/csgo-0.svg"
+        },
+        {
+          "catalogId": "7000000001002",
+          "name": "Eco Round \u2014 Entry Skin",
+          "valueCents": 80,
+          "valueUSD": "0.80",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/csgo-1.svg"
+        },
+        {
+          "catalogId": "7000000001003",
+          "name": "Eco Round \u2014 Field Selection",
+          "valueCents": 80,
+          "valueUSD": "0.80",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/csgo-1.svg"
+        },
+        {
+          "catalogId": "7000000001004",
+          "name": "Eco Round \u2014 Featured Skin",
+          "valueCents": 200,
+          "valueUSD": "2.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/csgo-2.svg"
+        },
+        {
+          "catalogId": "7000000001005",
+          "name": "Eco Round \u2014 Upgrade Selection",
+          "valueCents": 200,
+          "valueUSD": "2.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/csgo-2.svg"
+        },
+        {
+          "catalogId": "7000000001006",
+          "name": "Eco Round \u2014 Premium Skin",
+          "valueCents": 500,
+          "valueUSD": "5.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/csgo-3.svg"
+        },
+        {
+          "catalogId": "7000000001007",
+          "name": "Eco Round \u2014 Collector Skin",
+          "valueCents": 500,
+          "valueUSD": "5.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/csgo-3.svg"
+        },
+        {
+          "catalogId": "7000000001008",
+          "name": "Eco Round \u2014 Rare Selection",
+          "valueCents": 1500,
+          "valueUSD": "15.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/csgo-4.svg"
+        },
+        {
+          "catalogId": "7000000001009",
+          "name": "Eco Round \u2014 Chase Drop",
+          "valueCents": 1500,
+          "valueUSD": "15.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/csgo-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 100,
+      "image": "/public/packs/csgo-eco-round.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 90
+    },
+    {
+      "category": "CSGO",
+      "name": "Pistol Round",
+      "slug": "csgo-pistol-round",
+      "openingPriceUSD": "3.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Pistol skins",
+      "items": [
+        {
+          "catalogId": "7000000001100",
+          "name": "Pistol Round \u2014 Skin Credit",
+          "valueCents": 75,
+          "valueUSD": "0.75",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/csgo-0.svg"
+        },
+        {
+          "catalogId": "7000000001101",
+          "name": "Pistol Round \u2014 Loadout Credit",
+          "valueCents": 75,
+          "valueUSD": "0.75",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/csgo-0.svg"
+        },
+        {
+          "catalogId": "7000000001102",
+          "name": "Pistol Round \u2014 Entry Skin",
+          "valueCents": 240,
+          "valueUSD": "2.40",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/csgo-1.svg"
+        },
+        {
+          "catalogId": "7000000001103",
+          "name": "Pistol Round \u2014 Field Selection",
+          "valueCents": 240,
+          "valueUSD": "2.40",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/csgo-1.svg"
+        },
+        {
+          "catalogId": "7000000001104",
+          "name": "Pistol Round \u2014 Featured Skin",
+          "valueCents": 600,
+          "valueUSD": "6.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/csgo-2.svg"
+        },
+        {
+          "catalogId": "7000000001105",
+          "name": "Pistol Round \u2014 Upgrade Selection",
+          "valueCents": 600,
+          "valueUSD": "6.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/csgo-2.svg"
+        },
+        {
+          "catalogId": "7000000001106",
+          "name": "Pistol Round \u2014 Premium Skin",
+          "valueCents": 1500,
+          "valueUSD": "15.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/csgo-3.svg"
+        },
+        {
+          "catalogId": "7000000001107",
+          "name": "Pistol Round \u2014 Collector Skin",
+          "valueCents": 1500,
+          "valueUSD": "15.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/csgo-3.svg"
+        },
+        {
+          "catalogId": "7000000001108",
+          "name": "Pistol Round \u2014 Rare Selection",
+          "valueCents": 4500,
+          "valueUSD": "45.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/csgo-4.svg"
+        },
+        {
+          "catalogId": "7000000001109",
+          "name": "Pistol Round \u2014 Chase Drop",
+          "valueCents": 4500,
+          "valueUSD": "45.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/csgo-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 300,
+      "image": "/public/packs/csgo-pistol-round.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 270
+    },
+    {
+      "category": "CSGO",
+      "name": "Mil-Spec",
+      "slug": "csgo-mil-spec",
+      "openingPriceUSD": "5.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Mil-Spec skin selections",
+      "items": [
+        {
+          "catalogId": "7000000001200",
+          "name": "Mil-Spec \u2014 Skin Credit",
+          "valueCents": 125,
+          "valueUSD": "1.25",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/csgo-0.svg"
+        },
+        {
+          "catalogId": "7000000001201",
+          "name": "Mil-Spec \u2014 Loadout Credit",
+          "valueCents": 125,
+          "valueUSD": "1.25",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/csgo-0.svg"
+        },
+        {
+          "catalogId": "7000000001202",
+          "name": "Mil-Spec \u2014 Entry Skin",
+          "valueCents": 400,
+          "valueUSD": "4.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/csgo-1.svg"
+        },
+        {
+          "catalogId": "7000000001203",
+          "name": "Mil-Spec \u2014 Field Selection",
+          "valueCents": 400,
+          "valueUSD": "4.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/csgo-1.svg"
+        },
+        {
+          "catalogId": "7000000001204",
+          "name": "Mil-Spec \u2014 Featured Skin",
+          "valueCents": 1000,
+          "valueUSD": "10.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/csgo-2.svg"
+        },
+        {
+          "catalogId": "7000000001205",
+          "name": "Mil-Spec \u2014 Upgrade Selection",
+          "valueCents": 1000,
+          "valueUSD": "10.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/csgo-2.svg"
+        },
+        {
+          "catalogId": "7000000001206",
+          "name": "Mil-Spec \u2014 Premium Skin",
+          "valueCents": 2500,
+          "valueUSD": "25.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/csgo-3.svg"
+        },
+        {
+          "catalogId": "7000000001207",
+          "name": "Mil-Spec \u2014 Collector Skin",
+          "valueCents": 2500,
+          "valueUSD": "25.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/csgo-3.svg"
+        },
+        {
+          "catalogId": "7000000001208",
+          "name": "Mil-Spec \u2014 Rare Selection",
+          "valueCents": 7500,
+          "valueUSD": "75.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/csgo-4.svg"
+        },
+        {
+          "catalogId": "7000000001209",
+          "name": "Mil-Spec \u2014 Chase Drop",
+          "valueCents": 7500,
+          "valueUSD": "75.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/csgo-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 500,
+      "image": "/public/packs/csgo-mil-spec.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 450
+    },
+    {
+      "category": "CSGO",
+      "name": "Rifle Rush",
+      "slug": "csgo-rifle-rush",
+      "openingPriceUSD": "12.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Rifle skins",
+      "items": [
+        {
+          "catalogId": "7000000001300",
+          "name": "Rifle Rush \u2014 Skin Credit",
+          "valueCents": 300,
+          "valueUSD": "3.00",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/csgo-0.svg"
+        },
+        {
+          "catalogId": "7000000001301",
+          "name": "Rifle Rush \u2014 Loadout Credit",
+          "valueCents": 300,
+          "valueUSD": "3.00",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/csgo-0.svg"
+        },
+        {
+          "catalogId": "7000000001302",
+          "name": "Rifle Rush \u2014 Entry Skin",
+          "valueCents": 960,
+          "valueUSD": "9.60",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/csgo-1.svg"
+        },
+        {
+          "catalogId": "7000000001303",
+          "name": "Rifle Rush \u2014 Field Selection",
+          "valueCents": 960,
+          "valueUSD": "9.60",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/csgo-1.svg"
+        },
+        {
+          "catalogId": "7000000001304",
+          "name": "Rifle Rush \u2014 Featured Skin",
+          "valueCents": 2400,
+          "valueUSD": "24.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/csgo-2.svg"
+        },
+        {
+          "catalogId": "7000000001305",
+          "name": "Rifle Rush \u2014 Upgrade Selection",
+          "valueCents": 2400,
+          "valueUSD": "24.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/csgo-2.svg"
+        },
+        {
+          "catalogId": "7000000001306",
+          "name": "Rifle Rush \u2014 Premium Skin",
+          "valueCents": 6000,
+          "valueUSD": "60.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/csgo-3.svg"
+        },
+        {
+          "catalogId": "7000000001307",
+          "name": "Rifle Rush \u2014 Collector Skin",
+          "valueCents": 6000,
+          "valueUSD": "60.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/csgo-3.svg"
+        },
+        {
+          "catalogId": "7000000001308",
+          "name": "Rifle Rush \u2014 Rare Selection",
+          "valueCents": 18000,
+          "valueUSD": "180.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/csgo-4.svg"
+        },
+        {
+          "catalogId": "7000000001309",
+          "name": "Rifle Rush \u2014 Chase Drop",
+          "valueCents": 18000,
+          "valueUSD": "180.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/csgo-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 1200,
+      "image": "/public/packs/csgo-rifle-rush.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 1080
+    },
+    {
+      "category": "CSGO",
+      "name": "AWP Focus",
+      "slug": "csgo-awp-focus",
+      "openingPriceUSD": "25.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "AWP skins",
+      "items": [
+        {
+          "catalogId": "7000000001400",
+          "name": "AWP Focus \u2014 Skin Credit",
+          "valueCents": 625,
+          "valueUSD": "6.25",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/csgo-0.svg"
+        },
+        {
+          "catalogId": "7000000001401",
+          "name": "AWP Focus \u2014 Loadout Credit",
+          "valueCents": 625,
+          "valueUSD": "6.25",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/csgo-0.svg"
+        },
+        {
+          "catalogId": "7000000001402",
+          "name": "AWP Focus \u2014 Entry Skin",
+          "valueCents": 2000,
+          "valueUSD": "20.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/csgo-1.svg"
+        },
+        {
+          "catalogId": "7000000001403",
+          "name": "AWP Focus \u2014 Field Selection",
+          "valueCents": 2000,
+          "valueUSD": "20.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/csgo-1.svg"
+        },
+        {
+          "catalogId": "7000000001404",
+          "name": "AWP Focus \u2014 Featured Skin",
+          "valueCents": 5000,
+          "valueUSD": "50.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/csgo-2.svg"
+        },
+        {
+          "catalogId": "7000000001405",
+          "name": "AWP Focus \u2014 Upgrade Selection",
+          "valueCents": 5000,
+          "valueUSD": "50.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/csgo-2.svg"
+        },
+        {
+          "catalogId": "7000000001406",
+          "name": "AWP Focus \u2014 Premium Skin",
+          "valueCents": 12500,
+          "valueUSD": "125.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/csgo-3.svg"
+        },
+        {
+          "catalogId": "7000000001407",
+          "name": "AWP Focus \u2014 Collector Skin",
+          "valueCents": 12500,
+          "valueUSD": "125.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/csgo-3.svg"
+        },
+        {
+          "catalogId": "7000000001408",
+          "name": "AWP Focus \u2014 Rare Selection",
+          "valueCents": 37500,
+          "valueUSD": "375.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/csgo-4.svg"
+        },
+        {
+          "catalogId": "7000000001409",
+          "name": "AWP Focus \u2014 Chase Drop",
+          "valueCents": 37500,
+          "valueUSD": "375.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/csgo-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 2500,
+      "image": "/public/packs/csgo-awp-focus.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 2250
+    },
+    {
+      "category": "CSGO",
+      "name": "Covert Collection",
+      "slug": "csgo-covert-collection",
+      "openingPriceUSD": "50.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Covert skin theme",
+      "items": [
+        {
+          "catalogId": "7000000001500",
+          "name": "Covert Collection \u2014 Skin Credit",
+          "valueCents": 1250,
+          "valueUSD": "12.50",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/csgo-0.svg"
+        },
+        {
+          "catalogId": "7000000001501",
+          "name": "Covert Collection \u2014 Loadout Credit",
+          "valueCents": 1250,
+          "valueUSD": "12.50",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/csgo-0.svg"
+        },
+        {
+          "catalogId": "7000000001502",
+          "name": "Covert Collection \u2014 Entry Skin",
+          "valueCents": 4000,
+          "valueUSD": "40.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/csgo-1.svg"
+        },
+        {
+          "catalogId": "7000000001503",
+          "name": "Covert Collection \u2014 Field Selection",
+          "valueCents": 4000,
+          "valueUSD": "40.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/csgo-1.svg"
+        },
+        {
+          "catalogId": "7000000001504",
+          "name": "Covert Collection \u2014 Featured Skin",
+          "valueCents": 10000,
+          "valueUSD": "100.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/csgo-2.svg"
+        },
+        {
+          "catalogId": "7000000001505",
+          "name": "Covert Collection \u2014 Upgrade Selection",
+          "valueCents": 10000,
+          "valueUSD": "100.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/csgo-2.svg"
+        },
+        {
+          "catalogId": "7000000001506",
+          "name": "Covert Collection \u2014 Premium Skin",
+          "valueCents": 25000,
+          "valueUSD": "250.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/csgo-3.svg"
+        },
+        {
+          "catalogId": "7000000001507",
+          "name": "Covert Collection \u2014 Collector Skin",
+          "valueCents": 25000,
+          "valueUSD": "250.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/csgo-3.svg"
+        },
+        {
+          "catalogId": "7000000001508",
+          "name": "Covert Collection \u2014 Rare Selection",
+          "valueCents": 75000,
+          "valueUSD": "750.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/csgo-4.svg"
+        },
+        {
+          "catalogId": "7000000001509",
+          "name": "Covert Collection \u2014 Chase Drop",
+          "valueCents": 75000,
+          "valueUSD": "750.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/csgo-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 5000,
+      "image": "/public/packs/csgo-covert-collection.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 4500
+    },
+    {
+      "category": "CSGO",
+      "name": "Neon Loadout",
+      "slug": "csgo-neon-loadout",
+      "openingPriceUSD": "75.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Brightly patterned skins",
+      "items": [
+        {
+          "catalogId": "7000000001600",
+          "name": "Neon Loadout \u2014 Skin Credit",
+          "valueCents": 1875,
+          "valueUSD": "18.75",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/csgo-0.svg"
+        },
+        {
+          "catalogId": "7000000001601",
+          "name": "Neon Loadout \u2014 Loadout Credit",
+          "valueCents": 1875,
+          "valueUSD": "18.75",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/csgo-0.svg"
+        },
+        {
+          "catalogId": "7000000001602",
+          "name": "Neon Loadout \u2014 Entry Skin",
+          "valueCents": 6000,
+          "valueUSD": "60.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/csgo-1.svg"
+        },
+        {
+          "catalogId": "7000000001603",
+          "name": "Neon Loadout \u2014 Field Selection",
+          "valueCents": 6000,
+          "valueUSD": "60.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/csgo-1.svg"
+        },
+        {
+          "catalogId": "7000000001604",
+          "name": "Neon Loadout \u2014 Featured Skin",
+          "valueCents": 15000,
+          "valueUSD": "150.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/csgo-2.svg"
+        },
+        {
+          "catalogId": "7000000001605",
+          "name": "Neon Loadout \u2014 Upgrade Selection",
+          "valueCents": 15000,
+          "valueUSD": "150.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/csgo-2.svg"
+        },
+        {
+          "catalogId": "7000000001606",
+          "name": "Neon Loadout \u2014 Premium Skin",
+          "valueCents": 37500,
+          "valueUSD": "375.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/csgo-3.svg"
+        },
+        {
+          "catalogId": "7000000001607",
+          "name": "Neon Loadout \u2014 Collector Skin",
+          "valueCents": 37500,
+          "valueUSD": "375.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/csgo-3.svg"
+        },
+        {
+          "catalogId": "7000000001608",
+          "name": "Neon Loadout \u2014 Rare Selection",
+          "valueCents": 112500,
+          "valueUSD": "1125.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/csgo-4.svg"
+        },
+        {
+          "catalogId": "7000000001609",
+          "name": "Neon Loadout \u2014 Chase Drop",
+          "valueCents": 112500,
+          "valueUSD": "1125.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/csgo-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 7500,
+      "image": "/public/packs/csgo-neon-loadout.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 6750
+    },
+    {
+      "category": "CSGO",
+      "name": "Knife Hunt",
+      "slug": "csgo-knife-hunt",
+      "openingPriceUSD": "125.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Knife-focused selections",
+      "items": [
+        {
+          "catalogId": "7000000001700",
+          "name": "Knife Hunt \u2014 Skin Credit",
+          "valueCents": 3125,
+          "valueUSD": "31.25",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/csgo-0.svg"
+        },
+        {
+          "catalogId": "7000000001701",
+          "name": "Knife Hunt \u2014 Loadout Credit",
+          "valueCents": 3125,
+          "valueUSD": "31.25",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/csgo-0.svg"
+        },
+        {
+          "catalogId": "7000000001702",
+          "name": "Knife Hunt \u2014 Entry Skin",
+          "valueCents": 10000,
+          "valueUSD": "100.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/csgo-1.svg"
+        },
+        {
+          "catalogId": "7000000001703",
+          "name": "Knife Hunt \u2014 Field Selection",
+          "valueCents": 10000,
+          "valueUSD": "100.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/csgo-1.svg"
+        },
+        {
+          "catalogId": "7000000001704",
+          "name": "Knife Hunt \u2014 Featured Skin",
+          "valueCents": 25000,
+          "valueUSD": "250.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/csgo-2.svg"
+        },
+        {
+          "catalogId": "7000000001705",
+          "name": "Knife Hunt \u2014 Upgrade Selection",
+          "valueCents": 25000,
+          "valueUSD": "250.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/csgo-2.svg"
+        },
+        {
+          "catalogId": "7000000001706",
+          "name": "Knife Hunt \u2014 Premium Skin",
+          "valueCents": 62500,
+          "valueUSD": "625.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/csgo-3.svg"
+        },
+        {
+          "catalogId": "7000000001707",
+          "name": "Knife Hunt \u2014 Collector Skin",
+          "valueCents": 62500,
+          "valueUSD": "625.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/csgo-3.svg"
+        },
+        {
+          "catalogId": "7000000001708",
+          "name": "Knife Hunt \u2014 Rare Selection",
+          "valueCents": 187500,
+          "valueUSD": "1875.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/csgo-4.svg"
+        },
+        {
+          "catalogId": "7000000001709",
+          "name": "Knife Hunt \u2014 Chase Drop",
+          "valueCents": 187500,
+          "valueUSD": "1875.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/csgo-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 12500,
+      "image": "/public/packs/csgo-knife-hunt.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 11250
+    },
+    {
+      "category": "CSGO",
+      "name": "Gloves Elite",
+      "slug": "csgo-gloves-elite",
+      "openingPriceUSD": "250.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Glove-focused selections",
+      "items": [
+        {
+          "catalogId": "7000000001800",
+          "name": "Gloves Elite \u2014 Skin Credit",
+          "valueCents": 6250,
+          "valueUSD": "62.50",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/csgo-0.svg"
+        },
+        {
+          "catalogId": "7000000001801",
+          "name": "Gloves Elite \u2014 Loadout Credit",
+          "valueCents": 6250,
+          "valueUSD": "62.50",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/csgo-0.svg"
+        },
+        {
+          "catalogId": "7000000001802",
+          "name": "Gloves Elite \u2014 Entry Skin",
+          "valueCents": 20000,
+          "valueUSD": "200.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/csgo-1.svg"
+        },
+        {
+          "catalogId": "7000000001803",
+          "name": "Gloves Elite \u2014 Field Selection",
+          "valueCents": 20000,
+          "valueUSD": "200.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/csgo-1.svg"
+        },
+        {
+          "catalogId": "7000000001804",
+          "name": "Gloves Elite \u2014 Featured Skin",
+          "valueCents": 50000,
+          "valueUSD": "500.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/csgo-2.svg"
+        },
+        {
+          "catalogId": "7000000001805",
+          "name": "Gloves Elite \u2014 Upgrade Selection",
+          "valueCents": 50000,
+          "valueUSD": "500.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/csgo-2.svg"
+        },
+        {
+          "catalogId": "7000000001806",
+          "name": "Gloves Elite \u2014 Premium Skin",
+          "valueCents": 125000,
+          "valueUSD": "1250.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/csgo-3.svg"
+        },
+        {
+          "catalogId": "7000000001807",
+          "name": "Gloves Elite \u2014 Collector Skin",
+          "valueCents": 125000,
+          "valueUSD": "1250.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/csgo-3.svg"
+        },
+        {
+          "catalogId": "7000000001808",
+          "name": "Gloves Elite \u2014 Rare Selection",
+          "valueCents": 375000,
+          "valueUSD": "3750.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/csgo-4.svg"
+        },
+        {
+          "catalogId": "7000000001809",
+          "name": "Gloves Elite \u2014 Chase Drop",
+          "valueCents": 375000,
+          "valueUSD": "3750.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/csgo-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 25000,
+      "image": "/public/packs/csgo-gloves-elite.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 22500
+    },
+    {
+      "category": "CSGO",
+      "name": "Dragon Lore",
+      "slug": "csgo-dragon-lore",
+      "openingPriceUSD": "500.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Premium AWP-focused selection",
+      "items": [
+        {
+          "catalogId": "7000000001900",
+          "name": "Dragon Lore \u2014 Skin Credit",
+          "valueCents": 12500,
+          "valueUSD": "125.00",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/csgo-0.svg"
+        },
+        {
+          "catalogId": "7000000001901",
+          "name": "Dragon Lore \u2014 Loadout Credit",
+          "valueCents": 12500,
+          "valueUSD": "125.00",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/csgo-0.svg"
+        },
+        {
+          "catalogId": "7000000001902",
+          "name": "Dragon Lore \u2014 Entry Skin",
+          "valueCents": 40000,
+          "valueUSD": "400.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/csgo-1.svg"
+        },
+        {
+          "catalogId": "7000000001903",
+          "name": "Dragon Lore \u2014 Field Selection",
+          "valueCents": 40000,
+          "valueUSD": "400.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/csgo-1.svg"
+        },
+        {
+          "catalogId": "7000000001904",
+          "name": "Dragon Lore \u2014 Featured Skin",
+          "valueCents": 100000,
+          "valueUSD": "1000.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/csgo-2.svg"
+        },
+        {
+          "catalogId": "7000000001905",
+          "name": "Dragon Lore \u2014 Upgrade Selection",
+          "valueCents": 100000,
+          "valueUSD": "1000.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/csgo-2.svg"
+        },
+        {
+          "catalogId": "7000000001906",
+          "name": "Dragon Lore \u2014 Premium Skin",
+          "valueCents": 250000,
+          "valueUSD": "2500.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/csgo-3.svg"
+        },
+        {
+          "catalogId": "7000000001907",
+          "name": "Dragon Lore \u2014 Collector Skin",
+          "valueCents": 250000,
+          "valueUSD": "2500.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/csgo-3.svg"
+        },
+        {
+          "catalogId": "7000000001908",
+          "name": "Dragon Lore \u2014 Rare Selection",
+          "valueCents": 750000,
+          "valueUSD": "7500.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/csgo-4.svg"
+        },
+        {
+          "catalogId": "7000000001909",
+          "name": "Dragon Lore \u2014 Chase Drop",
+          "valueCents": 750000,
+          "valueUSD": "7500.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/csgo-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 50000,
+      "image": "/public/packs/csgo-dragon-lore.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 45000
+    },
+    {
+      "category": "IRL",
+      "name": "Apple",
+      "slug": "irl-apple",
+      "openingPriceUSD": "25.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Apple phones, earbuds, watches and accessories",
+      "items": [
+        {
+          "catalogId": "7000000002000",
+          "name": "Apple \u2014 Accessory Credit",
+          "valueCents": 625,
+          "valueUSD": "6.25",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000002001",
+          "name": "Apple \u2014 Charging Credit",
+          "valueCents": 625,
+          "valueUSD": "6.25",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000002002",
+          "name": "Apple \u2014 Cable Selection",
+          "valueCents": 2000,
+          "valueUSD": "20.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000002003",
+          "name": "Apple \u2014 Accessory Bundle",
+          "valueCents": 2000,
+          "valueUSD": "20.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000002004",
+          "name": "Apple \u2014 Charger Selection",
+          "valueCents": 5000,
+          "valueUSD": "50.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000002005",
+          "name": "Apple \u2014 Travel Bundle",
+          "valueCents": 5000,
+          "valueUSD": "50.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000002006",
+          "name": "Apple \u2014 AirPods Selection",
+          "valueCents": 12500,
+          "valueUSD": "125.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000002007",
+          "name": "Apple \u2014 Watch Selection",
+          "valueCents": 12500,
+          "valueUSD": "125.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000002008",
+          "name": "Apple \u2014 iPhone Selection",
+          "valueCents": 37500,
+          "valueUSD": "375.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/irl-4.svg"
+        },
+        {
+          "catalogId": "7000000002009",
+          "name": "Apple \u2014 MacBook Selection",
+          "valueCents": 37500,
+          "valueUSD": "375.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/irl-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 2500,
+      "image": "/public/packs/irl-apple.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 2250
+    },
+    {
+      "category": "IRL",
+      "name": "Samsung",
+      "slug": "irl-samsung",
+      "openingPriceUSD": "20.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Samsung phones, earbuds and accessories",
+      "items": [
+        {
+          "catalogId": "7000000002100",
+          "name": "Samsung \u2014 Accessory Credit",
+          "valueCents": 500,
+          "valueUSD": "5.00",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000002101",
+          "name": "Samsung \u2014 Gear Credit",
+          "valueCents": 500,
+          "valueUSD": "5.00",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000002102",
+          "name": "Samsung \u2014 Entry Selection",
+          "valueCents": 1600,
+          "valueUSD": "16.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000002103",
+          "name": "Samsung \u2014 Accessories",
+          "valueCents": 1600,
+          "valueUSD": "16.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000002104",
+          "name": "Samsung \u2014 Featured Selection",
+          "valueCents": 4000,
+          "valueUSD": "40.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000002105",
+          "name": "Samsung \u2014 Gear Bundle",
+          "valueCents": 4000,
+          "valueUSD": "40.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000002106",
+          "name": "Samsung \u2014 Premium Selection",
+          "valueCents": 10000,
+          "valueUSD": "100.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000002107",
+          "name": "Samsung \u2014 Collector Selection",
+          "valueCents": 10000,
+          "valueUSD": "100.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000002108",
+          "name": "Samsung \u2014 Rare Selection",
+          "valueCents": 30000,
+          "valueUSD": "300.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/irl-4.svg"
+        },
+        {
+          "catalogId": "7000000002109",
+          "name": "Samsung \u2014 Chase Drop",
+          "valueCents": 30000,
+          "valueUSD": "300.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/irl-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 2000,
+      "image": "/public/packs/irl-samsung.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 1800
+    },
+    {
+      "category": "IRL",
+      "name": "PlayStation",
+      "slug": "irl-playstation",
+      "openingPriceUSD": "20.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "PlayStation consoles, controllers and accessories",
+      "items": [
+        {
+          "catalogId": "7000000002200",
+          "name": "PlayStation \u2014 Accessory Credit",
+          "valueCents": 500,
+          "valueUSD": "5.00",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000002201",
+          "name": "PlayStation \u2014 Gear Credit",
+          "valueCents": 500,
+          "valueUSD": "5.00",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000002202",
+          "name": "PlayStation \u2014 Entry Selection",
+          "valueCents": 1600,
+          "valueUSD": "16.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000002203",
+          "name": "PlayStation \u2014 Accessories",
+          "valueCents": 1600,
+          "valueUSD": "16.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000002204",
+          "name": "PlayStation \u2014 Featured Selection",
+          "valueCents": 4000,
+          "valueUSD": "40.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000002205",
+          "name": "PlayStation \u2014 Gear Bundle",
+          "valueCents": 4000,
+          "valueUSD": "40.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000002206",
+          "name": "PlayStation \u2014 Premium Selection",
+          "valueCents": 10000,
+          "valueUSD": "100.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000002207",
+          "name": "PlayStation \u2014 Collector Selection",
+          "valueCents": 10000,
+          "valueUSD": "100.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000002208",
+          "name": "PlayStation \u2014 Rare Selection",
+          "valueCents": 30000,
+          "valueUSD": "300.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/irl-4.svg"
+        },
+        {
+          "catalogId": "7000000002209",
+          "name": "PlayStation \u2014 Chase Drop",
+          "valueCents": 30000,
+          "valueUSD": "300.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/irl-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 2000,
+      "image": "/public/packs/irl-playstation.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 1800
+    },
+    {
+      "category": "IRL",
+      "name": "Xbox",
+      "slug": "irl-xbox",
+      "openingPriceUSD": "15.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Xbox consoles, controllers and accessories",
+      "items": [
+        {
+          "catalogId": "7000000002300",
+          "name": "Xbox \u2014 Accessory Credit",
+          "valueCents": 375,
+          "valueUSD": "3.75",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000002301",
+          "name": "Xbox \u2014 Gear Credit",
+          "valueCents": 375,
+          "valueUSD": "3.75",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000002302",
+          "name": "Xbox \u2014 Entry Selection",
+          "valueCents": 1200,
+          "valueUSD": "12.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000002303",
+          "name": "Xbox \u2014 Accessories",
+          "valueCents": 1200,
+          "valueUSD": "12.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000002304",
+          "name": "Xbox \u2014 Featured Selection",
+          "valueCents": 3000,
+          "valueUSD": "30.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000002305",
+          "name": "Xbox \u2014 Gear Bundle",
+          "valueCents": 3000,
+          "valueUSD": "30.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000002306",
+          "name": "Xbox \u2014 Premium Selection",
+          "valueCents": 7500,
+          "valueUSD": "75.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000002307",
+          "name": "Xbox \u2014 Collector Selection",
+          "valueCents": 7500,
+          "valueUSD": "75.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000002308",
+          "name": "Xbox \u2014 Rare Selection",
+          "valueCents": 22500,
+          "valueUSD": "225.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/irl-4.svg"
+        },
+        {
+          "catalogId": "7000000002309",
+          "name": "Xbox \u2014 Chase Drop",
+          "valueCents": 22500,
+          "valueUSD": "225.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/irl-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 1500,
+      "image": "/public/packs/irl-xbox.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 1350
+    },
+    {
+      "category": "IRL",
+      "name": "Nintendo",
+      "slug": "irl-nintendo",
+      "openingPriceUSD": "12.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Nintendo hardware and accessories",
+      "items": [
+        {
+          "catalogId": "7000000002400",
+          "name": "Nintendo \u2014 Accessory Credit",
+          "valueCents": 300,
+          "valueUSD": "3.00",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000002401",
+          "name": "Nintendo \u2014 Gear Credit",
+          "valueCents": 300,
+          "valueUSD": "3.00",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000002402",
+          "name": "Nintendo \u2014 Entry Selection",
+          "valueCents": 960,
+          "valueUSD": "9.60",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000002403",
+          "name": "Nintendo \u2014 Accessories",
+          "valueCents": 960,
+          "valueUSD": "9.60",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000002404",
+          "name": "Nintendo \u2014 Featured Selection",
+          "valueCents": 2400,
+          "valueUSD": "24.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000002405",
+          "name": "Nintendo \u2014 Gear Bundle",
+          "valueCents": 2400,
+          "valueUSD": "24.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000002406",
+          "name": "Nintendo \u2014 Premium Selection",
+          "valueCents": 6000,
+          "valueUSD": "60.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000002407",
+          "name": "Nintendo \u2014 Collector Selection",
+          "valueCents": 6000,
+          "valueUSD": "60.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000002408",
+          "name": "Nintendo \u2014 Rare Selection",
+          "valueCents": 18000,
+          "valueUSD": "180.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/irl-4.svg"
+        },
+        {
+          "catalogId": "7000000002409",
+          "name": "Nintendo \u2014 Chase Drop",
+          "valueCents": 18000,
+          "valueUSD": "180.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/irl-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 1200,
+      "image": "/public/packs/irl-nintendo.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 1080
+    },
+    {
+      "category": "IRL",
+      "name": "Gaming PC",
+      "slug": "irl-gaming-pc",
+      "openingPriceUSD": "100.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "PC gaming hardware and peripherals",
+      "items": [
+        {
+          "catalogId": "7000000002500",
+          "name": "Gaming PC \u2014 Accessory Credit",
+          "valueCents": 2500,
+          "valueUSD": "25.00",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000002501",
+          "name": "Gaming PC \u2014 Gear Credit",
+          "valueCents": 2500,
+          "valueUSD": "25.00",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000002502",
+          "name": "Gaming PC \u2014 Entry Selection",
+          "valueCents": 8000,
+          "valueUSD": "80.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000002503",
+          "name": "Gaming PC \u2014 Accessories",
+          "valueCents": 8000,
+          "valueUSD": "80.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000002504",
+          "name": "Gaming PC \u2014 Featured Selection",
+          "valueCents": 20000,
+          "valueUSD": "200.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000002505",
+          "name": "Gaming PC \u2014 Gear Bundle",
+          "valueCents": 20000,
+          "valueUSD": "200.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000002506",
+          "name": "Gaming PC \u2014 Premium Selection",
+          "valueCents": 50000,
+          "valueUSD": "500.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000002507",
+          "name": "Gaming PC \u2014 Collector Selection",
+          "valueCents": 50000,
+          "valueUSD": "500.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000002508",
+          "name": "Gaming PC \u2014 Rare Selection",
+          "valueCents": 150000,
+          "valueUSD": "1500.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/irl-4.svg"
+        },
+        {
+          "catalogId": "7000000002509",
+          "name": "Gaming PC \u2014 Chase Drop",
+          "valueCents": 150000,
+          "valueUSD": "1500.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/irl-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 10000,
+      "image": "/public/packs/irl-gaming-pc.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 9000
+    },
+    {
+      "category": "IRL",
+      "name": "RTX Upgrade",
+      "slug": "irl-rtx-upgrade",
+      "openingPriceUSD": "250.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Graphics cards and PC components",
+      "items": [
+        {
+          "catalogId": "7000000002600",
+          "name": "RTX Upgrade \u2014 Accessory Credit",
+          "valueCents": 6250,
+          "valueUSD": "62.50",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000002601",
+          "name": "RTX Upgrade \u2014 Gear Credit",
+          "valueCents": 6250,
+          "valueUSD": "62.50",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000002602",
+          "name": "RTX Upgrade \u2014 Entry Selection",
+          "valueCents": 20000,
+          "valueUSD": "200.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000002603",
+          "name": "RTX Upgrade \u2014 Accessories",
+          "valueCents": 20000,
+          "valueUSD": "200.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000002604",
+          "name": "RTX Upgrade \u2014 Featured Selection",
+          "valueCents": 50000,
+          "valueUSD": "500.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000002605",
+          "name": "RTX Upgrade \u2014 Gear Bundle",
+          "valueCents": 50000,
+          "valueUSD": "500.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000002606",
+          "name": "RTX Upgrade \u2014 Premium Selection",
+          "valueCents": 125000,
+          "valueUSD": "1250.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000002607",
+          "name": "RTX Upgrade \u2014 Collector Selection",
+          "valueCents": 125000,
+          "valueUSD": "1250.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000002608",
+          "name": "RTX Upgrade \u2014 Rare Selection",
+          "valueCents": 375000,
+          "valueUSD": "3750.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/irl-4.svg"
+        },
+        {
+          "catalogId": "7000000002609",
+          "name": "RTX Upgrade \u2014 Chase Drop",
+          "valueCents": 375000,
+          "valueUSD": "3750.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/irl-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 25000,
+      "image": "/public/packs/irl-rtx-upgrade.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 22500
+    },
+    {
+      "category": "IRL",
+      "name": "Razer",
+      "slug": "irl-razer",
+      "openingPriceUSD": "10.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Razer gaming peripherals",
+      "items": [
+        {
+          "catalogId": "7000000002700",
+          "name": "Razer \u2014 Accessory Credit",
+          "valueCents": 250,
+          "valueUSD": "2.50",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000002701",
+          "name": "Razer \u2014 Gear Credit",
+          "valueCents": 250,
+          "valueUSD": "2.50",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000002702",
+          "name": "Razer \u2014 Entry Selection",
+          "valueCents": 800,
+          "valueUSD": "8.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000002703",
+          "name": "Razer \u2014 Accessories",
+          "valueCents": 800,
+          "valueUSD": "8.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000002704",
+          "name": "Razer \u2014 Featured Selection",
+          "valueCents": 2000,
+          "valueUSD": "20.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000002705",
+          "name": "Razer \u2014 Gear Bundle",
+          "valueCents": 2000,
+          "valueUSD": "20.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000002706",
+          "name": "Razer \u2014 Premium Selection",
+          "valueCents": 5000,
+          "valueUSD": "50.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000002707",
+          "name": "Razer \u2014 Collector Selection",
+          "valueCents": 5000,
+          "valueUSD": "50.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000002708",
+          "name": "Razer \u2014 Rare Selection",
+          "valueCents": 15000,
+          "valueUSD": "150.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/irl-4.svg"
+        },
+        {
+          "catalogId": "7000000002709",
+          "name": "Razer \u2014 Chase Drop",
+          "valueCents": 15000,
+          "valueUSD": "150.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/irl-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 1000,
+      "image": "/public/packs/irl-razer.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 900
+    },
+    {
+      "category": "IRL",
+      "name": "Logitech",
+      "slug": "irl-logitech",
+      "openingPriceUSD": "8.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Logitech mice, keyboards and accessories",
+      "items": [
+        {
+          "catalogId": "7000000002800",
+          "name": "Logitech \u2014 Accessory Credit",
+          "valueCents": 200,
+          "valueUSD": "2.00",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000002801",
+          "name": "Logitech \u2014 Gear Credit",
+          "valueCents": 200,
+          "valueUSD": "2.00",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000002802",
+          "name": "Logitech \u2014 Entry Selection",
+          "valueCents": 640,
+          "valueUSD": "6.40",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000002803",
+          "name": "Logitech \u2014 Accessories",
+          "valueCents": 640,
+          "valueUSD": "6.40",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000002804",
+          "name": "Logitech \u2014 Featured Selection",
+          "valueCents": 1600,
+          "valueUSD": "16.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000002805",
+          "name": "Logitech \u2014 Gear Bundle",
+          "valueCents": 1600,
+          "valueUSD": "16.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000002806",
+          "name": "Logitech \u2014 Premium Selection",
+          "valueCents": 4000,
+          "valueUSD": "40.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000002807",
+          "name": "Logitech \u2014 Collector Selection",
+          "valueCents": 4000,
+          "valueUSD": "40.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000002808",
+          "name": "Logitech \u2014 Rare Selection",
+          "valueCents": 12000,
+          "valueUSD": "120.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/irl-4.svg"
+        },
+        {
+          "catalogId": "7000000002809",
+          "name": "Logitech \u2014 Chase Drop",
+          "valueCents": 12000,
+          "valueUSD": "120.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/irl-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 800,
+      "image": "/public/packs/irl-logitech.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 720
+    },
+    {
+      "category": "IRL",
+      "name": "Corsair",
+      "slug": "irl-corsair",
+      "openingPriceUSD": "15.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Corsair peripherals and PC accessories",
+      "items": [
+        {
+          "catalogId": "7000000002900",
+          "name": "Corsair \u2014 Accessory Credit",
+          "valueCents": 375,
+          "valueUSD": "3.75",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000002901",
+          "name": "Corsair \u2014 Gear Credit",
+          "valueCents": 375,
+          "valueUSD": "3.75",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000002902",
+          "name": "Corsair \u2014 Entry Selection",
+          "valueCents": 1200,
+          "valueUSD": "12.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000002903",
+          "name": "Corsair \u2014 Accessories",
+          "valueCents": 1200,
+          "valueUSD": "12.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000002904",
+          "name": "Corsair \u2014 Featured Selection",
+          "valueCents": 3000,
+          "valueUSD": "30.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000002905",
+          "name": "Corsair \u2014 Gear Bundle",
+          "valueCents": 3000,
+          "valueUSD": "30.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000002906",
+          "name": "Corsair \u2014 Premium Selection",
+          "valueCents": 7500,
+          "valueUSD": "75.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000002907",
+          "name": "Corsair \u2014 Collector Selection",
+          "valueCents": 7500,
+          "valueUSD": "75.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000002908",
+          "name": "Corsair \u2014 Rare Selection",
+          "valueCents": 22500,
+          "valueUSD": "225.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/irl-4.svg"
+        },
+        {
+          "catalogId": "7000000002909",
+          "name": "Corsair \u2014 Chase Drop",
+          "valueCents": 22500,
+          "valueUSD": "225.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/irl-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 1500,
+      "image": "/public/packs/irl-corsair.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 1350
+    },
+    {
+      "category": "IRL",
+      "name": "SteelSeries",
+      "slug": "irl-steelseries",
+      "openingPriceUSD": "12.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "SteelSeries headsets and peripherals",
+      "items": [
+        {
+          "catalogId": "7000000003000",
+          "name": "SteelSeries \u2014 Accessory Credit",
+          "valueCents": 300,
+          "valueUSD": "3.00",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000003001",
+          "name": "SteelSeries \u2014 Gear Credit",
+          "valueCents": 300,
+          "valueUSD": "3.00",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000003002",
+          "name": "SteelSeries \u2014 Entry Selection",
+          "valueCents": 960,
+          "valueUSD": "9.60",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000003003",
+          "name": "SteelSeries \u2014 Accessories",
+          "valueCents": 960,
+          "valueUSD": "9.60",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000003004",
+          "name": "SteelSeries \u2014 Featured Selection",
+          "valueCents": 2400,
+          "valueUSD": "24.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000003005",
+          "name": "SteelSeries \u2014 Gear Bundle",
+          "valueCents": 2400,
+          "valueUSD": "24.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000003006",
+          "name": "SteelSeries \u2014 Premium Selection",
+          "valueCents": 6000,
+          "valueUSD": "60.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000003007",
+          "name": "SteelSeries \u2014 Collector Selection",
+          "valueCents": 6000,
+          "valueUSD": "60.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000003008",
+          "name": "SteelSeries \u2014 Rare Selection",
+          "valueCents": 18000,
+          "valueUSD": "180.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/irl-4.svg"
+        },
+        {
+          "catalogId": "7000000003009",
+          "name": "SteelSeries \u2014 Chase Drop",
+          "valueCents": 18000,
+          "valueUSD": "180.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/irl-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 1200,
+      "image": "/public/packs/irl-steelseries.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 1080
+    },
+    {
+      "category": "IRL",
+      "name": "ASUS ROG",
+      "slug": "irl-asus-rog",
+      "openingPriceUSD": "50.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "ROG gaming hardware and accessories",
+      "items": [
+        {
+          "catalogId": "7000000003100",
+          "name": "ASUS ROG \u2014 Accessory Credit",
+          "valueCents": 1250,
+          "valueUSD": "12.50",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000003101",
+          "name": "ASUS ROG \u2014 Gear Credit",
+          "valueCents": 1250,
+          "valueUSD": "12.50",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000003102",
+          "name": "ASUS ROG \u2014 Entry Selection",
+          "valueCents": 4000,
+          "valueUSD": "40.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000003103",
+          "name": "ASUS ROG \u2014 Accessories",
+          "valueCents": 4000,
+          "valueUSD": "40.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000003104",
+          "name": "ASUS ROG \u2014 Featured Selection",
+          "valueCents": 10000,
+          "valueUSD": "100.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000003105",
+          "name": "ASUS ROG \u2014 Gear Bundle",
+          "valueCents": 10000,
+          "valueUSD": "100.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000003106",
+          "name": "ASUS ROG \u2014 Premium Selection",
+          "valueCents": 25000,
+          "valueUSD": "250.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000003107",
+          "name": "ASUS ROG \u2014 Collector Selection",
+          "valueCents": 25000,
+          "valueUSD": "250.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000003108",
+          "name": "ASUS ROG \u2014 Rare Selection",
+          "valueCents": 75000,
+          "valueUSD": "750.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/irl-4.svg"
+        },
+        {
+          "catalogId": "7000000003109",
+          "name": "ASUS ROG \u2014 Chase Drop",
+          "valueCents": 75000,
+          "valueUSD": "750.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/irl-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 5000,
+      "image": "/public/packs/irl-asus-rog.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 4500
+    },
+    {
+      "category": "IRL",
+      "name": "Sneaker Drop",
+      "slug": "irl-sneaker-drop",
+      "openingPriceUSD": "10.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Mixed sneaker selection",
+      "items": [
+        {
+          "catalogId": "7000000003200",
+          "name": "Sneaker Drop \u2014 Accessory Credit",
+          "valueCents": 250,
+          "valueUSD": "2.50",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000003201",
+          "name": "Sneaker Drop \u2014 Gear Credit",
+          "valueCents": 250,
+          "valueUSD": "2.50",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000003202",
+          "name": "Sneaker Drop \u2014 Entry Selection",
+          "valueCents": 800,
+          "valueUSD": "8.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000003203",
+          "name": "Sneaker Drop \u2014 Accessories",
+          "valueCents": 800,
+          "valueUSD": "8.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000003204",
+          "name": "Sneaker Drop \u2014 Featured Selection",
+          "valueCents": 2000,
+          "valueUSD": "20.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000003205",
+          "name": "Sneaker Drop \u2014 Gear Bundle",
+          "valueCents": 2000,
+          "valueUSD": "20.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000003206",
+          "name": "Sneaker Drop \u2014 Premium Selection",
+          "valueCents": 5000,
+          "valueUSD": "50.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000003207",
+          "name": "Sneaker Drop \u2014 Collector Selection",
+          "valueCents": 5000,
+          "valueUSD": "50.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000003208",
+          "name": "Sneaker Drop \u2014 Rare Selection",
+          "valueCents": 15000,
+          "valueUSD": "150.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/irl-4.svg"
+        },
+        {
+          "catalogId": "7000000003209",
+          "name": "Sneaker Drop \u2014 Chase Drop",
+          "valueCents": 15000,
+          "valueUSD": "150.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/irl-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 1000,
+      "image": "/public/packs/irl-sneaker-drop.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 900
+    },
+    {
+      "category": "IRL",
+      "name": "Nike",
+      "slug": "irl-nike",
+      "openingPriceUSD": "15.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Nike footwear and accessories",
+      "items": [
+        {
+          "catalogId": "7000000003300",
+          "name": "Nike \u2014 Accessory Credit",
+          "valueCents": 375,
+          "valueUSD": "3.75",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000003301",
+          "name": "Nike \u2014 Gear Credit",
+          "valueCents": 375,
+          "valueUSD": "3.75",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000003302",
+          "name": "Nike \u2014 Entry Selection",
+          "valueCents": 1200,
+          "valueUSD": "12.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000003303",
+          "name": "Nike \u2014 Accessories",
+          "valueCents": 1200,
+          "valueUSD": "12.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000003304",
+          "name": "Nike \u2014 Featured Selection",
+          "valueCents": 3000,
+          "valueUSD": "30.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000003305",
+          "name": "Nike \u2014 Gear Bundle",
+          "valueCents": 3000,
+          "valueUSD": "30.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000003306",
+          "name": "Nike \u2014 Premium Selection",
+          "valueCents": 7500,
+          "valueUSD": "75.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000003307",
+          "name": "Nike \u2014 Collector Selection",
+          "valueCents": 7500,
+          "valueUSD": "75.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000003308",
+          "name": "Nike \u2014 Rare Selection",
+          "valueCents": 22500,
+          "valueUSD": "225.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/irl-4.svg"
+        },
+        {
+          "catalogId": "7000000003309",
+          "name": "Nike \u2014 Chase Drop",
+          "valueCents": 22500,
+          "valueUSD": "225.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/irl-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 1500,
+      "image": "/public/packs/irl-nike.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 1350
+    },
+    {
+      "category": "IRL",
+      "name": "Adidas",
+      "slug": "irl-adidas",
+      "openingPriceUSD": "8.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Adidas footwear and accessories",
+      "items": [
+        {
+          "catalogId": "7000000003400",
+          "name": "Adidas \u2014 Accessory Credit",
+          "valueCents": 200,
+          "valueUSD": "2.00",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000003401",
+          "name": "Adidas \u2014 Gear Credit",
+          "valueCents": 200,
+          "valueUSD": "2.00",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000003402",
+          "name": "Adidas \u2014 Entry Selection",
+          "valueCents": 640,
+          "valueUSD": "6.40",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000003403",
+          "name": "Adidas \u2014 Accessories",
+          "valueCents": 640,
+          "valueUSD": "6.40",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000003404",
+          "name": "Adidas \u2014 Featured Selection",
+          "valueCents": 1600,
+          "valueUSD": "16.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000003405",
+          "name": "Adidas \u2014 Gear Bundle",
+          "valueCents": 1600,
+          "valueUSD": "16.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000003406",
+          "name": "Adidas \u2014 Premium Selection",
+          "valueCents": 4000,
+          "valueUSD": "40.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000003407",
+          "name": "Adidas \u2014 Collector Selection",
+          "valueCents": 4000,
+          "valueUSD": "40.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000003408",
+          "name": "Adidas \u2014 Rare Selection",
+          "valueCents": 12000,
+          "valueUSD": "120.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/irl-4.svg"
+        },
+        {
+          "catalogId": "7000000003409",
+          "name": "Adidas \u2014 Chase Drop",
+          "valueCents": 12000,
+          "valueUSD": "120.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/irl-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 800,
+      "image": "/public/packs/irl-adidas.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 720
+    },
+    {
+      "category": "IRL",
+      "name": "Jordan",
+      "slug": "irl-jordan",
+      "openingPriceUSD": "30.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Jordan footwear and accessories",
+      "items": [
+        {
+          "catalogId": "7000000003500",
+          "name": "Jordan \u2014 Accessory Credit",
+          "valueCents": 750,
+          "valueUSD": "7.50",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000003501",
+          "name": "Jordan \u2014 Gear Credit",
+          "valueCents": 750,
+          "valueUSD": "7.50",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000003502",
+          "name": "Jordan \u2014 Entry Selection",
+          "valueCents": 2400,
+          "valueUSD": "24.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000003503",
+          "name": "Jordan \u2014 Accessories",
+          "valueCents": 2400,
+          "valueUSD": "24.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000003504",
+          "name": "Jordan \u2014 Featured Selection",
+          "valueCents": 6000,
+          "valueUSD": "60.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000003505",
+          "name": "Jordan \u2014 Gear Bundle",
+          "valueCents": 6000,
+          "valueUSD": "60.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000003506",
+          "name": "Jordan \u2014 Premium Selection",
+          "valueCents": 15000,
+          "valueUSD": "150.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000003507",
+          "name": "Jordan \u2014 Collector Selection",
+          "valueCents": 15000,
+          "valueUSD": "150.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000003508",
+          "name": "Jordan \u2014 Rare Selection",
+          "valueCents": 45000,
+          "valueUSD": "450.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/irl-4.svg"
+        },
+        {
+          "catalogId": "7000000003509",
+          "name": "Jordan \u2014 Chase Drop",
+          "valueCents": 45000,
+          "valueUSD": "450.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/irl-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 3000,
+      "image": "/public/packs/irl-jordan.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 2700
+    },
+    {
+      "category": "IRL",
+      "name": "Designer Labels",
+      "slug": "irl-designer-labels",
+      "openingPriceUSD": "75.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Designer accessories",
+      "items": [
+        {
+          "catalogId": "7000000003600",
+          "name": "Designer Labels \u2014 Accessory Credit",
+          "valueCents": 1875,
+          "valueUSD": "18.75",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000003601",
+          "name": "Designer Labels \u2014 Gear Credit",
+          "valueCents": 1875,
+          "valueUSD": "18.75",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000003602",
+          "name": "Designer Labels \u2014 Entry Selection",
+          "valueCents": 6000,
+          "valueUSD": "60.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000003603",
+          "name": "Designer Labels \u2014 Accessories",
+          "valueCents": 6000,
+          "valueUSD": "60.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000003604",
+          "name": "Designer Labels \u2014 Featured Selection",
+          "valueCents": 15000,
+          "valueUSD": "150.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000003605",
+          "name": "Designer Labels \u2014 Gear Bundle",
+          "valueCents": 15000,
+          "valueUSD": "150.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000003606",
+          "name": "Designer Labels \u2014 Premium Selection",
+          "valueCents": 37500,
+          "valueUSD": "375.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000003607",
+          "name": "Designer Labels \u2014 Collector Selection",
+          "valueCents": 37500,
+          "valueUSD": "375.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000003608",
+          "name": "Designer Labels \u2014 Rare Selection",
+          "valueCents": 112500,
+          "valueUSD": "1125.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/irl-4.svg"
+        },
+        {
+          "catalogId": "7000000003609",
+          "name": "Designer Labels \u2014 Chase Drop",
+          "valueCents": 112500,
+          "valueUSD": "1125.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/irl-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 7500,
+      "image": "/public/packs/irl-designer-labels.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 6750
+    },
+    {
+      "category": "IRL",
+      "name": "Watch Collection",
+      "slug": "irl-watch-collection",
+      "openingPriceUSD": "50.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Watches and watch accessories",
+      "items": [
+        {
+          "catalogId": "7000000003700",
+          "name": "Watch Collection \u2014 Accessory Credit",
+          "valueCents": 1250,
+          "valueUSD": "12.50",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000003701",
+          "name": "Watch Collection \u2014 Gear Credit",
+          "valueCents": 1250,
+          "valueUSD": "12.50",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000003702",
+          "name": "Watch Collection \u2014 Entry Selection",
+          "valueCents": 4000,
+          "valueUSD": "40.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000003703",
+          "name": "Watch Collection \u2014 Accessories",
+          "valueCents": 4000,
+          "valueUSD": "40.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000003704",
+          "name": "Watch Collection \u2014 Featured Selection",
+          "valueCents": 10000,
+          "valueUSD": "100.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000003705",
+          "name": "Watch Collection \u2014 Gear Bundle",
+          "valueCents": 10000,
+          "valueUSD": "100.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000003706",
+          "name": "Watch Collection \u2014 Premium Selection",
+          "valueCents": 25000,
+          "valueUSD": "250.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000003707",
+          "name": "Watch Collection \u2014 Collector Selection",
+          "valueCents": 25000,
+          "valueUSD": "250.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000003708",
+          "name": "Watch Collection \u2014 Rare Selection",
+          "valueCents": 75000,
+          "valueUSD": "750.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/irl-4.svg"
+        },
+        {
+          "catalogId": "7000000003709",
+          "name": "Watch Collection \u2014 Chase Drop",
+          "valueCents": 75000,
+          "valueUSD": "750.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/irl-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 5000,
+      "image": "/public/packs/irl-watch-collection.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 4500
+    },
+    {
+      "category": "IRL",
+      "name": "Camera Gear",
+      "slug": "irl-camera-gear",
+      "openingPriceUSD": "35.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Cameras and photography accessories",
+      "items": [
+        {
+          "catalogId": "7000000003800",
+          "name": "Camera Gear \u2014 Accessory Credit",
+          "valueCents": 875,
+          "valueUSD": "8.75",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000003801",
+          "name": "Camera Gear \u2014 Gear Credit",
+          "valueCents": 875,
+          "valueUSD": "8.75",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000003802",
+          "name": "Camera Gear \u2014 Entry Selection",
+          "valueCents": 2800,
+          "valueUSD": "28.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000003803",
+          "name": "Camera Gear \u2014 Accessories",
+          "valueCents": 2800,
+          "valueUSD": "28.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000003804",
+          "name": "Camera Gear \u2014 Featured Selection",
+          "valueCents": 7000,
+          "valueUSD": "70.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000003805",
+          "name": "Camera Gear \u2014 Gear Bundle",
+          "valueCents": 7000,
+          "valueUSD": "70.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000003806",
+          "name": "Camera Gear \u2014 Premium Selection",
+          "valueCents": 17500,
+          "valueUSD": "175.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000003807",
+          "name": "Camera Gear \u2014 Collector Selection",
+          "valueCents": 17500,
+          "valueUSD": "175.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000003808",
+          "name": "Camera Gear \u2014 Rare Selection",
+          "valueCents": 52500,
+          "valueUSD": "525.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/irl-4.svg"
+        },
+        {
+          "catalogId": "7000000003809",
+          "name": "Camera Gear \u2014 Chase Drop",
+          "valueCents": 52500,
+          "valueUSD": "525.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/irl-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 3500,
+      "image": "/public/packs/irl-camera-gear.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 3150
+    },
+    {
+      "category": "IRL",
+      "name": "Ultimate Tech",
+      "slug": "irl-ultimate-tech",
+      "openingPriceUSD": "500.00",
+      "targetHouseEdge": "0.10",
+      "targetReturn": "0.90",
+      "theme": "Premium mixed technology selection",
+      "items": [
+        {
+          "catalogId": "7000000003900",
+          "name": "Ultimate Tech \u2014 Accessory Credit",
+          "valueCents": 12500,
+          "valueUSD": "125.00",
+          "tickets": 30000,
+          "rangeFrom": 1,
+          "rangeTo": 30000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000003901",
+          "name": "Ultimate Tech \u2014 Gear Credit",
+          "valueCents": 12500,
+          "valueUSD": "125.00",
+          "tickets": 30000,
+          "rangeFrom": 30001,
+          "rangeTo": 60000,
+          "image": "/public/pack-rewards/irl-0.svg"
+        },
+        {
+          "catalogId": "7000000003902",
+          "name": "Ultimate Tech \u2014 Entry Selection",
+          "valueCents": 40000,
+          "valueUSD": "400.00",
+          "tickets": 12500,
+          "rangeFrom": 60001,
+          "rangeTo": 72500,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000003903",
+          "name": "Ultimate Tech \u2014 Accessories",
+          "valueCents": 40000,
+          "valueUSD": "400.00",
+          "tickets": 12500,
+          "rangeFrom": 72501,
+          "rangeTo": 85000,
+          "image": "/public/pack-rewards/irl-1.svg"
+        },
+        {
+          "catalogId": "7000000003904",
+          "name": "Ultimate Tech \u2014 Featured Selection",
+          "valueCents": 100000,
+          "valueUSD": "1000.00",
+          "tickets": 5000,
+          "rangeFrom": 85001,
+          "rangeTo": 90000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000003905",
+          "name": "Ultimate Tech \u2014 Gear Bundle",
+          "valueCents": 100000,
+          "valueUSD": "1000.00",
+          "tickets": 5000,
+          "rangeFrom": 90001,
+          "rangeTo": 95000,
+          "image": "/public/pack-rewards/irl-2.svg"
+        },
+        {
+          "catalogId": "7000000003906",
+          "name": "Ultimate Tech \u2014 Premium Selection",
+          "valueCents": 250000,
+          "valueUSD": "2500.00",
+          "tickets": 2000,
+          "rangeFrom": 95001,
+          "rangeTo": 97000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000003907",
+          "name": "Ultimate Tech \u2014 Collector Selection",
+          "valueCents": 250000,
+          "valueUSD": "2500.00",
+          "tickets": 2000,
+          "rangeFrom": 97001,
+          "rangeTo": 99000,
+          "image": "/public/pack-rewards/irl-3.svg"
+        },
+        {
+          "catalogId": "7000000003908",
+          "name": "Ultimate Tech \u2014 Rare Selection",
+          "valueCents": 750000,
+          "valueUSD": "7500.00",
+          "tickets": 500,
+          "rangeFrom": 99001,
+          "rangeTo": 99500,
+          "image": "/public/pack-rewards/irl-4.svg"
+        },
+        {
+          "catalogId": "7000000003909",
+          "name": "Ultimate Tech \u2014 Chase Drop",
+          "valueCents": 750000,
+          "valueUSD": "7500.00",
+          "tickets": 500,
+          "rangeFrom": 99501,
+          "rangeTo": 100000,
+          "image": "/public/pack-rewards/irl-4.svg"
+        }
+      ],
+      "status": "ready_for_owner_review",
+      "priceCents": 50000,
+      "image": "/public/packs/irl-ultimate-tech.png",
+      "artworkStatus": "ready",
+      "valueBasis": "Assigned in-site inventory resale values; not retail price quotes or shipping promises.",
+      "expectedReturnCents": 45000
+    }
+  ]
+}

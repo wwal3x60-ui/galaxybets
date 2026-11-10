@@ -1,3 +1,4 @@
+const {MAX_BET_USD}=require('../../../utils/bet-limits');
 const express = require('express');
 const router = express.Router();
 
@@ -25,7 +26,7 @@ router.post('/create', isAuthed, apiLimiter, async (req, res) => {
     if (!Number.isFinite(Number(amount))) return res.status(400).json({ error: 'INVALID_AMOUNT' });
     amount = roundDecimal(amount);
     if (amount < 0.2) return res.status(400).json({ error: 'INVALID_AMOUNT' });
-    if (amount > 1000) return res.status(400).json({ error: 'INVALID_AMOUNT' });
+    if (amount > MAX_BET_USD) return res.status(400).json({ error: 'INVALID_AMOUNT' });
 
     const side = req.body.side;
     if (!['fire', 'ice'].includes(side)) return res.status(400).json({ error: 'INVALID_SIDE' });
@@ -87,12 +88,12 @@ router.post('/create', isAuthed, apiLimiter, async (req, res) => {
 });
 
 router.post('/:id/join', isAuthed, apiLimiter, async (req, res) => {
-    joinCoinflip(req, res);
+    return joinCoinflip(req, res);
 });
 
 
 router.post('/:id/bot', isAuthed, apiLimiter, async (req, res) => {
-    joinCoinflip(req, res, true);
+    return joinCoinflip(req, res, true);
 });
 
 async function joinCoinflip(req, res, bot = false) {
@@ -116,6 +117,7 @@ async function joinCoinflip(req, res, bot = false) {
             //const [[coinflip]] = await sql.query('SELECT * FROM coinflips WHERE id = ? FOR UPDATE', [id]);
 
             if (!coinflip) return res.json({ error: 'INVALID_ID' });
+            if(Number(coinflip.amount)>MAX_BET_USD)return res.json({error:'INVALID_AMOUNT'});
             if (coinflip.fire && coinflip.ice) return res.json({ error: 'ALREADY_STARTED' });
 
             let user;

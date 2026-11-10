@@ -1,0 +1,5 @@
+'use strict';
+const path=require('path');require('dotenv').config({path:path.join(__dirname,'../.env')});
+const {sql,doTransaction}=require('../database');const prep=require('../utils/launch-preparation');
+async function main(){const apply=process.argv.includes('--apply');if(apply&&!process.argv.includes('--backend-stopped'))throw Error('Stop backend before applying; add --backend-stopped.');const plan=await prep.inspect(sql);console.table(plan.legacy.map(p=>({id:p.id,oldCase:p.name,price:(Number(p.price)/100).toFixed(2),action:'retire active version'})));console.log({mode:apply?'apply':'preview',protectedPacks:40,oldCasesToRetire:plan.legacy.length,NOOPE:{id:plan.noope.id,username:plan.noope.username,excluded:Boolean(Number(plan.noope.leaderboardBan))}});if(!apply){console.log('Read-only preview. No packs, balances, inventory or historical rows have changed.');return;}console.log(await doTransaction(async(connection,commit)=>{const result=await prep.apply(connection);await commit();return result;}));}
+main().catch(e=>{console.error(e.message);process.exitCode=1;}).finally(()=>sql.end());

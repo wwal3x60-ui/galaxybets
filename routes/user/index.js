@@ -13,6 +13,7 @@ const affiliateRoute = require('./affiliate');
 const rakebackRoute = require('./rakeback');
 const notificationsRoute = require('./notifications');
 
+router.use(require('./profile-photo'));
 router.use('/affiliate', affiliateRoute);
 router.use('/rakeback', rakebackRoute);
 router.use('/notifications', notificationsRoute);
@@ -52,7 +53,7 @@ router.post('/mentions', isAuthed, async (req, res) => {
 
 const resultsPerPage = 10;
 const allowedTypes = ['deposit', 'withdraw', 'in', 'out'];
-const allowedMethods = ['rakeback', 'tip', 'promo', 'affiliate', 'crypto', 'rain'];
+const allowedMethods = ['rakeback', 'tip', 'promo', 'affiliate', 'crypto', 'rain', 'sell'];
 
 router.get('/transactions', isAuthed, async (req, res) => {
 
@@ -95,7 +96,7 @@ router.get('/transactions', isAuthed, async (req, res) => {
 
 });
 
-const allowedGames = ['battle', 'case', 'coinflip', 'crash', 'jackpot', 'roulette'];
+const allowedGames = ['keno', 'battle', 'case', 'coinflip', 'crash', 'jackpot', 'roulette'];
 
 router.get('/bets', isAuthed, async (req, res) => {
 
@@ -131,6 +132,72 @@ router.get('/bets', isAuthed, async (req, res) => {
 
 });
 
+// ---------------------------------------------------------------------------
+// Inventory (the "cart"): items won from cases wait here until sold.
+// ---------------------------------------------------------------------------
+
+router.get('/inventory', isAuthed, async (req, res) => {
+
+    try {
+        const status = req.query.status === 'SOLD' ? 'SOLD' : 'AVAILABLE';
+        const [items] = await sql.query(
+            'SELECT id, name, img, price, status, createdAt FROM inventory WHERE userId = ? AND status = ? ORDER BY id DESC LIMIT 500',
+            [req.userId, status]
+        );
+        res.json(items);
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'INTERNAL_ERROR' });
+    }
+
+});
+
+router.post('/inventory/sell', [isAuthed, apiLimiter], async (req, res) => {
+
+    const rawIds = req.body?.ids;
+    if (!Array.isArray(rawIds) || rawIds.length < 1 || rawIds.length > 100) return res.status(400).json({ error: 'INVALID_IDS' });
+
+    const ids = [...new Set(rawIds.map(e => Number(e)))];
+    if (ids.some(id => !Number.isSafeInteger(id) || id <= 0)) return res.status(400).json({ error: 'INVALID_IDS' });
+
+    try {
+
+        await doTransaction(async (connection, commit) => {
+
+            const [[user]] = await connection.query('SELECT id, username, balance FROM users WHERE id = ? FOR UPDATE', [req.userId]);
+
+            // Lock the chosen items; they must be yours and still unsold
+            const [items] = await connection.query(
+                "SELECT id, price FROM inventory WHERE userId = ? AND status = 'AVAILABLE' AND id IN (?) FOR UPDATE",
+                [req.userId, ids]
+            );
+            if (items.length !== ids.length) return res.status(400).json({ error: 'ITEMS_NOT_AVAILABLE' });
+
+            const total = roundDecimal(items.reduce((sum, e) => sum + e.price, 0));
+            if (!(total > 0)) return res.status(400).json({ error: 'INVALID_IDS' });
+
+            await connection.query("UPDATE inventory SET status = 'SOLD', soldAt = NOW() WHERE userId = ? AND id IN (?)", [req.userId, ids]);
+            await connection.query('UPDATE users SET balance = balance + ? WHERE id = ?', [total, user.id]);
+            await connection.query(
+                'INSERT INTO transactions (userId, amount, type, method, methodId) VALUES (?, ?, ?, ?, ?)',
+                [user.id, total, 'in', 'sell', String(items[0].id)]
+            );
+            await commit();
+
+            const balance = roundDecimal(user.balance + total);
+            io.to(String(user.id)).emit('balance', 'set', balance);
+            res.json({ success: true, totalPrice: total, balance });
+
+
+        });
+
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'INTERNAL_ERROR' });
+    }
+
+});
+
 const botImgs = {
     'bot1': '/public/bot1.png',
     'bot2': '/public/bot2.png',
@@ -155,7 +222,7 @@ router.get('/:id/img', async (req, res) => {
     const upperCharacter = firstCharacter ? firstCharacter.toUpperCase() : '?';
     const initial = /^[A-Za-z0-9]$/.test(upperCharacter) ? upperCharacter : '?';
 
-    res.set('Cache-Control', 'public, max-age=3600');
+    res.set('Cache-Control', 'no-store');
     res.type('image/svg+xml').send(
         `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">` +
         `<rect width="64" height="64" rx="12" fill="${background}"/>` +

@@ -1,3 +1,5 @@
+const {MAX_BET_USD}=require('../../../utils/bet-limits');
+const { creditAffiliateGameBets, emitAffiliateCredits, withAffiliateSettlement } = require('../../../utils/affiliate-commission');
 const { sql, doTransaction } = require('../../../database');
 const { newBets } = require('../../../socketio/bets');
 const { sleep, roundDecimal } = require('../../../utils');
@@ -15,7 +17,7 @@ const jackpot = {
         betTime: 60000,
         rollTime: 5000,
         minBet: 0.2,
-        maxBet: 10000
+        maxBet: MAX_BET_USD
     }
 };
 
@@ -49,23 +51,16 @@ async function broadcastJackpotState(roundId = jackpot.round.id) {
     const updatedBets = await getJackpotBets(roundId);
     const newTotalAmount = rounds[0]?.amount ?? 0;
 
+    if (String(jackpot.round.id) !== String(roundId)) return;
     jackpot.bets = updatedBets;
     jackpot.round.amount = newTotalAmount;
     io.to('jackpot').emit('jackpot:bets', updatedBets);
     io.to('jackpot').emit('jackpot:amount', newTotalAmount);
 }
 
-async function ensureJackpotBot() {
-    const [[bot]] = await sql.query('SELECT id FROM users WHERE role = ? LIMIT 1', ['BOT']);
-    if (bot) return bot.id;
-
-    const passwordHash = crypto.randomBytes(32).toString('hex');
-    const [result] = await sql.query(
-        'INSERT INTO users (username, email, passwordHash, role, balance, xp, perms, verified) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-        ['House Bot', 'house-bot@bots.invalid', passwordHash, 'BOT', 0, 0, 0, 0]
-    );
-    return result.insertId;
-}
+const {ensureBots}=require('../../../utils/jackpot-bots');
+const {jackpotWinner}=require('../../../utils/fair-ticket');
+async function ensureJackpotBot(){await ensureBots(sql);}
 
 const combine = (serverSeed, clientSeed) => {
     return crypto.createHmac('sha256', serverSeed).update(clientSeed).digest('hex');
@@ -190,7 +185,7 @@ let jackpotTimer;
 let jackpotProcessing = false;
 
 async function startCountdown(countStartedAt = new Date()) {
-    const startedAt = new Date(countStartedAt);
+    const startedAt = countStartedAt ? new Date(countStartedAt) : new Date();
     const validStartedAt = Number.isNaN(startedAt.getTime()) ? new Date() : startedAt;
     jackpot.round.countStartedAt = validStartedAt;
     jackpot.timeLeft = Math.max(
@@ -204,14 +199,17 @@ async function startCountdown(countStartedAt = new Date()) {
 function startJackpotTimer() {
     if (jackpotTimer) return;
 
-    jackpotTimer = setInterval(() => {
+    let tickBusy=false;
+    jackpotTimer = setInterval(async () => {
+        if(tickBusy)return;tickBusy=true;try{
         if (jackpot.spinning) {
             io.to('jackpot').emit('jackpot:tick', 0);
             if (!jackpotProcessing) processJackpotRound();
             return;
         }
 
-        jackpot.timeLeft = Math.max(0, jackpot.timeLeft - 1);
+        await broadcastJackpotState(jackpot.round.id);
+        jackpot.timeLeft=Math.max(0,Math.ceil((new Date(jackpot.round.countStartedAt).getTime()+jackpot.config.betTime-Date.now())/1000));
         io.to('jackpot').emit('jackpot:tick', jackpot.timeLeft);
 
         if (jackpot.timeLeft === 0) {
@@ -219,6 +217,7 @@ function startJackpotTimer() {
             jackpot.round.bettingClosed = true;
             processJackpotRound();
         }
+        }catch(e){console.error('Jackpot tick:',e.message);}finally{tickBusy=false;}
     }, 1000);
 }
 
@@ -236,6 +235,13 @@ function processJackpotRound() {
 }
 
 async function finishJackpotRound() {
+    if(jackpot.round.id&&!jackpot.round.rolledAt&&!jackpot.round.endedAt){
+        await doTransaction(async(connection,commit)=>{
+            const [[saved]]=await connection.query('SELECT amount FROM jackpot WHERE id=? FOR UPDATE',[jackpot.round.id]);
+            const [entries]=await connection.query('SELECT jb.*,u.username,u.role,u.xp,u.anon FROM jackpotBets jb JOIN users u ON u.id=jb.userId WHERE jb.jackpotId=? ORDER BY jb.id',[jackpot.round.id]);
+            jackpot.round.amount=Number(saved.amount);jackpot.bets=entries.map(b=>({...b,user:{id:b.userId,username:b.username,role:b.role,xp:b.xp,anon:b.anon}}));await commit();
+        });
+    }
     const round = jackpot.round;
     if (!round.id) throw new Error('Cannot finish a Jackpot round without an id');
 
@@ -258,20 +264,10 @@ async function finishJackpotRound() {
         }
 
         const clientSeed = round.clientSeed || await waitForEOSBlock(commitTo);
-        const getBetWeight = bet => Number(bet.amount) * (bet.user.role === 'BOT' ? 1.3 : 1);
-        const totalWeight = jackpot.bets.reduce((total, bet) => total + getBetWeight(bet), 0);
-        if (!Number.isFinite(totalWeight) || totalWeight <= 0) {
-            throw new Error(`Invalid total Jackpot weight for round ${round.id}`);
-        }
-
-        const weightedRoll = getFloatResult(combine(unhashedSeed, clientSeed)) * totalWeight;
-        let cumulativeWeight = 0;
-        const winner = jackpot.bets.find(bet => {
-            cumulativeWeight += getBetWeight(bet);
-            return weightedRoll < cumulativeWeight;
-        });
-        if (!winner) throw new Error(`No winning Jackpot bet found for round ${round.id}`);
-        const winnerTicket = Math.floor(weightedRoll * 100);
+        const selected=jackpotWinner(combine(unhashedSeed,clientSeed),jackpot.bets);
+        const winner=selected.winner,winnerTicket=selected.ticket,totalWeight=selected.total/100;
+        if(!winner)throw Error('Winning jackpot ticket has no owner');
+        const getBetWeight=bet=>Number(bet.amount);
 
         const rolledAt = new Date();
         round.winnerTicket = winnerTicket;
@@ -314,7 +310,16 @@ async function finishJackpotRound() {
         await sleep(jackpot.config.rollTime);
 
         const endedAt = new Date();
-        await doTransaction(async (connection, commit) => {
+        await withAffiliateSettlement(async (connection, commit) => {
+            const [[saved]] = await connection.query(
+                'SELECT endedAt FROM jackpot WHERE id = ? FOR UPDATE', [round.id]
+            );
+            if (!saved) throw new Error('Jackpot no longer exists');
+            if (saved.endedAt) {
+                await commit();
+                round.endedAt = saved.endedAt;
+                return;
+            }
             await connection.query('UPDATE jackpot SET endedAt = ? WHERE id = ?', [endedAt, round.id]);
 
             const socketBets = [];
@@ -347,7 +352,9 @@ async function finishJackpotRound() {
                 [round.winnerBet, winnings, 'jackpot', betIds]
             );
 
+            const credits = await creditAffiliateGameBets(connection, 'jackpot', betIds);
             await commit();
+            emitAffiliateCredits(credits);
             round.endedAt = endedAt;
             if (winnerBalance) {
                 io.to(winnerBalance.userId).emit('balance', 'add', winnerBalance.amount);
@@ -365,37 +372,7 @@ async function finishJackpotRound() {
     io.to('jackpot').emit('jackpot:tick', jackpot.timeLeft);
 }
 
-async function makeBotJoin(amount = jackpot.round.amount) {
-
-    try {
-
-        await doTransaction(async (connection, commit) => {
-
-            await connection.query('SELECT id FROM jackpot WHERE id = ? FOR UPDATE', [jackpot.round.id]);
-
-            const [[bot]] = await connection.query('SELECT id, username, role, xp FROM users WHERE role = ? LIMIT 1', ['BOT']);
-            if (!bot) throw new Error('No bot found jackpot');
-    
-            const ticketsFrom = jackpot.round.amount * 100;
-            const ticketsTo = ticketsFrom + (amount * 100) - 1;
-    
-            const [jackpotBetResult] = await connection.query('INSERT INTO jackpotBets (userId, jackpotId, amount, ticketsFrom, ticketsTo) VALUES (?, ?, ?, ?, ?)', [bot.id, jackpot.round.id, amount, ticketsFrom, ticketsTo]);
-            const [betResult] = await connection.query('INSERT INTO bets (userId, amount, edge, game, gameId, completed) VALUES (?, ?, ?, ?, ?, ?)', [bot.id, amount, 0, 'jackpot', jackpotBetResult.insertId, false]);
-    
-            jackpot.round.amount = roundDecimal(jackpot.round.amount + amount);
-            await connection.query('UPDATE jackpot SET amount = ? WHERE id = ?', [jackpot.round.amount, jackpot.round.id]);
-            
-            await commit();
-
-        });
-        await startCountdown(jackpot.round.countStartedAt);
-        await broadcastJackpotState(jackpot.round.id);
-
-    } catch (error) {
-        console.error('Unable to add Jackpot bot bet:', error);
-    }
-
-}
+async function makeBotJoin(){return {joined:false,reason:'use-bot-worker'};}
 
 module.exports = {
     cacheJackpot,

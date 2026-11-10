@@ -6,7 +6,7 @@ const limit = 50;
 
 const channelsIds = ['VIP', 'EN', 'BEG', 'GR', 'TR'];
 channelsIds.forEach(channel => {
-    channels[channel] = {};
+    channels[channel] = {messages:[],locked:false};
 });
 
 async function cacheChannels() {
@@ -84,7 +84,7 @@ function sendSystemMessage(socket, message) {
 }
 
 let lastOnlineUsers = {};
-const multiplier = process.env.NODE_ENV == 'production' ? 2.5 : 1;
+const multiplier = 1;
 
 async function sendOnlineUsers(socket, cache) {
 

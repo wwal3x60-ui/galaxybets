@@ -1,3 +1,5 @@
+const {MAX_BET_USD}=require('../../../utils/bet-limits');
+const { creditAffiliateGameBets, emitAffiliateCredits } = require('../../../utils/affiliate-commission');
 const express = require('express');
 const router = express.Router();
 
@@ -101,6 +103,7 @@ router.post('/:id/open', [isAuthed, apiLimiter], async (req, res) => {
     const casePrice = fromCents(caseInfo.price);
     if (casePrice < 0.2) return res.status(400).json({ error: 'INVALID_AMOUNT' });
     const price = roundDecimal(casePrice * amount);
+    if(price>MAX_BET_USD)return res.status(400).json({error:"MAX_BET_CASES"});
 
     try {
 
@@ -119,6 +122,7 @@ router.post('/:id/open', [isAuthed, apiLimiter], async (req, res) => {
     
             const seeds = await getUserSeeds(user.id, connection, true);
             const results = [];
+            const affiliateCredits = [];
     
             let value = -price;
             let total = 0;
@@ -148,37 +152,53 @@ router.post('/:id/open', [isAuthed, apiLimiter], async (req, res) => {
                 );
         
                 await connection.query(`
-                    INSERT INTO bets (userId, amount, winnings, edge, game, gameId) VALUES (?, ?, ?, ?, ?, ?)`,
+                    INSERT INTO bets (userId, amount, winnings, edge, game, gameId, completed) VALUES (?, ?, ?, ?, ?, ?, 1)`,
                     [user.id, casePrice, fromCents(item.price), edge, 'case', openingResult.insertId]
                 );
     
+                affiliateCredits.push(...await creditAffiliateGameBets(
+                    connection, 'case', [openingResult.insertId]
+                ));
+
+                const mappedItem = mapItem(item);
+
+                // The won item goes to the user's inventory (cart), NOT to the balance.
+                const [inventoryResult] = await connection.query(`
+                    INSERT INTO inventory (userId, openingId, caseItemId, name, img, price) VALUES (?, ?, ?, ?, ?, ?)`,
+                    [user.id, openingResult.insertId, item.id, mappedItem.name, mappedItem.img, mappedItem.price]
+                );
+
                 results.push({
                     openingId: openingResult.insertId,
+                    inventoryId: inventoryResult.insertId,
                     nonce: seeds.nonce,
                     result,
                     seed,
-                    item: mapItem(item)
+                    item: mappedItem
                 });
     
                 total += fromCents(item.price);
     
             }
     
-            value = roundDecimal(value + total);
+            // Winnings are NOT paid to the balance any more (they are in the inventory).
+            value = roundDecimal(value);
     
             const xp = roundDecimal(price * xpMultiplier);
             await connection.query(`
                 UPDATE users SET balance = balance + ?, xp = xp + ? WHERE id = ?
             `, [value, xp, user.id]);
             
-            io.to(user.id).emit('balance', 'set', roundDecimal(user.balance - price));
             await xpChanged(user.id, user.xp, roundDecimal(user.xp + xp), connection);
     
             const [nonceIncrease] = await connection.query('UPDATE serverSeeds SET nonce = nonce + ? WHERE id = ?', [amount, seeds.serverSeedId]);
             if (nonceIncrease.affectedRows != 1) return res.status(404).json({ error: 'UNKNOWN_ERROR' });
 
             await commit();
-    
+            emitAffiliateCredits(affiliateCredits);
+
+            io.to(user.id).emit('balance', 'set', roundDecimal(user.balance + value));
+
             res.json({
                 balance: roundDecimal(user.balance + value),
                 total,

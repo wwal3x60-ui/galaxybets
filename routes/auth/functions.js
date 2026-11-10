@@ -56,7 +56,7 @@ function validateJwtToken(token) {
 
 }
 
-function isAuthed(req, res, next) {
+async function isAuthed(req, res, next) {
 
     const token = getReqToken(req);
     if (!token) return res.status(401).json({ error: 'UNAUTHORIZED' });
@@ -66,8 +66,7 @@ function isAuthed(req, res, next) {
 
     if (bannedUsers.has(valid.uid)) return res.status(401).json({ error: 'UNAUTHORIZED' });
 
-    req.userId = valid.uid;
-    next();
+    try{const [[u]]=await require('../../database').sql.query('SELECT role,banned FROM users WHERE id=?',[valid.uid]);if(!u||u.banned||String(u.role).trim().toUpperCase()==='BOT')return res.status(403).json({error:'ACCOUNT_RESTRICTED'});req.userId=valid.uid;next();}catch(e){console.error('Authorization:',e.message);res.status(503).json({error:'AUTH_UNAVAILABLE'});}
     
 }
 

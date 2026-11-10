@@ -121,6 +121,10 @@ app.use('/items', itemsRoute);
 app.use('/rain', rainRoute);
 app.use('/leaderboard', leaderboardRoute);
 app.use('/cases', casesRoute);
+app.use('/keno',require('./routes/games/keno'));
+app.use('/streamer',require('./routes/streamer'));
+app.use('/community',require('./routes/community'));
+app.use('/live-opens', require('./routes/live-opens'));
 app.use('/battles', battlesRoute);
 app.use('/roulette', rouletteRoute);
 app.use('/crash', crashRoute);
@@ -158,9 +162,12 @@ const { cacheLeaderboards } = require('./routes/leaderboard/functions');
 async function start() {
     const port = process.env.PORT || 3001;
 
+    await cacheAdmin();
+    await cacheChannels();
     await cacheJackpot();
+    await cacheCases();
 
-    const serverInstance = app.listen(port, () => {
+    const serverInstance = app.listen(port, process.env.HOST || '127.0.0.1', () => {
         console.log('Listening on port ' + port);
     });
 
@@ -175,9 +182,9 @@ async function start() {
     });
 
     const promises = [
-        cacheBets, cacheRains, cacheBattles, cacheCases, cacheCrash,
-        cacheRoulette, cacheCoinflips, cacheChannels,
-        cacheAdmin, cacheLeaderboards
+        cacheBets, cacheRains, cacheBattles, cacheDrops, cacheCrash,
+        cacheRoulette, cacheCoinflips,
+        cacheLeaderboards
     ];
 
     promises.forEach((cache) => timedPromise(cache, cache.name));

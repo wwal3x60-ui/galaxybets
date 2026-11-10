@@ -1,3 +1,4 @@
+const { isShadowbanned } = require('../../../utils/shadowban');
 const io = require('../../../socketio/server');
 const { sql } = require('../../../database');
 const { fromCents, toCents } = require('../../../utils/money');
@@ -97,6 +98,7 @@ async function cacheDrops(top = false) {
 }
 
 function newDrops(user, caseInfo, results) {
+    require('../../../utils/live-opens').emitLiveOpens(io, user, caseInfo, results);
 
     io.to('cases').except(user.id).emit('cases:drops', results.map(result => {
         
@@ -146,7 +148,9 @@ function mapItem(e) {
         name: e.name,
         img: e.img ? e.img : `/items/${e.robloxId}/img`,
         price: fromCents(e.price),
-        probability: +getItemProbability(e.rangeFrom, e.rangeTo).toFixed(3) // roundDecimal(getItemProbability(e.rangeFrom, e.rangeTo), 3)
+        startTicket: Number(e.rangeFrom),
+        endTicket: Number(e.rangeTo),
+        probability: +getItemProbability(e.rangeFrom, e.rangeTo).toFixed(3)
     }
 
 }

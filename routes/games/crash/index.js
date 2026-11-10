@@ -1,16 +1,12 @@
+const {MAX_BET_USD}=require('../../../utils/bet-limits');
 const express = require('express');
 const router = express.Router();
-
 const { doTransaction } = require('../../../database');
-
 const { isAuthed, apiLimiter } = require('../../auth/functions');
 const { roundDecimal, xpChanged } = require('../../../utils');
 const io = require('../../../socketio/server');
-const { crash } = require('./functions')
-const { newBets } = require('../../../socketio/bets');
+const { crash, settleCrashCashout } = require('./functions');
 const { enabledFeatures, xpMultiplier } = require('../../admin/config');
-
-// const clientSeed = '00000000000000000003e5a54c2898a18d262eb5860e696441f8a4ebbff03697'; // btc block hash
 
 router.use((req, res, next) => {
     if (!enabledFeatures.crash) return res.status(400).json({ error: 'DISABLED' });
@@ -18,128 +14,71 @@ router.use((req, res, next) => {
 });
 
 router.post('/bet', isAuthed, apiLimiter, async (req, res) => {
-
-    if (crash.round.startedAt) return res.json({ error: 'ALREADY_STARTED' });
-    if (crash.bets.find(bet => bet.user.id === req.userId)) return res.json({ error: 'ALREADY_JOINED' });
-
     const amount = roundDecimal(req.body.amount);
-
-    if (!amount || amount < 0.2 || amount > 88) {
-        return res.json({ error: 'INVALID_AMOUNT' });
-    }
-
-    const autoCashoutPoint = req.body.autoCashoutPoint ? roundDecimal(req.body.autoCashoutPoint) : null;
-
-    if (autoCashoutPoint && (autoCashoutPoint < 1.01 || autoCashoutPoint > 100000 || isNaN(autoCashoutPoint))) {
+    if (!Number.isFinite(amount) || amount < 0.2 || amount > MAX_BET_USD) return res.json({ error: 'INVALID_AMOUNT' });
+    const point = req.body.autoCashoutPoint ? roundDecimal(req.body.autoCashoutPoint) : null;
+    if (point !== null && (!Number.isFinite(point) || point < 1.01 || point > 100000)) {
         return res.json({ error: 'INVALID_CASHOUT' });
     }
-
     try {
-
+        const roundId = crash.round.id;
         await doTransaction(async (connection, commit) => {
-
-            const [[user]] = await connection.query('SELECT id, username, role, balance, xp, anon FROM users WHERE id = ? FOR UPDATE', [req.userId]);
-
-            if (user.balance < amount) {
-                return res.json({ error: 'INSUFFICIENT_BALANCE' });
-            }
-    
+            const [[round]] = await connection.query(
+                'SELECT startedAt, endedAt FROM crash WHERE id = ? FOR UPDATE', [roundId]
+            );
+            if (!round || round.startedAt || round.endedAt) return res.json({ error: 'ALREADY_STARTED' });
+            const [[user]] = await connection.query(
+                'SELECT id, username, role, balance, xp, anon FROM users WHERE id = ? FOR UPDATE', [req.userId]
+            );
+            if (!user) return res.status(404).json({ error: 'UNKNOWN_ERROR' });
+            const [[joined]] = await connection.query(
+                'SELECT id FROM crashBets WHERE roundId = ? AND userId = ? FOR UPDATE', [roundId, user.id]
+            );
+            if (joined) return res.json({ error: 'ALREADY_JOINED' });
+            if (Number(user.balance) < amount) return res.json({ error: 'INSUFFICIENT_BALANCE' });
             const xp = roundDecimal(amount * xpMultiplier);
-            await connection.query('UPDATE users SET balance = balance - ?, xp = xp + ? WHERE id = ?', [amount, xp, req.userId]);
-    
-            const [crashBetResult] = await connection.query('INSERT INTO crashBets (userId, roundId, amount, autoCashoutPoint) VALUES (?, ?, ?, ?)', [user.id, crash.round.id, amount, autoCashoutPoint]);
-            const [betResult] = await connection.query('INSERT INTO bets (userId, amount, edge, game, gameId, completed) VALUES (?, ?, ?, ?, ?, ?)', [user.id, amount, roundDecimal(amount * 0.075), 'crash', crashBetResult.insertId, false]);
-
+            await connection.query('UPDATE users SET balance = balance - ?, xp = xp + ? WHERE id = ?', [amount, xp, user.id]);
+            const [result] = await connection.query(
+                'INSERT INTO crashBets (userId, roundId, amount, autoCashoutPoint) VALUES (?, ?, ?, ?)',
+                [user.id, roundId, amount, point]
+            );
+            await connection.query(
+                'INSERT INTO bets (userId, amount, edge, game, gameId, completed) VALUES (?, ?, ?, ?, ?, 0)',
+                [user.id, amount, roundDecimal(amount * 0.075), 'crash', result.insertId]
+            );
             await xpChanged(user.id, user.xp, roundDecimal(user.xp + xp), connection);
             await commit();
-        
-            io.to(user.id).emit('balance', 'set', roundDecimal(user.balance - amount));
-
             const bet = {
-                id: crashBetResult.insertId,
-                user: {
-                    id: user.id,
-                    username: user.username,
-                    role: user.role,
-                    xp: user.xp,
-                    anon: user.anon
-                },
-                cashoutPoint: null,
-                amount
+                id: result.insertId, amount, cashoutPoint: null, autoCashoutPoint: point,
+                user: { id: user.id, username: user.username, role: user.role, xp: user.xp, anon: user.anon }
             };
-    
-            io.to('crash').emit('crash:bets', [bet]);
-            bet.user.anon = user.anon;
-            bet.autoCashoutPoint = autoCashoutPoint;
-    
             crash.bets.push(bet);
-        
+            io.to(String(user.id)).emit('balance', 'set', roundDecimal(user.balance - amount));
+            io.to('crash').emit('crash:bets', [bet]);
             res.json({ success: true });
-
         });
-
-    } catch (e) {
-        console.error(e);
-        return res.status(500).json({ error: 'INTERNAL_ERROR' });
+    } catch (error) {
+        console.error(error);
+        if (!res.headersSent) res.status(500).json({ error: 'INTERNAL_ERROR' });
     }
-
-
 });
 
 router.post('/cashout', isAuthed, apiLimiter, async (req, res) => {
-
     if (!crash.round.startedAt) return res.json({ error: 'NOT_STARTED' });
     if (crash.round.endedAt) return res.json({ error: 'ALREADY_ENDED' });
-
-    const bet = crash.bets.find(bet => bet.user.id === req.userId);
+    const bet = crash.bets.find(row => String(row.user.id) === String(req.userId));
     if (!bet) return res.json({ error: 'NOT_JOINED' });
-
-    const currentPoint = crash.round.currentMultiplier;
-    
-    if (!currentPoint || currentPoint < 1.01) return res.json({ error: 'INVALID_CASHOUT' });
-    if (bet.cashoutPoint || (bet.autoCashoutPoint && (currentPoint >= bet.autoCashoutPoint))) return res.json({ error: 'ALREADY_CASHED_OUT' });
-
-    bet.cashoutPoint = currentPoint;
-    const winnings = roundDecimal(bet.amount * currentPoint);
-    bet.winnings = winnings > crash.config.maxProfit ? crash.config.maxProfit : winnings;
-
-    try {
-
-        const user = await doTransaction(async (connection, commit) => {
-
-            const [[user]] = await connection.query('SELECT id, username, balance, xp, anon FROM users WHERE id = ?', [req.userId]);
-
-            await connection.query('UPDATE users SET balance = balance + ? WHERE id = ?', [bet.winnings, user.id]);
-            await connection.query('UPDATE bets SET completed = 1, winnings = ? WHERE game = ? AND gameId = ?', [bet.winnings, 'crash', bet.id]);
-
-            await commit();
-            return user;
-
-        });
-
-        io.to(user.id).emit('balance', 'set', roundDecimal(user.balance + bet.winnings));
-
-        io.to('crash').emit('crash:cashout', {
-            id: bet.id,
-            cashoutPoint: currentPoint,
-            winnings: bet.winnings
-        });
-    
-        newBets([{
-            user: user,
-            amount: bet.amount,
-            edge: roundDecimal(bet.amount * 0.075),
-            payout: bet.winnings,
-            game: 'crash'
-        }]);
-    
-        res.json({ success: true });
-
-    } catch (e) {
-        console.error(e);
-        return res.status(500).json({ error: 'INTERNAL_ERROR' });
+    const point = Number(crash.round.currentMultiplier);
+    if (!point || point < 1.01) return res.json({ error: 'INVALID_CASHOUT' });
+    if (Number(bet.cashoutPoint) > 0 || (bet.autoCashoutPoint && point >= Number(bet.autoCashoutPoint))) {
+        return res.json({ error: 'ALREADY_CASHED_OUT' });
     }
-
+    try {
+        res.json(await settleCrashCashout(bet, point));
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'INTERNAL_ERROR' });
+    }
 });
 
 module.exports = router;

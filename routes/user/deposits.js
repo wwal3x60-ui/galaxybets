@@ -40,4 +40,18 @@ router.post('/crypto', depositCryptoLimiter, isAuthed, apiLimiter, async (req, r
     }
 });
 
+// List of the logged-in user's crypto deposits (for the Deposits history page)
+router.get('/', isAuthed, async (req, res) => {
+    try {
+        const [rows] = await sql.query(
+            "SELECT id, amount, coin, txHash, status, createdAt FROM transactions WHERE userId = ? AND type = 'crypto_deposit' ORDER BY id DESC LIMIT 200",
+            [req.userId]
+        );
+        return res.json(rows);
+    } catch (error) {
+        console.error('DEPOSIT LIST ERROR:', error);
+        return res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
+    }
+});
+
 module.exports = router;

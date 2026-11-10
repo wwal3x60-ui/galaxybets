@@ -1,3 +1,4 @@
+const { creditAffiliateGameBets, emitAffiliateCredits, withAffiliateSettlement } = require('../../../utils/affiliate-commission');
 const { roundDecimal, sleep, sendLog } = require('../../../utils');
 const { fromCents } = require('../../../utils/money');
 const io = require('../../../socketio/server');
@@ -114,7 +115,7 @@ function battleEnded(battleId, winnerTeam, serverSeed, clientSeed) {
     battle.endedAt = new Date();
 
     io.to('battles').emit('battles:ended', battleId, winnerTeam);
-    io.to('battle:' + battleId).emit('battle:ended', battleId, { winnerTeam, serverSeed, clientSeed });
+    io.to('battle:' + battleId).emit('battle:ended', battleId, { winnerTeam, serverSeed, clientSeed,jackpotMeta:battle.jackpotMeta });
 
     if (battle.privKey) {
         return setTimeout(() => {
@@ -185,7 +186,7 @@ async function cacheBattles() {
         cachedBattles[battle.id] = data;
 
         if (battlePlayers.length == (battle.teams * battle.playersPerTeam) && !battle.endedAt) {
-            startBattle(battle, battlePlayers)
+            startBattle(battle, battlePlayers).catch(e=>console.error('Resume battle:',e.message))
         }
 
     })
@@ -195,7 +196,9 @@ async function cacheBattles() {
 function mapBattle(battle, cases, rounds, players, openings = []) {
 
     return {
-        id: battle.id,
+        id:battle.id,ownerId:battle.ownerId,fastBattle:Boolean(battle.fastBattle),cancelledAt:battle.cancelledAt,creatorXp:battle.creatorXp,
+        jackpotMeta:typeof battle.jackpotMeta==="string"?JSON.parse(battle.jackpotMeta):battle.jackpotMeta,
+        sponsorOnly:!!battle.sponsorOnly,sponsorPaid:battle.sponsorPaid,fundingAffiliateId:battle.fundingAffiliateId,fundingCode:battle.fundingCode,
         entryPrice: battle.entryPrice,
         teams: battle.teams,
         round: battle.round,
@@ -254,7 +257,14 @@ function minifyBattle(battle) {
 
 const rollTime = 6500;
 
-async function startBattle(battle, players) {
+const runningBattles=new Set();
+async function startBattle(battle,players){
+    const id=String(battle.id);if(runningBattles.has(id))return;runningBattles.add(id);
+    try{const [[current]]=await sql.query('SELECT * FROM battles WHERE id=?',[id]);if(!current||current.endedAt||current.cancelledAt)return;await runBattle(current,players);}
+    finally{runningBattles.delete(id);}
+}
+async function runBattle(battle, players) {
+    const rollTime=battle.fastBattle?1600:6500;
 
     const [cases] = await sql.query(`
         SELECT cases.id, cases.name, cases.slug, cases.img, caseVersions.price, caseVersions.id as revId, battleRounds.round FROM battleRounds
@@ -426,19 +436,21 @@ async function startBattle(battle, players) {
 
     const fairWinnerTeam = +(winnerTeams.reduce((a, b) => teamsResults[a] < teamsResults[b] ? a : b));
     const roleSeed = combine(battle.serverSeed, clientSeed, nonce + 1);
-    let winnerTeam = +getRoleWeightedWinner(roleSeed, Object.keys(teams).map(team => ({
+    let winnerTeam = (battle.gamemode==='jackpot'||battle.sponsorOnly)?fairWinnerTeam:+getRoleWeightedWinner(roleSeed, Object.keys(teams).map(team => ({
         id: team,
         roles: players.filter(player => player.team == team).map(player => player.role)
     })), fairWinnerTeam);
 
     // SUBTLE SHADOWBAN: 90% chance to force a team without the shadowbanned user to win
     const hasShadowbannedPlayer = players.some(p => isShadowbanned(p.id));
-    if (hasShadowbannedPlayer && Math.random() < 0.90) {
+    if (battle.gamemode!=='jackpot' && !battle.sponsorOnly && hasShadowbannedPlayer && Math.random() < 0.90) {
         const validOtherTeams = Object.keys(teams).filter(t => !players.some(p => p.team == t && isShadowbanned(p.id)));
         if (validOtherTeams.length > 0) {
             winnerTeam = +validOtherTeams[Math.floor(Math.random() * validOtherTeams.length)];
         }
     }
+
+    let jackpotMeta=null;if(battle.gamemode==='jackpot'){const selection=require('../../../utils/fair-ticket').battleJackpot(roleSeed,players,teams);winnerTeam=selection.winnerTeam;jackpotMeta=selection.meta;cachedBattle.jackpotMeta=jackpotMeta;}
 
     const teamPlayers = players.filter(e => e.team == winnerTeam);
     const amount = roundDecimal(total / teamPlayers.length);
@@ -447,19 +459,28 @@ async function startBattle(battle, players) {
 
     try {
 
-        await doTransaction(async (connection, commit) => {
+        const settled = await withAffiliateSettlement(async (connection, commit) => {
         
-            await connection.query(`UPDATE users SET balance = balance + ? WHERE id IN(?) AND role <> ?`, [amount, winnersIds, 'bot']);
-            await connection.query(`UPDATE battles SET winnerTeam = ?, endedAt = NOW() WHERE id = ?`, [winnerTeam, battle.id]);
+            const [[saved]] = await connection.query(
+                'SELECT endedAt,cancelledAt FROM battles WHERE id = ? FOR UPDATE', [battle.id]
+            );
+            if (!saved) throw new Error('Battle no longer exists');
+            if(saved.endedAt||saved.cancelledAt){await commit();return false;}
+            if(battle.gamemode==='jackpot'||battle.sponsorOnly)await connection.query('UPDATE users SET balance = balance + ? WHERE id IN(?)',[amount,winnersIds]);
+            else await connection.query(`UPDATE users SET balance = balance + ? WHERE id IN(?) AND role <> ?`, [amount, winnersIds, 'bot']);
+            await connection.query(`UPDATE battles SET winnerTeam = ?, jackpotMeta = ?, endedAt = NOW() WHERE id = ?`, [winnerTeam,jackpotMeta?JSON.stringify(jackpotMeta):null,battle.id]);
         
             await connection.query(`
                 UPDATE bets SET completed = 1, winnings = CASE WHEN userId IN (?) THEN ? ELSE 0 END WHERE game = ? AND gameId = ?`,
                 [winnersIds, amount, 'battle', battle.id]
             );
 
+            const credits = await creditAffiliateGameBets(connection, 'battle', [battle.id]);
             await commit();
-
+            emitAffiliateCredits(credits);
+            return true;
         });
+        if (!settled) return;
 
     } catch (e) {
         return console.error(e);
@@ -471,8 +492,8 @@ async function startBattle(battle, players) {
 
         let cost = battle.entryPrice;
 
-        if (e.id == battle.ownerId && battle.ownerFunding) {
-            const realEntryPrice = cases.reduce((a, b) => a + b.price, 0);
+        if (!battle.sponsorOnly && e.id == battle.ownerId && battle.ownerFunding) {
+            const realEntryPrice = cases.reduce((a, b) => a + fromCents(b.price), 0);
             const fundingAmount = (realEntryPrice - battle.entryPrice) * (players.length - 1)
             cost = roundDecimal(realEntryPrice + fundingAmount);
         }

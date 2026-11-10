@@ -32,6 +32,7 @@ setInterval(() => {
 
 async function joinChat(socket, channel) {
         
+    if(typeof channel!=='string'||!Object.hasOwn(channels,channel))return socket.emit('chat:join',{error:'INVALID_CHANNEL'});
     if (channel == 'VIP') {
 
         if (!socket.userId) return sendSystemMessage(socket, `You need to be logged in to join this room.`);
@@ -57,6 +58,7 @@ async function sendMessage(socket, message, replyTo) {
     if (bannedUsers.has(socket.userId)) return sendSystemMessage(socket, `You are banned.`)
 
     if (!socket.channel) return sendSystemMessage(socket, `You got disconnected, refresh the site.`); // You haven't joined any chat rooms.
+    if(typeof message==='string')message=message.trim();
     if (!message || typeof message != 'string' || message.length > 1000) return sendSystemMessage(socket, `Invalid message.`);
 
     if (message.startsWith(cmdPrefix)) {
@@ -70,10 +72,11 @@ async function sendMessage(socket, message, replyTo) {
             return sendSystemMessage(socket, 'Unknown command.');
         }
 
+        if(!['tip','balance'].includes(commandName)){const gate=await require('../../utils/community-service').eligibility(socket.userId);if(!gate.canChat)return sendSystemMessage(socket,'$200 in completed wagers required to chat.');}
         const command = commands.get(commandName);
 
         try {
-            command.execute(socket, args);
+            await command.execute(socket, args);
         } catch (error) {
             console.error(error);
             sendSystemMessage(socket, 'There was an error trying to execute that command!');
@@ -85,13 +88,11 @@ async function sendMessage(socket, message, replyTo) {
         if (message.length > 300) return sendSystemMessage(socket, 'Message is too long.');
 
         const [[user]] = await sql.query('SELECT id, username, xp, role, perms, mutedUntil FROM users WHERE id = ?', [socket.userId]);
+        if(!user||user.role==='BOT')return sendSystemMessage(socket,'Chat unavailable.');
+        const gate=await require('../../utils/community-service').eligibility(socket.userId);if(!gate.canChat)return sendSystemMessage(socket,'$200 completed wagers required; muted or locked accounts cannot send.');
         const now = Date.now();
 
         if (user.perms < 1) {
-
-            if (user.xp < 200) {
-                return sendSystemMessage(socket, '200 wagered required to chat');
-            }
 
             const cooldown = cooldowns.get(socket.userId);
             if (cooldown && cooldown > now) return sendSystemMessage(socket, `You are on cooldown. Please wait ${Math.ceil((cooldown - now) / 1000)} seconds.`);

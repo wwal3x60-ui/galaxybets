@@ -46,7 +46,7 @@ async function newSocket(socket) {
 
 }
 
-function socketLogin(socket, token) {
+async function socketLogin(socket, token) {
     const valid = validateJwtToken(token);
 
     if (!valid) {
@@ -54,6 +54,7 @@ function socketLogin(socket, token) {
         return socket.emit('auth', { error: 'INVALID_TOKEN' });
     }
 
+    const [[u]]=await sql.query('SELECT role,banned FROM users WHERE id=?',[valid.uid]);if(!u||u.banned||String(u.role).trim().toUpperCase()==='BOT'){socket.userId=null;return socket.emit('auth',{error:'ACCOUNT_RESTRICTED'});}
     socket.userId = valid.uid;
     socket.emit('auth', { success: true, userId: socket.userId });
 
@@ -64,16 +65,7 @@ function socketLogin(socket, token) {
 
 io.on('connection', function(socket) {
 
-    if (socket.handshake.auth?.token === 'galaxybots123') {
-        socketLogin(socket, socket.handshake.auth.token);
-    }
-
     socket.on('auth', async function(authToken) {
-        if (authToken === 'galaxybots123') {
-            socket.userId = 35;
-            socket.join(String(socket.userId));
-            return socket.emit('auth', { success: true, userId: socket.userId });
-        }
 
         try {
             let token = null;
@@ -101,13 +93,13 @@ io.on('connection', function(socket) {
             }
 
             if (socket.userId) {
-                socket.leave(socket.userId);
+                socket.leave(String(socket.userId));
                 socket.userId = null;
             }
 
             const first = socket.userId == undefined;
 
-            socketLogin(socket, token);
+            await socketLogin(socket, token);
             if (first) await newSocket(socket);
         } catch (error) {
             console.error('Socket authentication failed:', error.message || error);
@@ -292,13 +284,14 @@ io.on('connection', function(socket) {
         socket.leave('crash');
     });
 
+    socket.on('chat:leave',()=>{if(socket.channel)socket.leave(socket.channel);socket.channel=null;});
     socket.on('chat:join', (channel) => {
 
-        joinChat(socket, channel);
+        Promise.resolve(joinChat(socket,channel)).catch(()=>sendSystemMessage(socket,'Unable to join chat.'));
 
     });
 
-    socket.on('chat:sendMessage', (message, replyTo = null) => sendMessage(socket, message, replyTo));
+    socket.on('chat:sendMessage',(message,replyTo=null)=>Promise.resolve(sendMessage(socket,message,replyTo)).catch(()=>sendSystemMessage(socket,'Unable to send message.')));
 
 });
 

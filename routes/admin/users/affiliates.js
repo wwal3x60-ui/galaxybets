@@ -4,6 +4,7 @@ const router = express.Router();
 const { sql, doTransaction } = require('../../../database');
 const { roundDecimal, sendLog } = require('../../../utils');
 
+const { firstEligibleBetId } = require('../../../utils/affiliate-config');
 const resultsPerPage = 10;
 
 router.get('/', async (req, res) => {
@@ -11,6 +12,7 @@ router.get('/', async (req, res) => {
     const sortBy = req.query.sortBy || 'affiliatedUsersCount';
     if (!['balance', 'xp', 'totalWagered', 'affiliatedUsersCount'].includes(sortBy)) return res.status(400).json({ error: 'INVALID_SORT_BY' });
 
+    const orderBy = sortBy === 'totalWagered' ? 'affiliatedUsersWageredCount' : sortBy;
     const sortOrder = req.query.sortOrder || 'DESC';
     if (!['ASC', 'DESC'].includes(sortOrder)) return res.status(400).json({ error: 'INVALID_SORT_ORDER' });
 
@@ -54,7 +56,7 @@ router.get('/', async (req, res) => {
         LEFT JOIN
             bets ON affiliates.userId = bets.userId AND bets.createdAt >= affiliates.createdAt AND bets.completed = 1
         ${searchQuery} GROUP BY
-            users.id ORDER BY ${sortBy} ${sortOrder} LIMIT ? OFFSET ?;
+            users.id ORDER BY ${orderBy} ${sortOrder} LIMIT ? OFFSET ?;
        `,
         searchArgs.concat([resultsPerPage, offset])
     );
@@ -95,7 +97,7 @@ router.get('/:id', async (req, res) => {
           SELECT COALESCE(SUM(bets.edge), 0) 
           FROM affiliates 
           JOIN bets ON affiliates.userId = bets.userId 
-          WHERE affiliates.affiliateId = users.id AND bets.createdAt >= COALESCE(
+          WHERE affiliates.affiliateId = users.id AND bets.completed = 1 AND bets.id < ${firstEligibleBetId} AND bets.createdAt >= affiliates.createdAt AND bets.createdAt >= COALESCE(
             (SELECT MAX(createdAt) FROM affiliateClaims WHERE userId = users.id), affiliates.createdAt
           )
         ) AS affiliatedUsersEdgeCountSinceLastClaim
@@ -109,8 +111,15 @@ router.get('/:id', async (req, res) => {
 
     if (!user) return res.status(404).json({ error: 'USER_NOT_FOUND' });
     
-    user.pendingAffiliateEarnings = roundDecimal((user.affiliatedUsersEdgeCountSinceLastClaim * 0.1) + user.affiliateEarningsOffset);
+    user.legacyPendingAffiliateEarnings = roundDecimal((user.affiliatedUsersEdgeCountSinceLastClaim * 0.1) + user.affiliateEarningsOffset);
 
+    user.pendingAffiliateEarnings = 0;
+    const [[ledger]] = await sql.query(
+        `SELECT COALESCE(SUM(commissionAmount), 0) AS affiliateEarned,
+                COALESCE(SUM(balanceCredit), 0) AS affiliateCredited
+         FROM affiliateCommissions WHERE affiliateId = ?`, [userId]
+    );
+    Object.assign(user, ledger);
     delete user.affiliateEarningsOffset;
     delete user.affiliatedUsersEdgeCountSinceLastClaim;
 
@@ -193,7 +202,7 @@ router.post('/:id/earnings', async (req, res) => {
 
         await doTransaction(async (connection, commit) => {
 
-            const [[user]] = await sql.query(
+            const [[user]] = await connection.query(
                 `
                 SELECT
                 users.id,
@@ -202,18 +211,19 @@ router.post('/:id/earnings', async (req, res) => {
                   SELECT COALESCE(SUM(bets.edge), 0) 
                   FROM affiliates 
                   JOIN bets ON affiliates.userId = bets.userId 
-                  WHERE affiliates.affiliateId = users.id AND bets.createdAt >= COALESCE(
+                  WHERE affiliates.affiliateId = users.id AND bets.completed = 1 AND bets.id < ${firstEligibleBetId} AND bets.createdAt >= affiliates.createdAt AND bets.createdAt >= COALESCE(
                     (SELECT MAX(createdAt) FROM affiliateClaims WHERE userId = users.id), affiliates.createdAt
                   )
                 ) AS affiliatedUsersEdgeCountSinceLastClaim
                 FROM
                     users
                 WHERE
-                    users.id = ?;
+                    users.id = ? FOR UPDATE;
                 `,
                 [userId]
             );
         
+            if (!user) return res.status(404).json({ error: 'USER_NOT_FOUND' });
             const affiliateEarnings = roundDecimal((user.affiliatedUsersEdgeCountSinceLastClaim * 0.1) + user.affiliateEarningsOffset);
             const offset = earnings - affiliateEarnings;
         
