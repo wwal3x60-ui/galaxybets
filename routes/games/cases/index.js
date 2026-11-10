@@ -101,7 +101,7 @@ router.post('/:id/open', [isAuthed, apiLimiter], async (req, res) => {
     if (!caseInfo) return res.status(404).json({ error: 'NOT_FOUND' });
 
     const casePrice = fromCents(caseInfo.price);
-    if (casePrice < 0.2) return res.status(400).json({ error: 'INVALID_AMOUNT' });
+    if (casePrice < 0.15) return res.status(400).json({ error: 'INVALID_AMOUNT' });
     const price = roundDecimal(casePrice * amount);
     if(price>MAX_BET_USD)return res.status(400).json({error:"MAX_BET_CASES"});
 

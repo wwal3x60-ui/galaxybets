@@ -87,7 +87,7 @@ router.post('/create', isAuthed, apiLimiter, async (req, res) => {
 
     let quote;try{quote=require('../../../utils/funded-battles').quote(battleCost,teams*playersPerTeam,fundingPercentage);}catch(e){return res.status(e.status||400).json({error:e.publicError||'INVALID_FUNDING'});}
     const {sponsorOnly,cost,entryPrice,sponsorPaid}=quote;
-    if(cost<(sponsorOnly ? 0.01 : 0.2))return res.status(400).json({error:'INVALID_AMOUNT'});
+    if(cost<(sponsorOnly ? 0.01 : 0.15))return res.status(400).json({error:'INVALID_AMOUNT'});
 
     try {
 
@@ -236,7 +236,7 @@ async function joinBattle(req, res, bot = false) {
                 } else {
 
                     if (battle.privKey && battle.privKey != req.body.privKey) return res.status(400).json({ error: 'INVALID_PRIV_KEY' });
-                    if (!battle.sponsorOnly && battle.entryPrice > 0 && battle.entryPrice < 0.2) {
+                    if (!battle.sponsorOnly && battle.entryPrice > 0 && battle.entryPrice < 0.15) {
                         return res.status(400).json({ error: 'INVALID_AMOUNT' });
                     }
 
