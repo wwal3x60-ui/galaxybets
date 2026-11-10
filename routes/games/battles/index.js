@@ -104,7 +104,7 @@ router.post('/create', isAuthed, apiLimiter, async (req, res) => {
                     SELECT COUNT(*) as total FROM battles WHERE ownerId = ? AND endedAt IS NULL
                 `, [user.id]);
 
-                if (total >= 3) return res.status(400).json({ error: 'TOO_MANY_BATTLES' });
+                if (total >= 1000) return res.status(400).json({ error: 'TOO_MANY_BATTLES' });
             }
 
             const restriction=await require('../../../utils/funded-battles').affiliate(connection,req.body.affiliateCode,fundingPercentage>0);
