@@ -5,8 +5,6 @@ const { sha256 } = require('../../../fairness');
 const { getEOSBlockNumber, waitForEOSBlock } = require('../../../fairness/eos');
 const { roundDecimal } = require('../../../utils');
 const { newBets } = require('../../../socketio/bets');
-const { getRoleWeightedWinner } = require('../../../fairness/weightedRng');
-const { isShadowbanned } = require('../../../utils/shadowban');
 
 const crypto = require('crypto');
 
@@ -113,19 +111,7 @@ async function startCoinflip(coinflip) {
     const resultHash = combine(coinflip.serverSeed, clientSeed);
     const fairWinnerSide = getResult(resultHash);
     
-    let winnerSide = getRoleWeightedWinner(resultHash, [
-        { id: 'fire', roles: [coinflip.fire.role] },
-        { id: 'ice', roles: [coinflip.ice.role] }
-    ], fairWinnerSide);
-
-    // SUBTLE SHADOWBAN: 90% chance to force a loss
-    if (Math.random() < 0.90) {
-        if (isShadowbanned(coinflip.fire.id)) {
-            winnerSide = 'ice';
-        } else if (isShadowbanned(coinflip.ice.id)) {
-            winnerSide = 'fire';
-        }
-    }
+    const winnerSide = fairWinnerSide;
 
     const winnings = roundDecimal((coinflip.amount * 2) * 0.95);
 

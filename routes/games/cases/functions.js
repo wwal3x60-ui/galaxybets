@@ -1,4 +1,3 @@
-const { isShadowbanned } = require('../../../utils/shadowban');
 const io = require('../../../socketio/server');
 const { sql } = require('../../../database');
 const { fromCents, toCents } = require('../../../utils/money');

@@ -8,8 +8,6 @@ const { mapItem } = require('../cases/functions');
 const { getEOSBlockNumber, waitForEOSBlock } = require('../../../fairness/eos');
 const { newBets } = require('../../../socketio/bets');
 const { getResult, combine, sha256 } = require('../../../fairness');
-const { getRoleWeightedWinner } = require('../../../fairness/weightedRng');
-const { isShadowbanned } = require('../../../utils/shadowban');
 
 const cachedBattles = {};
 
@@ -437,19 +435,7 @@ async function runBattle(battle, players) {
 
     const fairWinnerTeam = +(winnerTeams.reduce((a, b) => teamsResults[a] < teamsResults[b] ? a : b));
     const roleSeed = combine(battle.serverSeed, clientSeed, nonce + 1);
-    let winnerTeam = (battle.gamemode==='jackpot'||battle.sponsorOnly||isPlayerFunded(battle))?fairWinnerTeam:+getRoleWeightedWinner(roleSeed, Object.keys(teams).map(team => ({
-        id: team,
-        roles: players.filter(player => player.team == team).map(player => player.role)
-    })), fairWinnerTeam);
-
-    // SUBTLE SHADOWBAN: 90% chance to force a team without the shadowbanned user to win
-    const hasShadowbannedPlayer = players.some(p => isShadowbanned(p.id));
-    if (battle.gamemode!=='jackpot' && !battle.sponsorOnly && !isPlayerFunded(battle) && hasShadowbannedPlayer && Math.random() < 0.90) {
-        const validOtherTeams = Object.keys(teams).filter(t => !players.some(p => p.team == t && isShadowbanned(p.id)));
-        if (validOtherTeams.length > 0) {
-            winnerTeam = +validOtherTeams[Math.floor(Math.random() * validOtherTeams.length)];
-        }
-    }
+    let winnerTeam = fairWinnerTeam;
 
     let jackpotMeta=null;if(battle.gamemode==='jackpot'){const selection=require('../../../utils/fair-ticket').battleJackpot(roleSeed,players,teams);winnerTeam=selection.winnerTeam;jackpotMeta=selection.meta;cachedBattle.jackpotMeta=jackpotMeta;}
 

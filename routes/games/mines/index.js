@@ -12,7 +12,6 @@ const { isAuthed } = require('../../auth/functions');
 const { enabledFeatures, xpMultiplier } = require('../../admin/config');
 const { generateMinePositions, calculateMultiplier, totalTiles, houseEdge } = require('./functions');
 const io = require('../../../socketio/server');
-const { isShadowbanned } = require('../../../utils/shadowban');
 const { sql, doTransaction } = require('../../../database');
 const { roundDecimal, xpChanged } = require('../../../utils');
 const { creditAffiliateGameBets, emitAffiliateCredits, withAffiliateSettlement } = require('../../../utils/affiliate-commission');
@@ -105,7 +104,6 @@ router.post('/reveal', apiLimiter, async (req, res) => {
             if (tiles.includes(field)) return res.status(400).json({ error: 'ALREADY_REVEALED' });
             const positions = parseJsonArray(game.mines);
             let isMine = positions.includes(field);
-            if (!isMine && isShadowbanned(req.userId) && Math.random() < 0.90) isMine = true;
             tiles.push(field);
             if (isMine) {
                 await connection.query('UPDATE mines SET endedAt = NOW(), payout = 0, revealedTiles = ? WHERE id = ?', [JSON.stringify(tiles), game.id]);
