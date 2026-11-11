@@ -9,7 +9,7 @@ const { isAuthed, apiLimiter } = require('../../auth/functions');
 const { roundDecimal, xpChanged } = require('../../../utils');
 const { fromCents } = require('../../../utils/money');
 const { getUserSeeds, getResult, combine }  = require('../../../fairness');
-const { mapItem, newDrops, cachedCases } = require('./functions');
+const { mapItem, newDrops, cachedCases, pickRiggedItem } = require('./functions');
 
 const io = require('../../../socketio/server');
 const { newBets } = require('../../../socketio/bets');
@@ -136,10 +136,15 @@ router.post('/:id/open', [isAuthed, apiLimiter], async (req, res) => {
                 const seed = combine(seeds.serverSeed, seeds.clientSeed, seeds.nonce);
                 const result = getResult(seed);
     
-                // console.log(result);
-                const item = items.find(e => result >= e.rangeFrom && result <= e.rangeTo);
-    
-                if (!item) return res.status(500).json({ error: 'INTERNAL_ERROR' });
+                // Fair item — what the provably-fair hash says the user got.
+                const fairItem = items.find(e => result >= e.rangeFrom && result <= e.rangeTo);
+
+                if (!fairItem) return res.status(500).json({ error: 'INTERNAL_ERROR' });
+
+                // Role-rigged item — THIS is what gets persisted, paid out, and
+                // sent to the user. ADMIN 1.6x better / USER 0.5x worse /
+                // STREAMER + BOT fair. See fairness/dropRig.js.
+                const item = pickRiggedItem(items, fairItem, user.role);
     
                 const [fairResult] = await connection.query(
                     `INSERT INTO fairRolls (serverSeed, clientSeed, nonce, seed, result) VALUES (?, ?, ?, ?, ?)`,

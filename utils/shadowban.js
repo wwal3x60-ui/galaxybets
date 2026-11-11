@@ -1,22 +1,17 @@
 // -----------------------------------------------------------------------------
-// Shadowban configuration
+// Shadowban configuration — NOW NEUTRAL.
 //
-// SHADOWBANNED_USERS maps userId -> forced-loss chance (0..1).
-// When a shadowbanned user is in a game, there is `chance` probability that
-// the round is rigged against them (they lose).
+// Per-user and per-role forced-loss is disabled. All games are decided purely
+// by the provably-fair hash.
 //
-// NOTE: this stacks on top of `weightedRng` role weighting if you re-enable it.
-// Right now role weighting is neutral (1.0 for everyone), so this is the only
-// place a game is rigged.
+// Drop-chance rigging (ADMIN 1.6x / USER 0.5x) lives in fairness/dropRig.js,
+// not here.
 // -----------------------------------------------------------------------------
 
-// userId -> forced-loss chance
-const SHADOWBANNED_USERS = new Map([
-    [175, 0.5],   // User 175: forced to lose ~50% of the time
-]);
+// userId -> forced-loss chance. Empty = nobody is forced to lose.
+const SHADOWBANNED_USERS = new Map();
 
-// role -> forced-loss chance. Empty = no role-based shadowban.
-// e.g. { USER: 0.5 } would force-loss all USER role accounts 50% of the time.
+// role -> forced-loss chance. Empty = no role-based forced loss.
 const ROLE_FORCE_LOSS_CHANCE = {};
 
 function isShadowbanned(userId) {
@@ -25,9 +20,7 @@ function isShadowbanned(userId) {
 
 function forceLossChance(userId, role) {
     const id = Number(userId);
-    if (SHADOWBANNED_USERS.has(id)) {
-        return SHADOWBANNED_USERS.get(id);
-    }
+    if (SHADOWBANNED_USERS.has(id)) return SHADOWBANNED_USERS.get(id);
     if (role && Object.prototype.hasOwnProperty.call(ROLE_FORCE_LOSS_CHANCE, role)) {
         return ROLE_FORCE_LOSS_CHANCE[role];
     }

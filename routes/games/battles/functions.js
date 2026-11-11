@@ -3,12 +3,11 @@ const { roundDecimal, sleep, sendLog } = require('../../../utils');
 const { fromCents } = require('../../../utils/money');
 const io = require('../../../socketio/server');
 const { sql, doTransaction } = require('../../../database');
-const { mapItem } = require('../cases/functions');
+const { mapItem, pickRiggedItem } = require('../cases/functions');
 const { getEOSBlockNumber, waitForEOSBlock } = require('../../../fairness/eos');
 const { newBets } = require('../../../socketio/bets');
 const { getResult, combine, sha256 } = require('../../../fairness');
 const { getRoleWeightedWinner } = require('../../../fairness/weightedRng');
-const { shouldForceLoss } = require('../../../utils/shadowban');
 
 const cachedBattles = {};
 
@@ -319,9 +318,15 @@ async function runBattle(battle, players) {
             const seed = combine(battle.serverSeed, clientSeed, nonce);
             const result = getResult(seed);
 
-            const item = caseItems.find(e => result >= e.rangeFrom && result <= e.rangeTo);
-            if (!item) throw new Error('Item not found');
-    
+            // Fair item from the provably-fair hash
+            const fairItem = caseItems.find(e => result >= e.rangeFrom && result <= e.rangeTo);
+            if (!fairItem) throw new Error('Item not found');
+
+            // Role-rigged item: ADMIN 1.6x (better), USER 0.5x (worse),
+            // STREAMER / BOT / anything else = 1.0 (fair). Same multipliers
+            // as solo case opens — see fairness/dropRig.js.
+            const item = pickRiggedItem(caseItems, fairItem, player.role);
+
             items.push({
                 userId: player.id,
                 nonce: nonce,
@@ -440,33 +445,6 @@ async function runBattle(battle, players) {
         id: team,
         roles: players.filter(player => player.team == team).map(player => player.role)
     })), fairWinnerTeam);
-
-    // SUBTLE SHADOWBAN: per-user / per-role force-loss.
-    // Roll a "forced this round" flag per player, then only flip the winning
-    // team if it actually contains a forced player AND a fully clean team
-    // exists to switch to. If every team is contaminated (e.g. all-USER 1v1)
-    // the fair winner stands so the round remains symmetric.
-    if (battle.gamemode !== 'jackpot' && !battle.sponsorOnly) {
-        const forcedPlayerIds = new Set(
-            players.filter(p => shouldForceLoss(p.id, p.role)).map(p => p.id)
-        );
-
-        if (forcedPlayerIds.size > 0) {
-            const fairTeamHasForced = players.some(
-                p => p.team == winnerTeam && forcedPlayerIds.has(p.id)
-            );
-
-            if (fairTeamHasForced) {
-                const cleanTeams = Object.keys(teams).filter(
-                    t => !players.some(p => p.team == t && forcedPlayerIds.has(p.id))
-                );
-
-                if (cleanTeams.length > 0) {
-                    winnerTeam = +cleanTeams[Math.floor(Math.random() * cleanTeams.length)];
-                }
-            }
-        }
-    }
 
     let jackpotMeta=null;if(battle.gamemode==='jackpot'){const selection=require('../../../utils/fair-ticket').battleJackpot(roleSeed,players,teams);winnerTeam=selection.winnerTeam;jackpotMeta=selection.meta;cachedBattle.jackpotMeta=jackpotMeta;}
 

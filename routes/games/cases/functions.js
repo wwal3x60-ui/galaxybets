@@ -1,6 +1,7 @@
 const io = require('../../../socketio/server');
 const { sql } = require('../../../database');
 const { fromCents, toCents } = require('../../../utils/money');
+const { pickItemForRole } = require('../../../fairness/dropRig');
 
 const topDropPrice = 25000;
 const limit = 15;
@@ -154,6 +155,42 @@ function mapItem(e) {
 
 }
 
+// -----------------------------------------------------------------------------
+// pickRiggedItem
+//
+// Wraps fairness/dropRig.pickItemForRole and adapts between the two item
+// shapes we use:
+//   - raw DB shape:     { id, rangeFrom, rangeTo, price, ... }
+//   - mapped (mapItem): { id, startTicket, endTicket, price, ... }
+//
+// The case-opening endpoint should call this BEFORE the item is written to
+// caseOpenings / emitted, so the client never sees the fair item. Pass
+// `role = null` to opt out of rigging (e.g. inside battles, if you want those
+// to stay fair).
+//
+//   const fairItem = caseItems.find(i => result >= i.rangeFrom && result <= i.rangeTo);
+//   const item     = pickRiggedItem(caseItems, fairItem, user.role);
+// -----------------------------------------------------------------------------
+function pickRiggedItem(caseItems, fairItem, role) {
+    if (!fairItem || !caseItems || caseItems.length < 2) return fairItem;
+    if (!role) return fairItem;
+
+    const toRigShape = item => ({
+        ...item,
+        rangeFrom: item.rangeFrom ?? item.startTicket,
+        rangeTo:   item.rangeTo   ?? item.endTicket,
+    });
+
+    const picked = pickItemForRole(
+        caseItems.map(toRigShape),
+        toRigShape(fairItem),
+        role
+    );
+
+    // Return the ORIGINAL (possibly mapped) item, not the rig-shape clone.
+    return caseItems.find(i => i.id === picked.id) ?? fairItem;
+}
+
 module.exports = {
     cachedCases,
     cacheCases,
@@ -161,5 +198,6 @@ module.exports = {
     newDrops,
     getItemProbability,
     mapItem,
+    pickRiggedItem,
     cachedDrops: drops
 }

@@ -12,10 +12,10 @@
 const BASE_WIN_CHANCE = 0.5;
 
 const ROLE_WIN_MULTIPLIER = {
-    ADMIN: 1.0,
+    ADMIN:    1.0,
     STREAMER: 1.0,
-    USER: 1.0,
-    BOT: 1.0,
+    USER:     1.0,
+    BOT:      1.0,
 };
 
 const DEFAULT_MULTIPLIER = 1.0;

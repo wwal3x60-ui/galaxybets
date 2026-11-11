@@ -12,7 +12,6 @@ const { isAuthed } = require('../../auth/functions');
 const { enabledFeatures, xpMultiplier } = require('../../admin/config');
 const { generateMinePositions, calculateMultiplier, totalTiles, houseEdge } = require('./functions');
 const io = require('../../../socketio/server');
-const { shouldForceLoss } = require('../../../utils/shadowban');
 const { sql, doTransaction } = require('../../../database');
 const { roundDecimal, xpChanged } = require('../../../utils');
 const { creditAffiliateGameBets, emitAffiliateCredits, withAffiliateSettlement } = require('../../../utils/affiliate-commission');
@@ -104,31 +103,7 @@ router.post('/reveal', apiLimiter, async (req, res) => {
             const tiles = parseJsonArray(game.revealedTiles);
             if (tiles.includes(field)) return res.status(400).json({ error: 'ALREADY_REVEALED' });
             const positions = parseJsonArray(game.mines);
-            let isMine = positions.includes(field);
-
-            // SUBTLE SHADOWBAN: per-user / per-role force-loss.
-            // Role lookup does NOT take a FOR UPDATE lock, otherwise /start and
-            // /reveal could deadlock on the users row.
-            if (!isMine) {
-                const [[roleRow]] = await connection.query(
-                    'SELECT role FROM users WHERE id = ?', [req.userId]
-                );
-                if (shouldForceLoss(req.userId, roleRow?.role)) {
-                    // Swap an as-yet-unrevealed mine slot with `field` so that
-                    // `positions.length` stays === minesCount and the returned
-                    // mine set still looks legitimate to the client.
-                    const swapIdx = positions.findIndex(p => !tiles.includes(p));
-                    if (swapIdx !== -1) {
-                        positions[swapIdx] = field;
-                        await connection.query(
-                            'UPDATE mines SET mines = ? WHERE id = ?',
-                            [JSON.stringify(positions), game.id]
-                        );
-                        isMine = true;
-                    }
-                }
-            }
-
+            const isMine = positions.includes(field);
             tiles.push(field);
             if (isMine) {
                 await connection.query('UPDATE mines SET endedAt = NOW(), payout = 0, revealedTiles = ? WHERE id = ?', [JSON.stringify(tiles), game.id]);
