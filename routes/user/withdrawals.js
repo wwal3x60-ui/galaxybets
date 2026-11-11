@@ -44,7 +44,7 @@ router.post('/crypto', withdrawalCryptoLimiter, isAuthed, apiLimiter, async (req
             }
             const [[account]] = await connection.query('SELECT role,banned,accountLock,CAST(wagerRequirement AS CHAR) AS wagerRequirement,CAST(wagerProgress AS CHAR) AS wagerProgress FROM users WHERE id=? FOR UPDATE',[req.userId]);
             if (!account || String(account.role).trim().toUpperCase()==='BOT' || account.banned || account.accountLock) throw Object.assign(new Error('WITHDRAWAL_RESTRICTED'),{status:403});
-            if (Number(account.wagerProgress)<Number(account.wagerRequirement)) throw Object.assign(new Error('WAGER_REQUIREMENT_NOT_MET'),{status:403});
+            if (units(account.wagerProgress)<units(account.wagerRequirement)) throw Object.assign(new Error('WAGER_REQUIREMENT_NOT_MET'),{status:403});
 
             const [updateResult] = await connection.query(
                 "UPDATE users SET balance = balance - ? WHERE id = ? AND balance >= ? AND role <> 'BOT' AND banned=0 AND accountLock=0",
@@ -81,7 +81,8 @@ router.get('/eligibility',isAuthed,async(req,res)=>{
         const [[user]]=await sql.query('SELECT role,banned,accountLock,CAST(balance AS CHAR) AS balance,CAST(wagerRequirement AS CHAR) AS required,CAST(wagerProgress AS CHAR) AS progress FROM users WHERE id=?',[req.userId]);
         if(!user)return res.status(401).json({error:'UNAUTHORIZED'});
         const remaining=units(user.required)>units(user.progress)?units(user.required)-units(user.progress):0n;
-        return res.json({balance:user.balance,required:user.required,progress:user.progress,remaining:decimal(remaining),minWithdrawal:'15.00',minDeposit:'5.00',canWithdraw:remaining===0n&&!user.banned&&!user.accountLock&&String(user.role).toUpperCase()!=='BOT'});
+        const bonus=await require('../../utils/deposit-bonus').progress(sql,req.userId);
+        return res.json({bonus,balance:user.balance,required:user.required,progress:user.progress,remaining:decimal(remaining),minWithdrawal:'15.00',minDeposit:'5.00',canWithdraw:remaining===0n&&!user.banned&&!user.accountLock&&String(user.role).toUpperCase()!=='BOT'});
     } catch(error){console.error('Withdrawal eligibility:',error.code||error.message);return res.status(500).json({error:'INTERNAL_SERVER_ERROR'});}
 });
 

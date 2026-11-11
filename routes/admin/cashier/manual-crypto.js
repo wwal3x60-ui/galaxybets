@@ -3,16 +3,32 @@ const router = express.Router();
 
 const { sql, doTransaction } = require('../../../database');
 
+const bonus = require('../../../utils/deposit-bonus');
+const {units,decimal}=require('../../../utils/cashier-money');
+
+// All cashier decisions take the user lock before transaction/bonus locks.
+// This matches deposit submission and prevents opposite lock ordering when
+// two pending deposits for the same user are reviewed concurrently.
+async function lockTransaction(connection, transactionId) {
+    const [[hint]]=await connection.query('SELECT userId FROM transactions WHERE id = ?',[transactionId]);
+    if(!hint)return null;
+    await connection.query('SELECT id FROM users WHERE id=? FOR UPDATE',[hint.userId]);
+    const [[transaction]]=await connection.query('SELECT id,userId,amount,type,status FROM transactions WHERE id = ? FOR UPDATE',[transactionId]);
+    if(transaction&&String(transaction.userId)!==String(hint.userId))throw Error('Transaction ownership changed');
+    return transaction;
+}
+
 router.get('/pending', async (req, res) => {
     try {
         const [transactions] = await sql.query(
             `SELECT transactions.id, transactions.userId, users.username, transactions.type,
-                    transactions.amount, transactions.coin,
+                    transactions.amount, transactions.coin, GREATEST(users.wagerRequirement-users.wagerProgress,0) AS wageringRemaining,
                     CASE WHEN transactions.type='crypto_withdraw' THEN COALESCE(transactions.methodId,transactions.txHash) ELSE transactions.txHash END AS txHash,
                     transactions.status,
-                    transactions.createdAt
+                    transactions.createdAt, b.code AS bonusCode,b.status AS bonusStatus,b.bonusAmount,b.wagerAmount
              FROM transactions
              JOIN users ON users.id = transactions.userId
+             LEFT JOIN depositBonusRequests b ON b.transactionId=transactions.id
              WHERE transactions.status = ?
                AND transactions.type IN (?, ?)
              ORDER BY transactions.createdAt ASC, transactions.id ASC`,
@@ -33,18 +49,16 @@ router.post('/approve-deposit', async (req, res) => {
 
     try {
         const result = await doTransaction(async (connection, commit) => {
-            const [[transaction]] = await connection.query(
-                'SELECT id, userId, amount, type, status FROM transactions WHERE id = ? FOR UPDATE',
-                [transactionId]
-            );
+            const transaction = await lockTransaction(connection,transactionId);
             if (!transaction) return 'NOT_FOUND';
             if (transaction.status !== 'pending') return 'NOT_PENDING';
             if (transaction.type !== 'crypto_deposit') return 'INVALID_TYPE';
 
-            await require('../../../utils/cashier-wagering').addDepositRequirement(connection, transaction.userId, transaction.id, String(transaction.amount));
+            const award=await bonus.approve(connection,transaction);
+            await require('../../../utils/cashier-wagering').addDepositRequirement(connection, transaction.userId, transaction.id, String(transaction.amount),award.required);
 
             const [creditResult] = await connection.query('UPDATE users SET balance = balance + ? WHERE id = ?', [
-                transaction.amount,
+                decimal(units(String(transaction.amount))+units(award.bonus)),
                 transaction.userId
             ]);
             if (creditResult.affectedRows !== 1) throw new Error('Deposit user not found');
@@ -56,6 +70,7 @@ router.post('/approve-deposit', async (req, res) => {
             return 'APPROVED';
         });
 
+        if (result === 'WAGER_REQUIREMENT_NOT_MET') return res.status(409).json({error:'WAGER_REQUIREMENT_NOT_MET'});
         if (result === 'NOT_FOUND') return res.status(404).json({ error: 'TRANSACTION_NOT_FOUND' });
         if (result === 'NOT_PENDING') return res.status(409).json({ error: 'TRANSACTION_NOT_PENDING' });
         if (result === 'INVALID_TYPE') return res.status(400).json({ error: 'INVALID_TRANSACTION_TYPE' });
@@ -78,13 +93,13 @@ router.post('/approve-withdraw', async (req, res) => {
 
     try {
         const result = await doTransaction(async (connection, commit) => {
-            const [[transaction]] = await connection.query(
-                'SELECT id, type, status FROM transactions WHERE id = ? FOR UPDATE',
-                [transactionId]
-            );
+            const transaction = await lockTransaction(connection,transactionId);
             if (!transaction) return 'NOT_FOUND';
             if (transaction.status !== 'pending') return 'NOT_PENDING';
             if (transaction.type !== 'crypto_withdraw') return 'INVALID_TYPE';
+
+            const [[account]]=await connection.query('SELECT CAST(wagerRequirement AS CHAR) AS required,CAST(wagerProgress AS CHAR) AS progress FROM users WHERE id=? FOR UPDATE',[transaction.userId]);
+            if(!account||units(account.progress)<units(account.required))return 'WAGER_REQUIREMENT_NOT_MET';
 
             if (txHash === undefined) {
                 await connection.query(
@@ -101,6 +116,7 @@ router.post('/approve-withdraw', async (req, res) => {
             return 'APPROVED';
         });
 
+        if (result === 'WAGER_REQUIREMENT_NOT_MET') return res.status(409).json({error:'WAGER_REQUIREMENT_NOT_MET'});
         if (result === 'NOT_FOUND') return res.status(404).json({ error: 'TRANSACTION_NOT_FOUND' });
         if (result === 'NOT_PENDING') return res.status(409).json({ error: 'TRANSACTION_NOT_PENDING' });
         if (result === 'INVALID_TYPE') return res.status(400).json({ error: 'INVALID_TRANSACTION_TYPE' });
@@ -120,14 +136,12 @@ router.post('/reject', async (req, res) => {
 
     try {
         const result = await doTransaction(async (connection, commit) => {
-            const [[transaction]] = await connection.query(
-                'SELECT id, userId, amount, type, status FROM transactions WHERE id = ? FOR UPDATE',
-                [transactionId]
-            );
+            const transaction = await lockTransaction(connection,transactionId);
             if (!transaction) return 'NOT_FOUND';
             if (transaction.status !== 'pending') return 'NOT_PENDING';
             if (!['crypto_deposit', 'crypto_withdraw'].includes(transaction.type)) return 'INVALID_TYPE';
 
+            if (transaction.type === 'crypto_deposit') await bonus.reject(connection,transaction.id);
             if (transaction.type === 'crypto_withdraw') {
                 const [refundResult] = await connection.query('UPDATE users SET balance = balance + ? WHERE id = ?', [
                     transaction.amount,
@@ -143,6 +157,7 @@ router.post('/reject', async (req, res) => {
             return 'REJECTED';
         });
 
+        if (result === 'WAGER_REQUIREMENT_NOT_MET') return res.status(409).json({error:'WAGER_REQUIREMENT_NOT_MET'});
         if (result === 'NOT_FOUND') return res.status(404).json({ error: 'TRANSACTION_NOT_FOUND' });
         if (result === 'NOT_PENDING') return res.status(409).json({ error: 'TRANSACTION_NOT_PENDING' });
         if (result === 'INVALID_TYPE') return res.status(400).json({ error: 'INVALID_TRANSACTION_TYPE' });

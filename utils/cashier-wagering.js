@@ -6,16 +6,17 @@ async function boundary(c) {
   if (!flag || !/^[1-9]\d*$/.test(String(flag.value))) throw Error('Cashier wagering schema is not installed. Run the supplied Aiven migration before deploying.');
   return String(flag.value);
 }
-async function addDepositRequirement(c, userId, transactionId, amount) {
+async function addDepositRequirement(c, userId, transactionId, amount, requiredAmount=amount) {
+  if (units(requiredAmount)<units(amount)) throw Error("Wagering requirement cannot be below deposit amount");
   await boundary(c);
   await c.query('SELECT id FROM users WHERE id=? FOR UPDATE',[userId]);
   // A locking current read avoids a stale REPEATABLE READ snapshot when a bet
   // commits while this deposit waits for the user's balance lock.
   const [[last]] = await c.query('SELECT CAST(id AS CHAR) AS id FROM bets ORDER BY id DESC LIMIT 1 FOR UPDATE');
   const firstBetId=(BigInt(last?.id||'0')+1n).toString();
-  const [saved]=await c.query('INSERT IGNORE INTO cashierDepositWagers(transactionId,userId,amount,remaining,firstBetId) VALUES (?,?,?,?,?)',[transactionId,userId,amount,amount,firstBetId]);
+  const [saved]=await c.query('INSERT IGNORE INTO cashierDepositWagers(transactionId,userId,amount,remaining,firstBetId) VALUES (?,?,?,?,?)',[transactionId,userId,requiredAmount,requiredAmount,firstBetId]);
   if (saved.affectedRows!==1) throw Error('Deposit wagering requirement already recorded');
-  await c.query('UPDATE users SET wagerProgress=LEAST(wagerProgress,wagerRequirement),wagerRequirement=wagerRequirement+? WHERE id=?',[amount,userId]);
+  await c.query('UPDATE users SET wagerProgress=LEAST(wagerProgress,wagerRequirement),wagerRequirement=wagerRequirement+? WHERE id=?',[requiredAmount,userId]);
 }
 async function creditGameWagers(c, game, gameIds) {
   const firstBet=await boundary(c);
