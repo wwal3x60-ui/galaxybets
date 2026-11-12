@@ -8,7 +8,7 @@ const { depositCryptoLimiter } = require('./limiters');
 const bonus = require('../../utils/deposit-bonus');
 
 router.get('/bonus-config', apiLimiter, async (req,res) => {
-    try { await bonus.ensureReady(sql); return res.json({version:bonus.VERSION,codeMode:'streamer-affiliate',tiers:bonus.tiers,maxBonus:'500.00',multiplier:'1.8'}); }
+    try { await bonus.ensureReady(sql); return res.json({version:bonus.VERSION,codeMode:'streamer-affiliate',tiers:bonus.tiers,maxBonus:'500.00',multiplier:'5'}); }
     catch(error){return res.status(503).json({error:'BONUS_NOT_READY'});}
 });
 
@@ -20,7 +20,7 @@ router.get('/bonus-offer', isAuthed, apiLimiter, async (req,res) => {
 const allowedCoins = ['SOL', 'USDT', 'TRX', 'TRX (Tron)', 'LTC', 'DOGE', 'ETH', 'BNB', 'USDC'];
 
 router.post('/crypto', depositCryptoLimiter, isAuthed, apiLimiter, async (req, res) => {
-    const { amount, coin, txHash, bonusCode, bonusTermsAccepted } = req.body || {};
+    const { amount, coin, txHash, bonusCode, bonusTermsAccepted, bonusVersion } = req.body || {};
     const normalizedCoin = coin === 'TRX (Tron)' ? 'TRX' : coin;
 
     if (typeof amount !== 'number' || !Number.isFinite(amount) || amount <= 0 || Math.round(amount * 100) / 100 !== amount) {
@@ -35,6 +35,7 @@ router.post('/crypto', depositCryptoLimiter, isAuthed, apiLimiter, async (req, r
     try {
         const code=bonus.normalizeCode(bonusCode);
         if(code&&bonusTermsAccepted!==true)return res.status(400).json({error:'BONUS_TERMS_REQUIRED'});
+        if(code&&bonusVersion!==bonus.VERSION)return res.status(409).json({error:'BONUS_TERMS_CHANGED'});
         const result=await doTransaction(async(connection,commit)=>{
             const [[user]]=await connection.query('SELECT id,role,banned,accountLock FROM users WHERE id=? FOR UPDATE',[req.userId]);
             if(!user||user.banned||user.accountLock||String(user.role).trim().toUpperCase()==='BOT')throw Object.assign(new Error('DEPOSIT_RESTRICTED'),{publicError:'DEPOSIT_RESTRICTED',status:403});

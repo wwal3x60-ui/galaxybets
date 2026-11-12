@@ -1,21 +1,25 @@
 'use strict';
 const {units,decimal}=require('./cashier-money');
-const VERSION='streamer-ftd-v2', LEGACY_VERSION='jammy-ftd-v1';
+const VERSION='streamer-ftd-v3-5x', PREVIOUS_VERSION='streamer-ftd-v2', LEGACY_VERSION='jammy-ftd-v1';
+// Schema is unchanged. The request version records each customer's accepted terms.
+const SCHEMA_VERSION=PREVIOUS_VERSION;
+function multiplierFor(version){if(version===VERSION)return '5';if(version===PREVIOUS_VERSION||version===LEGACY_VERSION)return '1.8';throw Error('Unsupported stored bonus policy');}
 const tiers=[{minimum:'40.00',rate:10},{minimum:'150.00',rate:20},{minimum:'250.00',rate:30},{minimum:'400.00',rate:40},{minimum:'500.00',rate:50}];
 function fail(code,status=400){throw Object.assign(new Error(code),{publicError:code,status});}
 function normalizeCode(value){if(value==null||value==='')return '';if(typeof value!=='string'||value.length>32)fail('INVALID_BONUS_CODE');const code=value.trim().toUpperCase();if(code&&!/^[A-Z0-9]{2,20}$/.test(code))fail('INVALID_BONUS_CODE');return code;}
-function calculate(amount,code=''){
+function calculate(amount,code='',version=VERSION){
+  const multiplier=multiplierFor(version);
   let deposit;try{deposit=units(amount);}catch{fail('INVALID_AMOUNT');}
   if(deposit<4000n)fail('BONUS_MIN_DEPOSIT_40');
   const rate=[...tiers].reverse().find(t=>deposit>=units(t.minimum)).rate;
   const raw=deposit*BigInt(rate)/100n,bonus=raw>50000n?50000n:raw;
   // Round only the final wagering obligation UP to the nearest cent.
-  const required=((deposit+bonus)*18n+9n)/10n;
-  return {deposit:decimal(deposit),code,rate,bonus:decimal(bonus),creditedTotal:decimal(deposit+bonus),required:decimal(required),multiplier:'1.8',version:VERSION};
+  const required=multiplier==='5'?(deposit+bonus)*5n:((deposit+bonus)*18n+9n)/10n;
+  return {deposit:decimal(deposit),code,rate,bonus:decimal(bonus),creditedTotal:decimal(deposit+bonus),required:decimal(required),multiplier,version};
 }
 async function ensureReady(c){
   const [[flag]]=await c.query("SELECT value FROM siteFlags WHERE name='gb_streamer_bonus_version'");
-  if(flag?.value!==VERSION)fail('BONUS_NOT_READY',503);
+  if(flag?.value!==SCHEMA_VERSION)fail('BONUS_NOT_READY',503);
 }
 // Resolve on every offer/request; future STREAMER codes need no allow-list update.
 async function resolveStreamer(c,userId,code,requireLinked=false){
@@ -39,7 +43,7 @@ async function readEligibility(c,userId){
 async function offer(c,userId,amount,rawCode){
   await ensureReady(c);const code=normalizeCode(rawCode),eligibility=await readEligibility(c,userId);
   const streamer=code&&eligibility.eligible?await resolveStreamer(c,userId,code):null;
-  return {...eligibility,code,version:VERSION,codeMode:'streamer-affiliate',tiers,maxBonus:'500.00',multiplier:'1.8',...streamer,quote:code&&amount&&eligibility.eligible?calculate(String(amount),code):null};
+  return {...eligibility,code,version:VERSION,codeMode:'streamer-affiliate',tiers,maxBonus:'500.00',multiplier:'5',...streamer,quote:code&&amount&&eligibility.eligible?calculate(String(amount),code):null};
 }
 // Caller holds the depositing user lock. Existing affiliate redemption retains
 // its own IP restrictions and commission start boundary; never reassign a referral.
@@ -67,9 +71,9 @@ async function approve(c,transaction){
   if(previous)reason='BONUS_FIRST_DEPOSIT_ONLY';
   if(reason){await c.query("UPDATE depositBonusRequests SET status='ineligible',reason=? WHERE transactionId=?",[reason,transaction.id]);return {bonus:'0.00',required:String(transaction.amount),status:'ineligible',reason};}
   const legacy=request.version===LEGACY_VERSION&&request.code==='JAMMMY'&&request.streamerId==null;
-  if(!legacy&&(request.version!==VERSION||!request.streamerId||String(request.streamerId)===String(transaction.userId)))throw Error('Invalid stored streamer bonus identity');
+  if(!legacy&&(![VERSION,PREVIOUS_VERSION].includes(request.version)||!request.streamerId||String(request.streamerId)===String(transaction.userId)))throw Error('Invalid stored streamer bonus identity');
   // Honor the streamer identity accepted with the request even if its code changes later.
-  const q=calculate(String(transaction.amount),request.code);
+  const q=calculate(String(transaction.amount),request.code,request.version);
   if(String(request.userId)!==String(transaction.userId)||normalizeCode(request.code)!==request.code||Number(request.rate)!==q.rate||units(String(request.bonusAmount))!==units(q.bonus)||units(String(request.wagerAmount))!==units(q.required))throw Error('Bonus request does not match reviewed deposit');
   const [ledger]=await c.query("INSERT INTO transactions(userId,amount,type,method,methodId,status) VALUES (?,?,'bonus_credit','deposit_bonus',?,'approved')",[transaction.userId,q.bonus,`${request.code}:${transaction.id}`]);
   await c.query('INSERT INTO depositBonusAwards(userId,transactionId,bonusTransactionId,code,depositAmount,bonusAmount,wagerAmount,streamerId) VALUES (?,?,?,?,?,?,?,?)',[transaction.userId,transaction.id,ledger.insertId,request.code,q.deposit,q.bonus,q.required,request.streamerId??null]);
@@ -78,9 +82,9 @@ async function approve(c,transaction){
 }
 async function reject(c,transactionId){await c.query("UPDATE depositBonusRequests SET status='rejected',reason='DEPOSIT_REJECTED' WHERE transactionId=? AND status='pending'",[transactionId]);}
 async function progress(c,userId){
-  const [[award]]=await c.query(`SELECT a.code,CAST(a.depositAmount AS CHAR) AS deposit,CAST(a.bonusAmount AS CHAR) AS bonus,CAST(a.wagerAmount AS CHAR) AS required,CAST(w.remaining AS CHAR) AS remaining
-    FROM depositBonusAwards a JOIN cashierDepositWagers w ON w.transactionId=a.transactionId WHERE a.userId=?`,[userId]);
-  return award?{...award,multiplier:'1.8'}:null;
+  const [[award]]=await c.query(`SELECT a.code,r.version AS bonusVersion,CAST(a.depositAmount AS CHAR) AS deposit,CAST(a.bonusAmount AS CHAR) AS bonus,CAST(a.wagerAmount AS CHAR) AS required,CAST(w.remaining AS CHAR) AS remaining
+    FROM depositBonusAwards a JOIN depositBonusRequests r ON r.transactionId=a.transactionId JOIN cashierDepositWagers w ON w.transactionId=a.transactionId WHERE a.userId=?`,[userId]);
+  return award?{...award,multiplier:multiplierFor(award.bonusVersion)}:null;
 }
 async function assertTipEligible(c,userId){const p=await progress(c,userId);if(p&&units(p.remaining)>0n)fail('BONUS_WAGERING_REQUIRED_BEFORE_TIPPING',403);}
-module.exports={VERSION,LEGACY_VERSION,resolveStreamer,tiers,normalizeCode,calculate,ensureReady,readEligibility,offer,saveRequest,approve,reject,progress,assertTipEligible};
+module.exports={VERSION,PREVIOUS_VERSION,LEGACY_VERSION,SCHEMA_VERSION,multiplierFor,resolveStreamer,tiers,normalizeCode,calculate,ensureReady,readEligibility,offer,saveRequest,approve,reject,progress,assertTipEligible};
