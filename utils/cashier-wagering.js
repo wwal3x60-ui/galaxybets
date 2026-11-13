@@ -27,12 +27,14 @@ async function creditGameWagers(c, game, gameIds) {
     if (!user || String(user.role).toUpperCase()==='BOT' || units(user.required)<=units(user.progress)) continue;
     const [saved]=await c.query('INSERT IGNORE INTO cashierWagerCredits(betId,userId,credited) VALUES (?,?,0)',[bet.id,bet.userId]);
     if (saved.affectedRows!==1) continue;
-    const [deposits]=await c.query('SELECT CAST(transactionId AS CHAR) AS transactionId,CAST(remaining AS CHAR) AS remaining,CAST(firstBetId AS CHAR) AS firstBetId FROM cashierDepositWagers WHERE userId=? AND remaining>0 ORDER BY transactionId FOR UPDATE',[bet.userId]);
+    const [deposits]=await c.query('SELECT CAST(w.transactionId AS CHAR) AS transactionId,CAST(w.remaining AS CHAR) AS remaining,CAST(w.firstBetId AS CHAR) AS firstBetId,t.type AS fundingType,t.method AS fundingMethod FROM cashierDepositWagers w LEFT JOIN transactions t ON t.id=w.transactionId WHERE w.userId=? AND w.remaining>0 ORDER BY w.transactionId FOR UPDATE',[bet.userId]);
     const outstanding=units(user.required)-units(user.progress);
     const tracked=deposits.reduce((sum,d)=>sum+units(d.remaining),0n);
     const legacy=outstanding>tracked?outstanding-tracked:0n;
     let available=units(bet.amount),credited=min(available,legacy); available-=credited;
     for(const deposit of deposits) {
+      // Received-tip wagering is earned only on completed Packs and Battles.
+      if(deposit.fundingType==='in'&&deposit.fundingMethod==='tip'&&!['case','battle'].includes(game))continue;
       if(available<=0n)break;
       if(BigInt(bet.id)<BigInt(deposit.firstBetId))continue;
       const credit=min(available,units(deposit.remaining));

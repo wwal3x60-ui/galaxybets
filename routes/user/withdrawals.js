@@ -82,7 +82,8 @@ router.get('/eligibility',isAuthed,async(req,res)=>{
         if(!user)return res.status(401).json({error:'UNAUTHORIZED'});
         const remaining=units(user.required)>units(user.progress)?units(user.required)-units(user.progress):0n;
         const bonus=await require('../../utils/deposit-bonus').progress(sql,req.userId);
-        return res.json({bonus,balance:user.balance,required:user.required,progress:user.progress,remaining:decimal(remaining),minWithdrawal:'15.00',minDeposit:'5.00',canWithdraw:remaining===0n&&!user.banned&&!user.accountLock&&String(user.role).toUpperCase()!=='BOT'});
+        const tipWagering=await require('../../utils/tip-wagering').progress(sql,req.userId);
+        return res.json({bonus,tipWagering,balance:user.balance,required:user.required,progress:user.progress,remaining:decimal(remaining),minWithdrawal:'15.00',minDeposit:'5.00',canWithdraw:remaining===0n&&!user.banned&&!user.accountLock&&String(user.role).toUpperCase()!=='BOT'});
     } catch(error){console.error('Withdrawal eligibility:',error.code||error.message);return res.status(500).json({error:'INTERNAL_SERVER_ERROR'});}
 });
 

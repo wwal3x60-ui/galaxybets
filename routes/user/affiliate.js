@@ -205,11 +205,16 @@ router.post('/', [isAuthed, apiLimiter], async (req, res) => {
             }
 
             const [[affiliated]] = await connection.query(
-                'SELECT userId FROM affiliates WHERE userId = ? OR ip = ? FOR UPDATE',
-                [req.userId, req.ip || req.socket?.remoteAddress || '']
+                // A shared IP is audit information, not an account identity.
+                'SELECT userId, affiliateId FROM affiliates WHERE userId = ? FOR UPDATE',
+                [req.userId]
             );
 
             if (affiliated?.userId) {
+                if (String(affiliated.affiliateId) === String(affiliate.id)) {
+                    await commit();
+                    return res.json({ success: true, reward: 0, reused: true });
+                }
                 return res.status(400).json({
                     error: 'ALREADY_AFFILIATED'
                 });
