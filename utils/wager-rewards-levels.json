@@ -1,0 +1,22 @@
+[
+  {"level":1,"id":"wager-100-v1","threshold":"100.00","reward":"2.00"},
+  {"level":2,"id":"wager-250-v1","threshold":"250.00","reward":"5.00"},
+  {"level":3,"id":"wager-500-v1","threshold":"500.00","reward":"10.00"},
+  {"level":4,"id":"wager-1000-v1","threshold":"1000.00","reward":"20.00"},
+  {"level":5,"id":"wager-2500-v1","threshold":"2500.00","reward":"50.00"},
+  {"level":6,"id":"wager-5000-v1","threshold":"5000.00","reward":"100.00"},
+  {"level":7,"id":"wager-7500-v1","threshold":"7500.00","reward":"150.00"},
+  {"level":8,"id":"wager-10000-v1","threshold":"10000.00","reward":"200.00"},
+  {"level":9,"id":"wager-15000-v1","threshold":"15000.00","reward":"300.00"},
+  {"level":10,"id":"wager-20000-v1","threshold":"20000.00","reward":"400.00"},
+  {"level":11,"id":"wager-30000-v1","threshold":"30000.00","reward":"600.00"},
+  {"level":12,"id":"wager-40000-v1","threshold":"40000.00","reward":"800.00"},
+  {"level":13,"id":"wager-50000-v1","threshold":"50000.00","reward":"1000.00"},
+  {"level":14,"id":"wager-75000-v1","threshold":"75000.00","reward":"1500.00"},
+  {"level":15,"id":"wager-100000-v1","threshold":"100000.00","reward":"2000.00"},
+  {"level":16,"id":"wager-150000-v1","threshold":"150000.00","reward":"3000.00"},
+  {"level":17,"id":"wager-200000-v1","threshold":"200000.00","reward":"4000.00"},
+  {"level":18,"id":"wager-300000-v1","threshold":"300000.00","reward":"6000.00"},
+  {"level":19,"id":"wager-500000-v1","threshold":"500000.00","reward":"10000.00"},
+  {"level":20,"id":"wager-1000000-v1","threshold":"1000000.00","reward":"20000.00"}
+]

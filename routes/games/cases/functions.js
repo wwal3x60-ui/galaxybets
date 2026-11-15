@@ -5,6 +5,9 @@ const { pickItemForRole } = require('../../../fairness/dropRig');
 
 const topDropPrice = 25000;
 const limit = 15;
+// GB_ORIGINAL_CATALOGUE_ONLY_V1
+const retiredExpansion = new Set(require('../../../utils/retired-expansion-packs.json'));
+
 
 const cachedCases = {};
 
@@ -66,8 +69,8 @@ async function cacheDrops(top = false) {
         FROM caseOpenings INNER JOIN caseVersions ON caseOpenings.caseVersionId = caseVersions.id
         INNER JOIN cases ON caseVersions.caseId = cases.id
         INNER JOIN users ON caseOpenings.userId = users.id INNER JOIN caseItems ON caseOpenings.caseItemId = caseItems.id
-        ${top ? `WHERE caseItems.price > ${toCents(topDropPrice)}` : ''} ORDER BY caseOpenings.id DESC LIMIT ${limit}
-    `);
+        WHERE cases.slug NOT IN (?) ${top ? `AND caseItems.price > ${toCents(topDropPrice)}` : ''} ORDER BY caseOpenings.id DESC LIMIT ${limit}
+    `, [[...retiredExpansion]]);
 
     const after = Date.now();
     console.log(`Drops${top ? ' top': ''} took ${after - now}ms`);
@@ -98,6 +101,7 @@ async function cacheDrops(top = false) {
 }
 
 function newDrops(user, caseInfo, results) {
+    if (retiredExpansion.has(caseInfo.slug)) return;
     require('../../../utils/live-opens').emitLiveOpens(io, user, caseInfo, results);
 
     io.to('cases').except(user.id).emit('cases:drops', results.map(result => {

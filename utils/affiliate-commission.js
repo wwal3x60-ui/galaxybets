@@ -138,6 +138,9 @@ async function creditAffiliateCommission(connection, betId, firstEligibleBetId =
         [decimal(remainder, 8), balanceCredit, affiliateId]
     );
 
+    // Manager commission shares this settlement transaction; the streamer keeps their full credit.
+    await require('./affiliate-managers').accrue(connection, { betId: id, affiliateId, commissionAmount });
+
     return {
         status: 'recorded',
         affiliateId,

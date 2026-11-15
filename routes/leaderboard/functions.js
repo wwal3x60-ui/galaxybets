@@ -6,14 +6,20 @@ const service = makeRaceService({ sql, doTransaction, io });
 const leaderboards = Object.fromEntries(Object.entries(definitions).map(([type, definition]) => [type, { rewards: Object.fromEntries(definition.prizes.map((value, i) => [i + 1, Number(value)])) }]));
 let running = false;
 let refreshTimer;
+let refreshInFlight;
 
-async function refreshAll() {
+async function performRefresh() {
     for (const type of Object.keys(leaderboards)) {
         try {
             leaderboards[type].cache = await service.update(type);
             io.emit(`leaderboard:${type}`, leaderboards[type].cache.users);
         } catch (error) { console.error(`Unable to update ${type} race:`, error.message); }
     }
+}
+function refreshAll() {
+    if (refreshInFlight) return refreshInFlight;
+    refreshInFlight = performRefresh().finally(() => { refreshInFlight = null; });
+    return refreshInFlight;
 }
 async function cacheLeaderboards() {
     if (running) return;
@@ -26,7 +32,7 @@ async function cacheLeaderboards() {
 // Preserve game-side imports while refreshing both races. Requests also refresh
 // directly, so there is no dependency on optional game hooks.
 function scheduleWeeklyLeaderboardRefresh() {
-    if (refreshTimer) return;
+    if (running || refreshTimer || refreshInFlight) return;
     refreshTimer = setTimeout(async () => { refreshTimer = null; await refreshAll(); }, 250);
     refreshTimer.unref?.();
 }

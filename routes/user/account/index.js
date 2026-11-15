@@ -1,0 +1,11 @@
+'use strict';
+const router=require('express').Router(),{sql,doTransaction}=require('../../../database'),{isAuthed,apiLimiter}=require('../../auth/functions');
+const {createProfileService}=require('../../../utils/account-profile'),{createDashboard,VERSION}=require('../../../utils/account-dashboard'),{createService}=require('../../../utils/wager-rewards');
+const profiles=createProfileService({sql,transaction:doTransaction});
+const dashboard=createDashboard({sql,profiles,rewards:createService({sql,transaction:doTransaction}),bonus:require('../../../utils/deposit-bonus'),tipWagering:require('../../../utils/tip-wagering')});
+const error=(res,e)=>{if(!e.publicError)console.error('Account request failed:',e.code||'INTERNAL_ERROR');return res.status(e.status||503).json({error:e.publicError||'ACCOUNT_UNAVAILABLE'});};
+router.get('/version',apiLimiter,(_req,res)=>res.json({version:VERSION}));
+router.get('/dashboard',[isAuthed,apiLimiter],async(req,res)=>{res.set('Cache-Control','no-store');try{if(Object.keys(req.query||{}).length)return res.status(400).json({error:'INVALID_REQUEST'});return res.json(await dashboard.get(req.userId));}catch(e){return error(res,e);}});
+router.get('/profile',[isAuthed,apiLimiter],async(req,res)=>{res.set('Cache-Control','no-store');try{return res.json(await profiles.get(req.userId));}catch(e){return error(res,e);}});
+router.patch('/profile',[isAuthed,apiLimiter],async(req,res)=>{res.set('Cache-Control','no-store');try{return res.json(await profiles.update(req.userId,req.body));}catch(e){return error(res,e);}});
+module.exports=router;

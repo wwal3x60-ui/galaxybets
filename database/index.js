@@ -10,7 +10,7 @@ const connection = {
     connectionLimit: 10,
     queueLimit: 0,
     connectTimeout: 20000,
-    ssl: process.env.SQL_CA
+    ssl: (process.env.NODE_ENV === 'development' && ['127.0.0.1','localhost','::1'].includes(process.env.SQL_HOST || 'localhost')) ? undefined : process.env.SQL_CA
         ? { ca: process.env.SQL_CA, rejectUnauthorized: true }
         : { rejectUnauthorized: false },
     typeCast: function (field, next) {
@@ -28,45 +28,41 @@ pool.on('error', (error) => {
 });
 
 async function doTransaction(transactionLogic) {
-
     const connection = await pool.getConnection();
-
     let hasEnded = false;
-
+    let broken = false;
     async function commit() {
         if (hasEnded) throw new Error('Transaction has already been committed or rolled back.');
-        const [commitResult] = await connection.commit();
-        if (commitResult && commitResult.warningStatus) {
-            throw new Error('Commit err: ' + commitResult.warningStatus);
-        }
-        hasEnded = true;
+        try {
+            const [result] = await connection.commit();
+            // COMMIT has completed: never replay or attempt to undo an uncertain result.
+            hasEnded = true;
+            if (result && result.warningStatus) throw new Error('Commit err: ' + result.warningStatus);
+        } catch (error) { broken = true; throw error; }
     }
-
     async function rollback() {
         if (hasEnded) throw new Error('Transaction has already been committed or rolled back.');
-        const [rollbackResult] = await connection.rollback();
-        if (rollbackResult && rollbackResult.warningStatus) {
-            throw new Error('Rollback err: ' + rollbackResult.warningStatus);
-        }
-        hasEnded = true;
+        try {
+            await connection.rollback();
+            hasEnded = true;
+        } catch (error) { broken = true; throw error; }
     }
-
     try {
-        const [txResult] = await connection.beginTransaction();
-        if (txResult && txResult.warningStatus) {
-            throw new Error('Transaction err: ' + txResult.warningStatus);
+        const [result] = await connection.beginTransaction();
+        if (result && result.warningStatus) throw new Error('Transaction err: ' + result.warningStatus);
+        const value = await transactionLogic(connection, commit, rollback);
+        if (!hasEnded) await rollback();
+        return value;
+    } catch (error) {
+        if (error.fatal || ['ECONNRESET', 'PROTOCOL_CONNECTION_LOST', 'HANDSHAKE_SSL_ERROR'].includes(error.code)) broken = true;
+        if (!hasEnded && !broken) {
+            try { await rollback(); }
+            catch (cleanupError) { console.error('Transaction rollback failed:', cleanupError.code || cleanupError.message); }
         }
-
-        const res = await transactionLogic(connection, commit, rollback);
-
-        if (!hasEnded) await rollback();
-        return res;
-        
-    } catch (err) {
-        if (!hasEnded) await rollback();
-        throw err;
+        throw error;
     } finally {
-        connection.release();
+        if (broken) connection.destroy();
+        else connection.release();
     }
 }
 

@@ -35,11 +35,12 @@ router.post('/join',isAuthed,apiLimiter,async(req,res)=>{
    const [[updated]]=await connection.query('SELECT balance FROM users WHERE id = ?',[user.id]);
    await commit();return {userId:user.id,balance:Number(updated.balance)};
   });
+  res.json({success:true});
   try{
    io.to(String(result.userId)).emit('balance','set',result.balance);
    await broadcastJackpotState(roundId);
   }catch(error){console.error('Jackpot bet committed; live update failed:',error.message);}
-  return res.json({success:true});
+  return;
  }catch(error){if(error.publicError)return res.status(error.status).json({error:error.publicError});console.error('Jackpot bet failed:',error);return res.status(500).json({error:'INTERNAL_ERROR'});}
 });
 module.exports=router;

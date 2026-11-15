@@ -13,6 +13,12 @@ const affiliateRoute = require('./affiliate');
 const rakebackRoute = require('./rakeback');
 const notificationsRoute = require('./notifications');
 
+router.use('/pack-catalogue', require('./pack-catalogue'));
+
+router.use('/account', require('./account'));
+
+router.use('/wager-rewards', require('./wager-rewards'));
+
 router.use(require('./profile-photo'));
 router.use('/affiliate', affiliateRoute);
 router.use('/rakeback', rakebackRoute);

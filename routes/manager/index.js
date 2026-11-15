@@ -1,0 +1,18 @@
+'use strict';
+const router=require('express').Router(),{rateLimit}=require('express-rate-limit');
+const {isAuthed}=require('../auth/functions');
+const service=require('../../utils/affiliate-manager-service');
+const handle=fn=>async(req,res)=>{res.set('Cache-Control','no-store');try{res.json(await fn(req));}catch(e){if(!e.publicError)console.error('Manager request failed:',e.code||'INTERNAL_ERROR');res.status(e.status||503).json({error:e.publicError||'MANAGER_UNAVAILABLE'});}};
+router.use(isAuthed);
+router.use(rateLimit({windowMs:60000,limit:120,standardHeaders:'draft-8',legacyHeaders:false,keyGenerator:req=>String(req.userId)}));
+router.get('/me',handle(req=>service.me(req.userId)));
+router.get('/streamers',handle(req=>service.list(req.userId,req.query)));
+router.get('/available',handle(req=>service.list(req.userId,req.query,true)));
+router.get('/events',handle(req=>service.events(req.userId,req.query)));
+router.get('/streamers/:id/stats',handle(req=>service.ownedStats(req.userId,req.params.id,req.query)));
+router.post('/claim',handle(req=>service.claim(req.userId,req.body)));
+router.post('/notes',handle(req=>service.manage(req.userId,req.body)));
+router.post('/release',handle(req=>service.manage(req.userId,req.body,true)));
+router.post('/grant',handle(req=>service.grant(req.userId,req.body)));
+router.post('/commission/claim',handle(req=>service.claimCommission(req.userId,req.body)));
+module.exports=router;

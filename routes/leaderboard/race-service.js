@@ -97,7 +97,8 @@ function publicRows(rows, prizes) {
 }
 
 function makeRaceService({ sql, doTransaction, io, logger = console }) {
-    const snapshots = {}, pending = new Map();
+    const snapshots = {}, pending = new Map(), refreshedAt = {};
+    const snapshotTTL = 2000;
     function notify(credits) {
         for (const credit of credits) {
             try { io.to(credit.userId).emit('balance', 'add', Number(credit.amount)); }
@@ -107,6 +108,11 @@ function makeRaceService({ sql, doTransaction, io, logger = console }) {
     async function update(type) {
         typeCheck(type);
         if (pending.has(type)) return pending.get(type);
+        const cached = snapshots[type];
+        const elapsed = Date.now() - (refreshedAt[type] || 0);
+        if (cached && elapsed >= 0 && elapsed < snapshotTTL && cached.status === 'active' && cached.endsIn > elapsed) {
+            return {...cached, serverNow: new Date(Date.parse(cached.serverNow) + elapsed).toISOString(), endsIn: cached.endsIn - elapsed};
+        }
         const work = (async () => {
             // Only the process owning this locked series can settle and advance it.
             const result = await doTransaction(async (connection, commit) => {
@@ -146,6 +152,7 @@ function makeRaceService({ sql, doTransaction, io, logger = console }) {
                 return {data, credits};
             });
             snapshots[type] = result.data;
+            refreshedAt[type] = Date.now();
             notify(result.credits);
             return result.data;
         })();

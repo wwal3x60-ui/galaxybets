@@ -98,4 +98,6 @@ router.use('/cashier', cashierRoute);
 router.use('/statsbook', statsbookRoute);
 router.use('/dashboard', dashboardRoute);
 
+router.use('/affiliate-managers', require('./affiliate-managers'));
+
 module.exports = router;

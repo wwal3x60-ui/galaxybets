@@ -130,6 +130,7 @@ app.use('/leaderboard', leaderboardRoute);
 app.use('/cases', casesRoute);
 app.use('/keno',require('./routes/games/keno'));
 app.use('/streamer',require('./routes/streamer'));
+app.use('/manager', require('./routes/manager'));
 app.use('/community',require('./routes/community'));
 app.use('/live-opens', require('./routes/live-opens'));
 app.use('/battles', battlesRoute);
@@ -168,6 +169,7 @@ const { cacheLeaderboards } = require('./routes/leaderboard/functions');
 
 async function start() {
     await require('./utils/cashier-wagering').boundary(sql);
+    await require('./utils/affiliate-manager-schema').ensureReady(sql);
     const port = process.env.PORT || 3001;
 
     await cacheAdmin();

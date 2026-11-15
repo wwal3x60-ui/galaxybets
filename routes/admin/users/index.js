@@ -127,6 +127,7 @@ router.get('/:id/possess', async (req, res) => {
 const defaultRolePermissions = {
     USER: 0,
     STREAMER: 0,
+    AFFILIATE_MANAGER: 0,
     MOD: 1,
     DEV: 2,
     ADMIN: 2,
