@@ -53,6 +53,7 @@ class Wallet {
     if(body.Reason==='refund')await c.query('UPDATE gbSlotTransactions SET refunded=1 WHERE appId=? AND transactionId=?',[body.AppID,body.RefTransactionID]);
    }
    await c.query('INSERT INTO gbSlotTransactions(appId,transactionId,roundId,userId,gameId,reason,amount,payloadHash,response) VALUES (?,?,?,?,?,?,?,?,?)',[body.AppID,body.TransactionID,body.RoundID,body.UserID,body.GameID,body.Reason,decimal(amount),fingerprint(body),JSON.stringify(result)]);
+   if(result.code===0)await require('../utils/bonus-slot-wagering').onTransfer(c,body,amount);
    return result;
   });
  }

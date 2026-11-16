@@ -8,7 +8,7 @@ const { depositCryptoLimiter } = require('./limiters');
 const bonus = require('../../utils/deposit-bonus');
 
 router.get('/bonus-config', apiLimiter, async (req,res) => {
-    try { await bonus.ensureReady(sql); return res.json({version:bonus.VERSION,codeMode:'streamer-affiliate',tiers:bonus.tiers,maxBonus:'500.00',multiplier:'5'}); }
+    try { await bonus.ensureReady(sql); return res.json({version:bonus.VERSION,codeMode:'streamer-affiliate',tiers:bonus.tiers,minDeposit:bonus.minDeposit,maxBonus:bonus.maxBonus,multiplier:'40',contributions:{house:50,packs:100,battles:100,slots:100},exhaustionReset:'at-next-deposit-approval-only'}); }
     catch(error){return res.status(503).json({error:'BONUS_NOT_READY'});}
 });
 

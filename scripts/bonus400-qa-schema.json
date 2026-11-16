@@ -1,0 +1,154 @@
+{
+  "tables": [
+    {
+      "name": "users",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"users\" (\n  \"id\" bigint unsigned NOT NULL AUTO_INCREMENT,\n  \"username\" varchar(32) NOT NULL,\n  \"email\" varchar(255) NOT NULL,\n  \"emailVerifiedAt\" datetime DEFAULT NULL,\n  \"passwordHash\" varchar(255) NOT NULL,\n  \"2fa\" varchar(255) DEFAULT NULL,\n  \"role\" varchar(32) NOT NULL DEFAULT 'USER',\n  \"perms\" int unsigned NOT NULL DEFAULT '0',\n  \"balance\" decimal(18,2) NOT NULL DEFAULT '0.00',\n  \"xp\" int unsigned NOT NULL DEFAULT '0',\n  \"anon\" tinyint(1) NOT NULL DEFAULT '0',\n  \"mentionsEnabled\" tinyint(1) NOT NULL DEFAULT '1',\n  \"banned\" tinyint(1) NOT NULL DEFAULT '0',\n  \"tipBan\" tinyint(1) NOT NULL DEFAULT '0',\n  \"leaderboardBan\" tinyint(1) NOT NULL DEFAULT '0',\n  \"rainBan\" tinyint(1) NOT NULL DEFAULT '0',\n  \"accountLock\" tinyint(1) NOT NULL DEFAULT '0',\n  \"sponsorLock\" tinyint(1) NOT NULL DEFAULT '0',\n  \"verified\" tinyint(1) NOT NULL DEFAULT '0',\n  \"affiliateCode\" varchar(32) DEFAULT NULL,\n  \"affiliateCodeLock\" tinyint(1) NOT NULL DEFAULT '0',\n  \"affiliateEarningsOffset\" decimal(18,2) NOT NULL DEFAULT '0.00',\n  \"maxPerTip\" decimal(18,2) DEFAULT NULL,\n  \"maxTipPerUser\" decimal(18,2) DEFAULT NULL,\n  \"tipAllowance\" decimal(18,2) DEFAULT NULL,\n  \"rainTipAllowance\" decimal(18,2) NOT NULL DEFAULT '0.00',\n  \"cryptoAllowance\" decimal(18,2) NOT NULL DEFAULT '0.00',\n  \"mutedUntil\" datetime DEFAULT NULL,\n  \"ip\" varchar(45) DEFAULT NULL,\n  \"country\" char(2) DEFAULT NULL,\n  \"lastLogout\" datetime DEFAULT NULL,\n  \"createdAt\" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  \"wagerRequirement\" decimal(18,2) NOT NULL DEFAULT '0.00',\n  \"wagerProgress\" decimal(18,2) NOT NULL DEFAULT '0.00',\n  \"profilePhoto\" mediumtext,\n  PRIMARY KEY (\"id\"),\n  UNIQUE KEY \"uq_users_username\" (\"username\"),\n  UNIQUE KEY \"uq_users_email\" (\"email\"),\n  UNIQUE KEY \"uq_users_affiliateCode\" (\"affiliateCode\"),\n  KEY \"idx_users_createdAt\" (\"createdAt\"),\n  KEY \"idx_users_role\" (\"role\"),\n  KEY \"idx_users_xp\" (\"xp\"),\n  KEY \"idx_users_banned\" (\"banned\"),\n  KEY \"idx_users_sponsorLock\" (\"sponsorLock\"),\n  KEY \"idx_users_accountLock\" (\"accountLock\"),\n  KEY \"idx_users_leaderboardBan\" (\"leaderboardBan\"),\n  KEY \"idx_users_lastLogout\" (\"lastLogout\"),\n  KEY \"idx_users_country\" (\"country\"),\n  CONSTRAINT \"chk_users_balance_nonnegative\" CHECK ((`balance` >= 0))\n)"
+    },
+    {
+      "name": "bets",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"bets\" (\n  \"id\" bigint unsigned NOT NULL AUTO_INCREMENT,\n  \"userId\" bigint unsigned NOT NULL,\n  \"amount\" decimal(18,2) NOT NULL DEFAULT '0.00',\n  \"winnings\" decimal(18,2) NOT NULL DEFAULT '0.00',\n  \"edge\" decimal(18,2) NOT NULL DEFAULT '0.00',\n  \"game\" varchar(32) NOT NULL,\n  \"gameId\" bigint unsigned NOT NULL,\n  \"completed\" tinyint(1) NOT NULL DEFAULT '0',\n  \"createdAt\" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (\"id\"),\n  KEY \"idx_bets_user_completed_created\" (\"userId\",\"completed\",\"createdAt\"),\n  KEY \"idx_bets_user_id\" (\"userId\",\"id\"),\n  KEY \"idx_bets_game_gameId\" (\"game\",\"gameId\"),\n  KEY \"idx_bets_completed_id\" (\"completed\",\"id\"),\n  KEY \"idx_bets_created_completed\" (\"createdAt\",\"completed\")\n)"
+    },
+    {
+      "name": "transactions",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"transactions\" (\n  \"id\" bigint unsigned NOT NULL AUTO_INCREMENT,\n  \"userId\" bigint unsigned NOT NULL,\n  \"amount\" decimal(18,2) NOT NULL DEFAULT '0.00',\n  \"type\" varchar(32) NOT NULL,\n  \"method\" varchar(64) NOT NULL,\n  \"methodId\" varchar(255) DEFAULT NULL,\n  \"coin\" varchar(16) DEFAULT NULL,\n  \"txHash\" varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,\n  \"status\" varchar(16) NOT NULL DEFAULT 'approved',\n  \"createdAt\" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  \"updatedAt\" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  PRIMARY KEY (\"id\"),\n  UNIQUE KEY \"uq_transactions_txHash\" (\"txHash\"),\n  KEY \"idx_transactions_user_id\" (\"userId\",\"id\"),\n  KEY \"idx_transactions_user_type_created\" (\"userId\",\"type\",\"createdAt\"),\n  KEY \"idx_transactions_type_created\" (\"type\",\"createdAt\"),\n  KEY \"idx_transactions_type_method_methodId\" (\"type\",\"method\",\"methodId\")\n)"
+    },
+    {
+      "name": "inventory",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"inventory\" (\n  \"id\" bigint unsigned NOT NULL AUTO_INCREMENT,\n  \"userId\" bigint unsigned NOT NULL,\n  \"openingId\" bigint unsigned NOT NULL,\n  \"caseItemId\" bigint unsigned NOT NULL,\n  \"name\" varchar(255) NOT NULL,\n  \"img\" mediumtext,\n  \"price\" decimal(18,2) NOT NULL,\n  \"status\" varchar(16) NOT NULL DEFAULT 'AVAILABLE',\n  \"createdAt\" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  \"soldAt\" datetime DEFAULT NULL,\n  PRIMARY KEY (\"id\"),\n  UNIQUE KEY \"uq_inventory_opening\" (\"openingId\"),\n  KEY \"idx_inventory_user\" (\"userId\",\"status\",\"id\")\n)"
+    },
+    {
+      "name": "depositBonusRequests",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"depositBonusRequests\" (\n  \"transactionId\" bigint unsigned NOT NULL,\n  \"userId\" bigint unsigned NOT NULL,\n  \"code\" varchar(32) NOT NULL,\n  \"streamerId\" bigint unsigned DEFAULT NULL,\n  \"version\" varchar(32) NOT NULL,\n  \"rate\" tinyint unsigned NOT NULL,\n  \"bonusAmount\" decimal(18,2) NOT NULL,\n  \"wagerAmount\" decimal(18,2) NOT NULL,\n  \"status\" varchar(16) NOT NULL DEFAULT 'pending',\n  \"reason\" varchar(64) DEFAULT NULL,\n  \"acceptedAt\" datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),\n  PRIMARY KEY (\"transactionId\"),\n  KEY \"idx_bonus_request_user\" (\"userId\",\"status\"),\n  CONSTRAINT \"fk_bonus_request_transaction\" FOREIGN KEY (\"transactionId\") REFERENCES \"transactions\" (\"id\"),\n  CONSTRAINT \"fk_bonus_request_user\" FOREIGN KEY (\"userId\") REFERENCES \"users\" (\"id\"),\n  CONSTRAINT \"chk_bonus_request_status\" CHECK ((`status` in (_cp850'pending',_cp850'awarded',_cp850'ineligible',_cp850'rejected'))),\n  CONSTRAINT \"chk_bonus_request_values\" CHECK (((`rate` in (10,20,30,40,50)) and (`bonusAmount` > 0) and (`bonusAmount` <= 500) and (`wagerAmount` > 0)))\n)"
+    },
+    {
+      "name": "depositBonusAwards",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"depositBonusAwards\" (\n  \"userId\" bigint unsigned NOT NULL,\n  \"transactionId\" bigint unsigned NOT NULL,\n  \"bonusTransactionId\" bigint unsigned NOT NULL,\n  \"code\" varchar(32) NOT NULL,\n  \"streamerId\" bigint unsigned DEFAULT NULL,\n  \"depositAmount\" decimal(18,2) NOT NULL,\n  \"bonusAmount\" decimal(18,2) NOT NULL,\n  \"wagerAmount\" decimal(18,2) NOT NULL,\n  \"createdAt\" datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),\n  PRIMARY KEY (\"userId\"),\n  UNIQUE KEY \"uq_bonus_award_deposit\" (\"transactionId\"),\n  UNIQUE KEY \"uq_bonus_award_ledger\" (\"bonusTransactionId\"),\n  CONSTRAINT \"fk_bonus_award_deposit\" FOREIGN KEY (\"transactionId\") REFERENCES \"transactions\" (\"id\"),\n  CONSTRAINT \"fk_bonus_award_ledger\" FOREIGN KEY (\"bonusTransactionId\") REFERENCES \"transactions\" (\"id\"),\n  CONSTRAINT \"fk_bonus_award_user\" FOREIGN KEY (\"userId\") REFERENCES \"users\" (\"id\"),\n  CONSTRAINT \"chk_bonus_award_values\" CHECK (((`depositAmount` >= 40) and (`bonusAmount` > 0) and (`bonusAmount` <= 500) and (`wagerAmount` >= `depositAmount`) and (`transactionId` <> `bonusTransactionId`)))\n)"
+    },
+    {
+      "name": "cashierDepositWagers",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"cashierDepositWagers\" (\n  \"transactionId\" bigint unsigned NOT NULL,\n  \"userId\" bigint unsigned NOT NULL,\n  \"amount\" decimal(18,2) NOT NULL,\n  \"remaining\" decimal(18,2) NOT NULL,\n  \"firstBetId\" bigint unsigned NOT NULL,\n  \"createdAt\" datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),\n  PRIMARY KEY (\"transactionId\"),\n  KEY \"idx_cashier_deposit_user\" (\"userId\",\"remaining\"),\n  CONSTRAINT \"fk_cashier_deposit_user\" FOREIGN KEY (\"userId\") REFERENCES \"users\" (\"id\"),\n  CONSTRAINT \"chk_cashier_deposit_amount\" CHECK (((`amount` > 0) and (`remaining` >= 0) and (`remaining` <= `amount`)))\n)"
+    },
+    {
+      "name": "cashierWagerCredits",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"cashierWagerCredits\" (\n  \"betId\" bigint unsigned NOT NULL,\n  \"userId\" bigint unsigned NOT NULL,\n  \"credited\" decimal(18,2) NOT NULL DEFAULT '0.00',\n  \"createdAt\" datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),\n  PRIMARY KEY (\"betId\"),\n  KEY \"idx_cashier_credit_user\" (\"userId\"),\n  CONSTRAINT \"fk_cashier_credit_user\" FOREIGN KEY (\"userId\") REFERENCES \"users\" (\"id\"),\n  CONSTRAINT \"chk_cashier_credit_amount\" CHECK ((`credited` >= 0))\n)"
+    },
+    {
+      "name": "cashierWagerRemainders",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"cashierWagerRemainders\" (\n  \"userId\" bigint unsigned NOT NULL,\n  \"transactionId\" bigint unsigned NOT NULL,\n  \"halfCent\" tinyint unsigned NOT NULL DEFAULT '0',\n  PRIMARY KEY (\"userId\",\"transactionId\"),\n  CONSTRAINT \"chk_cashier_half_cent\" CHECK ((`halfCent` in (0,1)))\n)"
+    },
+    {
+      "name": "siteFlags",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"siteFlags\" (\n  \"name\" varchar(100) NOT NULL,\n  \"value\" varchar(255) DEFAULT NULL,\n  \"createdAt\" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (\"name\")\n)"
+    },
+    {
+      "name": "mines",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"mines\" (\n  \"id\" bigint unsigned NOT NULL AUTO_INCREMENT,\n  \"userId\" bigint unsigned NOT NULL,\n  \"amount\" decimal(18,2) NOT NULL DEFAULT '0.00',\n  \"clientSeedId\" bigint unsigned NOT NULL,\n  \"serverSeedId\" bigint unsigned NOT NULL,\n  \"nonce\" bigint unsigned NOT NULL,\n  \"minesCount\" tinyint unsigned NOT NULL,\n  \"mines\" json NOT NULL,\n  \"revealedTiles\" json NOT NULL,\n  \"payout\" decimal(18,2) NOT NULL DEFAULT '0.00',\n  \"endedAt\" datetime DEFAULT NULL,\n  PRIMARY KEY (\"id\"),\n  KEY \"idx_mines_user_ended\" (\"userId\",\"endedAt\")\n)"
+    },
+    {
+      "name": "coinflips",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"coinflips\" (\n  \"id\" bigint unsigned NOT NULL AUTO_INCREMENT,\n  \"ownerId\" bigint unsigned NOT NULL,\n  \"fire\" bigint unsigned DEFAULT NULL,\n  \"ice\" bigint unsigned DEFAULT NULL,\n  \"amount\" decimal(18,2) NOT NULL DEFAULT '0.00',\n  \"serverSeed\" varchar(255) NOT NULL,\n  \"clientSeed\" varchar(255) DEFAULT NULL,\n  \"winnerSide\" varchar(8) DEFAULT NULL,\n  \"EOSBlock\" bigint unsigned DEFAULT NULL,\n  \"createdAt\" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  \"startedAt\" datetime DEFAULT NULL,\n  PRIMARY KEY (\"id\"),\n  KEY \"idx_coinflips_winnerSide\" (\"winnerSide\"),\n  KEY \"idx_coinflips_createdAt\" (\"createdAt\"),\n  KEY \"idx_coinflips_ownerId\" (\"ownerId\"),\n  KEY \"idx_coinflips_fire\" (\"fire\"),\n  KEY \"idx_coinflips_ice\" (\"ice\")\n)"
+    },
+    {
+      "name": "crash",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"crash\" (\n  \"id\" bigint unsigned NOT NULL AUTO_INCREMENT,\n  \"crashPoint\" decimal(18,8) NOT NULL DEFAULT '0.00000000',\n  \"serverSeed\" varchar(255) NOT NULL,\n  \"createdAt\" datetime DEFAULT NULL,\n  \"startedAt\" datetime DEFAULT NULL,\n  \"endedAt\" datetime DEFAULT NULL,\n  PRIMARY KEY (\"id\"),\n  KEY \"idx_crash_ended_id\" (\"endedAt\",\"id\")\n)"
+    },
+    {
+      "name": "roulette",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"roulette\" (\n  \"id\" bigint unsigned NOT NULL AUTO_INCREMENT,\n  \"result\" tinyint unsigned NOT NULL,\n  \"color\" tinyint unsigned NOT NULL,\n  \"createdAt\" datetime DEFAULT NULL,\n  \"rolledAt\" datetime DEFAULT NULL,\n  \"endedAt\" datetime DEFAULT NULL,\n  PRIMARY KEY (\"id\"),\n  KEY \"idx_roulette_ended_id\" (\"endedAt\",\"id\")\n)"
+    },
+    {
+      "name": "rouletteBets",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"rouletteBets\" (\n  \"id\" bigint unsigned NOT NULL AUTO_INCREMENT,\n  \"userId\" bigint unsigned NOT NULL,\n  \"roundId\" bigint unsigned NOT NULL,\n  \"color\" tinyint unsigned NOT NULL,\n  \"amount\" decimal(18,2) NOT NULL DEFAULT '0.00',\n  PRIMARY KEY (\"id\"),\n  KEY \"idx_rouletteBets_roundId\" (\"roundId\"),\n  KEY \"idx_rouletteBets_user_round\" (\"userId\",\"roundId\")\n)"
+    },
+    {
+      "name": "jackpot",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"jackpot\" (\n  \"id\" bigint unsigned NOT NULL AUTO_INCREMENT,\n  \"serverSeed\" varchar(255) NOT NULL,\n  \"amount\" decimal(18,2) NOT NULL DEFAULT '0.00',\n  \"winnerBet\" bigint unsigned DEFAULT NULL,\n  \"ticket\" bigint unsigned DEFAULT NULL,\n  \"clientSeed\" varchar(255) DEFAULT NULL,\n  \"EOSBlock\" bigint unsigned DEFAULT NULL,\n  \"createdAt\" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  \"rolledAt\" datetime DEFAULT NULL,\n  \"endedAt\" datetime DEFAULT NULL,\n  \"countStartedAt\" datetime DEFAULT NULL,\n  PRIMARY KEY (\"id\"),\n  KEY \"idx_jackpot_ended_id\" (\"endedAt\",\"id\")\n)"
+    },
+    {
+      "name": "jackpotBets",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"jackpotBets\" (\n  \"id\" bigint unsigned NOT NULL AUTO_INCREMENT,\n  \"userId\" bigint unsigned NOT NULL,\n  \"jackpotId\" bigint unsigned NOT NULL,\n  \"amount\" decimal(18,2) NOT NULL DEFAULT '0.00',\n  \"ticketsFrom\" bigint unsigned NOT NULL,\n  \"ticketsTo\" bigint unsigned NOT NULL,\n  \"createdAt\" datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),\n  PRIMARY KEY (\"id\"),\n  KEY \"idx_jackpotBets_jackpot_id\" (\"jackpotId\",\"id\"),\n  KEY \"idx_jackpotBets_user_jackpot\" (\"userId\",\"jackpotId\")\n)"
+    },
+    {
+      "name": "battles",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"battles\" (\n  \"id\" bigint unsigned NOT NULL AUTO_INCREMENT,\n  \"ownerId\" bigint unsigned NOT NULL,\n  \"ownerFunding\" tinyint unsigned NOT NULL DEFAULT '0',\n  \"entryPrice\" decimal(18,2) NOT NULL DEFAULT '0.00',\n  \"privKey\" varchar(16) DEFAULT NULL,\n  \"minLevel\" int unsigned NOT NULL DEFAULT '0',\n  \"teams\" tinyint unsigned NOT NULL DEFAULT '1',\n  \"playersPerTeam\" tinyint unsigned NOT NULL DEFAULT '1',\n  \"gamemode\" varchar(32) NOT NULL,\n  \"serverSeed\" varchar(255) NOT NULL,\n  \"EOSBlock\" bigint unsigned DEFAULT NULL,\n  \"clientSeed\" varchar(255) DEFAULT NULL,\n  \"round\" int unsigned NOT NULL DEFAULT '0',\n  \"winnerTeam\" tinyint unsigned DEFAULT NULL,\n  \"createdAt\" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  \"startedAt\" datetime DEFAULT NULL,\n  \"endedAt\" datetime DEFAULT NULL,\n  \"fastBattle\" tinyint(1) NOT NULL DEFAULT '0',\n  \"cancelledAt\" datetime DEFAULT NULL,\n  \"cancelRefund\" decimal(18,2) DEFAULT NULL,\n  \"creatorXp\" int unsigned DEFAULT NULL,\n  \"jackpotMeta\" json DEFAULT NULL,\n  \"sponsorOnly\" tinyint(1) NOT NULL DEFAULT '0',\n  \"sponsorPaid\" decimal(18,2) NOT NULL DEFAULT '0.00',\n  \"fundingAffiliateId\" bigint unsigned DEFAULT NULL,\n  \"fundingCode\" varchar(32) DEFAULT NULL,\n  PRIMARY KEY (\"id\"),\n  KEY \"idx_battles_owner_ended\" (\"ownerId\",\"endedAt\"),\n  KEY \"idx_battles_ended_id\" (\"endedAt\",\"id\")\n)"
+    },
+    {
+      "name": "battlePlayers",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"battlePlayers\" (\n  \"battleId\" bigint unsigned NOT NULL,\n  \"userId\" bigint unsigned NOT NULL,\n  \"slot\" tinyint unsigned NOT NULL,\n  \"team\" tinyint unsigned NOT NULL,\n  PRIMARY KEY (\"battleId\",\"userId\"),\n  UNIQUE KEY \"uq_battlePlayers_battle_slot\" (\"battleId\",\"slot\"),\n  KEY \"idx_battlePlayers_userId\" (\"userId\")\n)"
+    },
+    {
+      "name": "battleRounds",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"battleRounds\" (\n  \"battleId\" bigint unsigned NOT NULL,\n  \"caseVersionId\" bigint unsigned NOT NULL,\n  \"round\" int unsigned NOT NULL,\n  PRIMARY KEY (\"battleId\",\"round\"),\n  KEY \"idx_battleRounds_caseVersionId\" (\"caseVersionId\")\n)"
+    },
+    {
+      "name": "battleOpenings",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"battleOpenings\" (\n  \"id\" bigint unsigned NOT NULL AUTO_INCREMENT,\n  \"battleId\" bigint unsigned NOT NULL,\n  \"caseOpeningId\" bigint unsigned NOT NULL,\n  \"round\" int unsigned NOT NULL,\n  PRIMARY KEY (\"id\")\n)"
+    },
+    {
+      "name": "gbSlotSessions",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"gbSlotSessions\" (\n  \"id\" bigint unsigned NOT NULL AUTO_INCREMENT,\n  \"userId\" bigint unsigned NOT NULL,\n  \"gameId\" varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,\n  \"currency\" char(3) NOT NULL,\n  \"state\" varchar(20) NOT NULL DEFAULT 'pending',\n  \"createdAt\" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (\"id\"),\n  KEY \"byPlayerGame\" (\"userId\",\"gameId\")\n)"
+    },
+    {
+      "name": "gbSlotRounds",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"gbSlotRounds\" (\n  \"appId\" varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,\n  \"roundId\" varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,\n  \"userId\" bigint unsigned NOT NULL,\n  \"gameId\" varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,\n  \"currency\" char(3) NOT NULL,\n  \"betTotal\" decimal(20,4) NOT NULL DEFAULT '0.0000',\n  \"winTotal\" decimal(20,4) NOT NULL DEFAULT '0.0000',\n  \"refundTotal\" decimal(20,4) NOT NULL DEFAULT '0.0000',\n  \"closed\" tinyint NOT NULL DEFAULT '0',\n  \"createdAt\" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  \"updatedAt\" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  PRIMARY KEY (\"appId\",\"roundId\"),\n  KEY \"byPlayer\" (\"userId\",\"createdAt\")\n)"
+    },
+    {
+      "name": "gbSlotTransactions",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"gbSlotTransactions\" (\n  \"appId\" varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,\n  \"transactionId\" varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,\n  \"roundId\" varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,\n  \"userId\" bigint unsigned NOT NULL,\n  \"gameId\" varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,\n  \"reason\" varchar(10) NOT NULL,\n  \"amount\" decimal(20,4) NOT NULL,\n  \"payloadHash\" char(64) NOT NULL,\n  \"response\" json NOT NULL,\n  \"refunded\" tinyint NOT NULL DEFAULT '0',\n  \"createdAt\" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (\"appId\",\"transactionId\"),\n  KEY \"byPlayer\" (\"userId\",\"createdAt\"),\n  KEY \"byRound\" (\"appId\",\"roundId\")\n)"
+    },
+    {
+      "name": "gbSlotWalletRemainders",
+      "present": true,
+      "engine": "InnoDB",
+      "ddl": "CREATE TABLE \"gbSlotWalletRemainders\" (\n  \"userId\" bigint unsigned NOT NULL,\n  \"units\" int unsigned NOT NULL DEFAULT '0',\n  PRIMARY KEY (\"userId\")\n)"
+    }
+  ]
+}

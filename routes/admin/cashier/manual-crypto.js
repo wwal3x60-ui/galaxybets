@@ -4,7 +4,7 @@ const router = express.Router();
 const { sql, doTransaction } = require('../../../database');
 
 const bonus = require('../../../utils/deposit-bonus');
-const {units,decimal}=require('../../../utils/cashier-money');
+const {units}=require('../../../utils/cashier-money');
 
 // All cashier decisions take the user lock before transaction/bonus locks.
 // This matches deposit submission and prevents opposite lock ordering when
@@ -54,18 +54,7 @@ router.post('/approve-deposit', async (req, res) => {
             if (transaction.status !== 'pending') return 'NOT_PENDING';
             if (transaction.type !== 'crypto_deposit') return 'INVALID_TYPE';
 
-            const award=await bonus.approve(connection,transaction);
-            await require('../../../utils/cashier-wagering').addDepositRequirement(connection, transaction.userId, transaction.id, String(transaction.amount),award.required);
-
-            const [creditResult] = await connection.query('UPDATE users SET balance = balance + ? WHERE id = ?', [
-                decimal(units(String(transaction.amount))+units(award.bonus)),
-                transaction.userId
-            ]);
-            if (creditResult.affectedRows !== 1) throw new Error('Deposit user not found');
-            await connection.query(
-                'UPDATE transactions SET status = ? WHERE id = ?',
-                ['approved', transaction.id]
-            );
+            await require('../../../utils/deposit-credit').creditApprovedDeposit(connection,transaction);
             await commit();
             return 'APPROVED';
         });
