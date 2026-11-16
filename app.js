@@ -99,6 +99,12 @@ app.use(bodyParser.urlencoded({
 app.use(nocache());
 app.use(cookieParser());
 
+// GalaxyBets slots v1: admin-only testing
+app.use('/slots', require('./slots/index.cjs'));
+
+// Temporary house-game pause; preserve existing settlement routes.
+app.use(require('./utils/temporary-game-policy.cjs'));
+
 // Routes
 const authRoute = require('./routes/auth');
 const userRoute = require('./routes/user');

@@ -34,6 +34,7 @@ async function tip(userId,input){
   const from=accounts.find(u=>u&&String(u.id)===String(userId)),to=accounts.find(u=>u&&String(u.id)===String(recipient.id));
   if(!from||!to)fail('USER_NOT_FOUND');
   const role=roleOf(from),isStreamer=role==='STREAMER',isAdmin=admins.has(role),exempt=isStreamer||isAdmin;
+  if(!isAdmin&&amountCents>250n)fail('MAX_TIP_TWO_FIFTY');
   if(role==='BOT'||roleOf(to)==='BOT'||from.banned||to.banned||from.tipBan||from.accountLock||to.accountLock)fail('TIPPING_RESTRICTED',403);
   if(!exempt){
    if(from.sponsorLock)fail('TIPPING_RESTRICTED',403);
@@ -59,7 +60,7 @@ async function tip(userId,input){
    const total=today.reduce((sum,row)=>sum+units(row.amount),0n);
    const person=today.filter(row=>String(row.toUserId)===String(to.id)).reduce((sum,row)=>sum+units(row.amount),0n);
    if(total+amountCents>3000n)fail('STREAMER_DAILY_TIP_LIMIT');
-   if(person+amountCents>500n)fail('STREAMER_RECIPIENT_DAILY_TIP_LIMIT');
+   if(person+amountCents>250n)fail('STREAMER_RECIPIENT_DAILY_TIP_LIMIT');
   }
   if(exempt)await c.query('UPDATE users SET balance=balance-? WHERE id=?',[amount,userId]);
   else await c.query('UPDATE users SET balance=balance-?,tipAllowance=IF(tipAllowance IS NULL,NULL,tipAllowance-?) WHERE id=?',[amount,amount,userId]);
@@ -72,7 +73,7 @@ async function tip(userId,input){
   }
   // Recipient wagering, incoming ledger, both balances and idempotency share this commit.
   await require('./tip-wagering').add(c,to.id,incomingId,amount);
-  const value={success:true,tipId:String(row.insertId),username:to.username,amount,balance:decimal(units(from.balance)-amountCents),recipientWageringRequired:decimal(amountCents*4n)};
+  const value={success:true,tipId:String(row.insertId),username:to.username,amount,balance:decimal(units(from.balance)-amountCents),recipientWageringRequired:decimal(amountCents*5n)};
   await c.query('UPDATE communityRequests SET result=? WHERE userId=? AND requestId=?',[JSON.stringify(value),userId,key]);
   await commit();return value;
  });

@@ -1,5 +1,6 @@
 'use strict';
 const {units,decimal} = require('./cashier-money');
+const policy = require('./wagering-policy');
 const min = (a,b) => a < b ? a : b;
 async function boundary(c) {
   const [[flag]] = await c.query("SELECT value FROM siteFlags WHERE name='gb_cashier_first_bet'");
@@ -20,6 +21,8 @@ async function addDepositRequirement(c, userId, transactionId, amount, requiredA
 }
 async function creditGameWagers(c, game, gameIds) {
   const firstBet=await boundary(c);
+  const [[weightedFlag]]=await c.query("SELECT value FROM siteFlags WHERE name='gb_weighted_wager_first_bet_v1'");
+  if(!weightedFlag||!/^[1-9]\d*$/.test(String(weightedFlag.value)))throw Error('Run the weighted wagering migration before starting the backend.');
   const [bets]=await c.query(`SELECT CAST(id AS CHAR) AS id,CAST(userId AS CHAR) AS userId,CAST(amount AS CHAR) AS amount
     FROM bets WHERE game=? AND gameId IN (?) AND completed=1 AND amount>0 AND id>=? ORDER BY userId,id FOR UPDATE`,[game,gameIds,firstBet]);
   for (const bet of bets) {
@@ -31,6 +34,25 @@ async function creditGameWagers(c, game, gameIds) {
     const outstanding=units(user.required)-units(user.progress);
     const tracked=deposits.reduce((sum,d)=>sum+units(d.remaining),0n);
     const legacy=outstanding>tracked?outstanding-tracked:0n;
+    if(BigInt(bet.id)>=BigInt(weightedFlag.value)) {
+      let available=units(bet.amount)*policy.halfCentRate(game),credited=0n;
+      const buckets=[{transactionId:'0',remaining:decimal(legacy),firstBetId:firstBet},...deposits];
+      for(const bucket of buckets) {
+        if(available<=0n)break;
+        if(BigInt(bet.id)<BigInt(bucket.firstBetId)||units(bucket.remaining)===0n)continue;
+        const [[old]]=await c.query('SELECT halfCent FROM cashierWagerRemainders WHERE userId=? AND transactionId=? FOR UPDATE',[bet.userId,bucket.transactionId]);
+        const result=policy.allocate(available,units(bucket.remaining),BigInt(old?.halfCent||0));
+        await c.query('INSERT INTO cashierWagerRemainders(userId,transactionId,halfCent) VALUES (?,?,?) ON DUPLICATE KEY UPDATE halfCent=VALUES(halfCent)',[bet.userId,bucket.transactionId,Number(result.carry)]);
+        if(result.credited>0n&&bucket.transactionId!=='0')await c.query('UPDATE cashierDepositWagers SET remaining=remaining-? WHERE transactionId=?',[decimal(result.credited),bucket.transactionId]);
+        available-=result.consumed;credited+=result.credited;
+      }
+      if(credited>0n) {
+        await c.query('UPDATE users SET wagerProgress=LEAST(wagerRequirement,wagerProgress+?) WHERE id=?',[decimal(credited),bet.userId]);
+        await c.query('UPDATE cashierWagerCredits SET credited=? WHERE betId=?',[decimal(credited),bet.id]);
+      }
+      continue;
+    }
+    // Already-placed wagers retain their previous contribution and eligibility.
     let available=units(bet.amount),credited=min(available,legacy); available-=credited;
     for(const deposit of deposits) {
       // Received-tip wagering is earned only on completed Packs and Battles.
