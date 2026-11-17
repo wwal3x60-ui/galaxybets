@@ -55,7 +55,7 @@ function decision({body, amount, balance, previous, round, reference, maxBet}) {
   if (round && (String(round.userId)!==body.UserID || round.gameId!==body.GameID || round.currency!==body.Currency)) throw error('ROUND_MISMATCH');
   if (round?.closed) throw error('ROUND_ALREADY_CLOSED');
   if (body.Reason==='bet') {
-    if (-amount>maxBet) throw error('TEST_STAKE_LIMIT');
+    if (maxBet!=null && -amount>maxBet) throw error('STAKE_LIMIT');
     if (balance+amount<0n) throw error('INSUFFICIENT_BALANCE');
   } else if (!round) throw error('UNKNOWN_ROUND');
   if (body.Reason==='refund') {
