@@ -1,7 +1,7 @@
 const _ = require("lodash");
 const crypto = require("crypto");
 
-const houseEdge = 7.5 / 100;
+const houseEdge = 1 / 100;
 const totalTiles = 25;
 
 function shuffle(array,floats, includeMatrix = false) {
@@ -81,19 +81,27 @@ function generateMinePositions(serverSeed, clientSeed, nonce, mines) {
 }
 
 function calculateMultiplier(mineCount, revealedTiles) {
-
-    if (revealedTiles < 1) return 1;
-
-    let successProbability = 1;
-    for (let i = 0; i < revealedTiles; i++) {
-        successProbability *= (totalTiles - mineCount - i) / (totalTiles - i);
+    if (!Number.isInteger(mineCount) || mineCount < 1 || mineCount >= totalTiles ||
+        !Number.isInteger(revealedTiles) || revealedTiles < 0 || revealedTiles > totalTiles - mineCount) {
+        throw new RangeError('Invalid Mines configuration');
     }
+    if (revealedTiles === 0) return 1;
 
-    const idealMultiplier = 1 / successProbability;
-    const adjustedMultiplier = idealMultiplier * (1 - houseEdge);
-
-    return +(adjustedMultiplier.toFixed(2));
-
+    // C(25,k) / C(25-mines,k), with a 1% house edge.
+    // Exact integers avoid binary floating-point errors at half-cent boundaries.
+    const combinations = (n, k) => {
+        k = Math.min(k, n - k);
+        let result = 1n;
+        for (let i = 1; i <= k; i++) {
+            result = result * BigInt(n - k + i) / BigInt(i);
+        }
+        return result;
+    };
+    const numerator = 99n * combinations(totalTiles, revealedTiles);
+    const denominator = combinations(totalTiles - mineCount, revealedTiles);
+    // Multiplier rounded half-up to two decimals, matching the supplied chart.
+    const hundredths = (2n * numerator + denominator) / (2n * denominator);
+    return Number(hundredths) / 100;
 }
 
 module.exports = {
