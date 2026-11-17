@@ -11,6 +11,8 @@ const createAuthLimiter = () => rateLimit({
 });
 
 const registerLimiter = createAuthLimiter();
-const loginLimiter = createAuthLimiter();
+const { createLoginFailureLimiter } = require('./login-failure-limiter.cjs');
+const loginLimiter = createLoginFailureLimiter();
 
 module.exports = { registerLimiter, loginLimiter };
+
