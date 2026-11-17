@@ -199,4 +199,7 @@ router.post('/logout', isAuthed, async (req, res) => {
 
 });
 
+require('./google.cjs').installGoogleAuth(router, {sql, doTransaction, createUserSeeds, bannedUsers, issueSession});
+
 module.exports = router;
+
