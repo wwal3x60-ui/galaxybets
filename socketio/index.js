@@ -1,3 +1,4 @@
+const { isResetRevoked } = require('../routes/auth/password-reset.cjs');
 const io = require('./server');
 const { sql } = require('../database');
 const { rains } = require('./rain');
@@ -54,7 +55,7 @@ async function socketLogin(socket, token) {
         return socket.emit('auth', { error: 'INVALID_TOKEN' });
     }
 
-    const [[u]]=await sql.query('SELECT role,banned FROM users WHERE id=?',[valid.uid]);if(!u||u.banned||String(u.role).trim().toUpperCase()==='BOT'){socket.userId=null;return socket.emit('auth',{error:'ACCOUNT_RESTRICTED'});}
+    const [[u]]=await sql.query('SELECT u.role,u.banned,r.revokedBeforeMs FROM users u LEFT JOIN passwordResetTokens r ON r.userId=u.id WHERE u.id=?',[valid.uid]);if(!u||u.banned||isResetRevoked(valid,u.revokedBeforeMs)||String(u.role).trim().toUpperCase()==='BOT'){socket.userId=null;return socket.emit('auth',{error:'ACCOUNT_RESTRICTED'});}
     socket.userId = valid.uid;
     socket.emit('auth', { success: true, userId: socket.userId });
 

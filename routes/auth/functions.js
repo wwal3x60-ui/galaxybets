@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { isResetRevoked } = require('./password-reset.cjs');
 const { createHash, createCipheriv, createDecipheriv } = require("crypto");
 const { bannedUsers, lastLogouts } = require('../admin/config');
 const rateLimit = require('express-rate-limit');
@@ -21,10 +22,11 @@ const secret = process.env.JWT_SECRET;
 
 const expiresIn = 7 * 24 * 60 * 60;
 
-function generateJwtToken(userId) {
+function generateJwtToken(userId, authTime = Date.now()) {
     
     const payload = {
-        uid: `${userId}`
+        uid: `${userId}`,
+        authTime
     };
 
     const options = {
@@ -43,7 +45,7 @@ function validateJwtToken(token) {
     try {
         const decoded = jwt.verify(token, secret);
 
-        if (lastLogouts[decoded.uid] && lastLogouts[decoded.uid] >= decoded.iat * 1000) {
+        if (lastLogouts[decoded.uid] && isResetRevoked(decoded, lastLogouts[decoded.uid])) {
             return null;
         }
 
@@ -66,7 +68,7 @@ async function isAuthed(req, res, next) {
 
     if (bannedUsers.has(valid.uid)) return res.status(401).json({ error: 'UNAUTHORIZED' });
 
-    try{const [[u]]=await require('../../database').sql.query('SELECT role,banned FROM users WHERE id=?',[valid.uid]);if(!u||u.banned||String(u.role).trim().toUpperCase()==='BOT')return res.status(403).json({error:'ACCOUNT_RESTRICTED'});req.userId=valid.uid;next();}catch(e){console.error('Authorization:',e.message);res.status(503).json({error:'AUTH_UNAVAILABLE'});}
+    try{const [[u]]=await require('../../database').sql.query('SELECT u.role,u.banned,r.revokedBeforeMs FROM users u LEFT JOIN passwordResetTokens r ON r.userId=u.id WHERE u.id=?',[valid.uid]);if(u&&isResetRevoked(valid,u.revokedBeforeMs))return res.status(401).json({error:'UNAUTHORIZED'});if(!u||u.banned||String(u.role).trim().toUpperCase()==='BOT')return res.status(403).json({error:'ACCOUNT_RESTRICTED'});req.userId=valid.uid;next();}catch(e){console.error('Authorization:',e.message);res.status(503).json({error:'AUTH_UNAVAILABLE'});}
     
 }
 

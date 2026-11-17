@@ -66,7 +66,7 @@ function respondWithValidationError(req, res) {
 
 function issueSession(res, user) {
     const userId = String(user.id);
-    const token = generateJwtToken(userId);
+    const token = generateJwtToken(userId, user.authTime);
 
     return res.status(200).json({
         expiresIn,
@@ -148,6 +148,7 @@ router.post('/register', registerLimiter, [
 });
 
 router.post('/login', loginLimiter, async (req, res) => {
+    const authTime = Date.now();
     const body = req.body || {};
     const email = typeof body.email === 'string'
         ? body.email.trim().toLowerCase()
@@ -177,7 +178,7 @@ router.post('/login', loginLimiter, async (req, res) => {
         const country = req.headers['cf-ipcountry'] || null;
         await sql.query('UPDATE users SET ip = ?, country = ? WHERE id = ?', [ip, country, user.id]);
 
-        return issueSession(res, user);
+        return issueSession(res, { ...user, authTime });
     } catch (error) {
         console.error('Login failed:', error);
         return res.status(500).json({ error: 'UNKNOWN_ERROR' });
@@ -201,5 +202,8 @@ router.post('/logout', isAuthed, async (req, res) => {
 
 require('./google.cjs').installGoogleAuth(router, {sql, doTransaction, createUserSeeds, bannedUsers, issueSession});
 
+require('./password-reset.cjs').installPasswordReset(router, {sql, doTransaction, bannedUsers, lastLogouts, commonPasswords, revokeSockets: userId => require('../../socketio/server').in(userId).disconnectSockets(true)});
+
 module.exports = router;
+
 
