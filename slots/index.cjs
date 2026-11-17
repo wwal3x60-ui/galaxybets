@@ -3,7 +3,8 @@ const express=require('express');
 const {sql}=require('../database');
 const {isAuthed}=require('../routes/auth/functions');
 const getConfig=require('./config.cjs');
-const {authenticate,error,text}=require('./protocol.cjs');
+const {authenticate,error,text,decimal}=require('./protocol.cjs');
+const {canPlay}=require('./access.cjs');
 const {Provider}=require('./provider.cjs');
 const {Wallet,refusal}=require('./wallet.cjs');
 let client;
@@ -11,7 +12,7 @@ function context(){const config=getConfig();if(!client||client.config.secret!==c
 const router=express.Router();
 const parseSlotsJson=express.json({limit:'32kb',strict:true});
 router.use((req,res,next)=>req.body!==undefined?next():parseSlotsJson(req,res,next));
-async function admin(req,res,next){try{const [[u]]=await sql.query('SELECT role,banned,accountLock,sponsorLock FROM users WHERE id=?',[req.userId]);if(!u||String(u.role).toUpperCase()!=='ADMIN'||u.banned||u.accountLock||u.sponsorLock)return res.status(403).json({error:'ADMIN_TEST_ACCESS_ONLY'});next();}catch{res.status(503).json({error:'DATABASE_UNAVAILABLE'});}}
+async function player(req,res,next){try{const [[u]]=await sql.query('SELECT role,banned,accountLock,sponsorLock FROM users WHERE id=?',[req.userId]);if(!canPlay(u))return res.status(403).json({error:'ACCOUNT_RESTRICTED'});next();}catch{res.status(503).json({error:'DATABASE_UNAVAILABLE'});}}
 const handle=fn=>async(req,res)=>{try{await fn(req,res);}catch(e){console.error('Slots request failed:',e.publicError||e.code||'INTERNAL_ERROR');res.status(e.status||503).json({error:e.publicError||'SLOTS_TEMPORARILY_UNAVAILABLE'});}};
 for(const [path,kind] of [['/wallet/Cash/Get','get'],['/wallet/Cash/TransferInOut','transfer']]) {
  router.post(path,async(req,res)=>{
@@ -20,8 +21,8 @@ for(const [path,kind] of [['/wallet/Cash/Get','get'],['/wallet/Cash/TransferInOu
   }catch(e){console.error('Slots callback refused:',e.publicError||e.code||'TEMPORARY_ERROR');res.status(e.publicError?e.status||400:503).json(refusal(e.publicError||'TEMPORARY_ERROR_RETRY_SAME_TRANSACTION'));}
  });
 }
-router.use(isAuthed,admin);
-router.get('/status',handle(async(req,res)=>{let c;try{c=getConfig();}catch{}const [[schema]]=await sql.query("SELECT COUNT(*) AS count FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name IN ('gbSlotTransactions','gbSlotRounds','gbSlotWalletRemainders','gbSlotSessions')");res.json({configured:!!c,enabled:c?.enabled||false,schemaReady:Number(schema.count)===4,currency:'USD',adminOnly:true,maxTestBet:process.env.CODEJACKPOT_MAX_TEST_BET||'1.00',contributions:'Slots contribute 100% only to new 40x deposit-bonus claims. Ordinary deposits, tips and older bonus claims receive no slots credit. Slots do not advance levels, rewards or affiliate commission.'});}));
+router.use(isAuthed,player);
+router.get('/status',handle(async(req,res)=>{let c;try{c=getConfig();}catch{}const [[schema]]=await sql.query("SELECT COUNT(*) AS count FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name IN ('gbSlotTransactions','gbSlotRounds','gbSlotWalletRemainders','gbSlotSessions')");res.json({configured:!!c,enabled:c?.enabled||false,schemaReady:Number(schema.count)===4,currency:'USD',adminOnly:false,maxBet:decimal(c?.maxBet??10000n),maxTestBet:decimal(c?.maxBet??10000n),contributions:'Slots contribute 100% only to new 40x deposit-bonus claims. Ordinary deposits, tips and older bonus claims receive no slots credit. Slots do not advance levels, rewards or affiliate commission.'});}));
 router.get('/games',handle(async(req,res)=>{const {config,provider}=context();if(!config.enabled)throw error('SLOTS_DISABLED',503);res.json({games:await provider.games()});}));
 router.get('/balance',handle(async(req,res)=>res.json(await context().wallet.get(String(req.userId)))));
 router.get('/history',handle(async(req,res)=>{const [rounds]=await sql.query('SELECT roundId,gameId,currency,CAST(betTotal AS CHAR) AS betTotal,CAST(winTotal AS CHAR) AS winTotal,CAST(refundTotal AS CHAR) AS refundTotal,closed,createdAt FROM gbSlotRounds WHERE userId=? ORDER BY createdAt DESC LIMIT 50',[req.userId]);res.json({rounds});}));

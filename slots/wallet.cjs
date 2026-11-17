@@ -1,5 +1,6 @@
 'use strict';
 const {money,decimal,error,decision}=require('./protocol.cjs');
+const {canPlay,stakeLimit}=require('./access.cjs');
 const success=balance=>({code:0,error:'',data:{Balance:Number(decimal(balance))}});
 const refusal=message=>({code:1,error:message,data:null});
 class Wallet {
@@ -34,11 +35,11 @@ class Wallet {
    try {
     if(body.Reason==='bet') {
      if(!this.config.enabled)throw error('SLOTS_DISABLED');
-     if(String(user.role).toUpperCase()!=='ADMIN' || user.banned || user.accountLock || user.sponsorLock)throw error('ACCOUNT_RESTRICTED');
+     if(!canPlay(user))throw error('ACCOUNT_RESTRICTED');
      const [[session]]=await c.query("SELECT id FROM gbSlotSessions WHERE userId=? AND gameId=? AND currency=? AND state IN ('pending','launched') LIMIT 1",[body.UserID,body.GameID,this.config.currency]);
      if(!session)throw error('NO_LAUNCH_SESSION');
     }
-    const plan=decision({body,amount,balance,round:existing,reference,maxBet:this.config.maxBet});
+    const plan=decision({body,amount,balance,round:existing,reference,maxBet:body.Reason==='bet'?stakeLimit(this.config.maxBet):this.config.maxBet});
     after=plan.after;
     if(after<0n || after>9007199254740991n)throw error('BALANCE_OUT_OF_RANGE');
     result=success(after);
