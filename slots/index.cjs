@@ -21,6 +21,8 @@ for(const [path,kind] of [['/wallet/Cash/Get','get'],['/wallet/Cash/TransferInOu
   }catch(e){console.error('Slots callback refused:',e.publicError||e.code||'TEMPORARY_ERROR');res.status(e.publicError?e.status||400:503).json(refusal(e.publicError||'TEMPORARY_ERROR_RETRY_SAME_TRANSACTION'));}
  });
 }
+// Public homepage preview: seven catalogue entries only; no player data or launch access.
+router.get('/featured',require('./featured.cjs').createFeaturedHandler(context));
 router.use(isAuthed,player);
 router.get('/status',handle(async(req,res)=>{let c;try{c=getConfig();}catch{}const [[schema]]=await sql.query("SELECT COUNT(*) AS count FROM information_schema.tables WHERE table_schema=DATABASE() AND table_name IN ('gbSlotTransactions','gbSlotRounds','gbSlotWalletRemainders','gbSlotSessions')");res.json({configured:!!c,enabled:c?.enabled||false,schemaReady:Number(schema.count)===4,currency:'USD',adminOnly:false,maxBet:c?.maxBet==null?null:decimal(c.maxBet),maxTestBet:c?.maxBet==null?null:decimal(c.maxBet),contributions:'Slots contribute 100% only to new 40x deposit-bonus claims. Ordinary deposits, tips and older bonus claims receive no slots credit. Slots do not advance levels, rewards or affiliate commission.'});}));
 router.get('/games',handle(async(req,res)=>{const {config,provider}=context();if(!config.enabled)throw error('SLOTS_DISABLED',503);res.json({games:await provider.games()});}));
@@ -45,3 +47,4 @@ router.post('/launch',handle(async(req,res)=>{
  }finally{launching.delete(uid);}
 }));
 module.exports=router;
+
