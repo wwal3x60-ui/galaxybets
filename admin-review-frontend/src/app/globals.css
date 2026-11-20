@@ -1,0 +1,109 @@
+@import "tailwindcss";
+@plugin './hero.ts';
+@source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #0f1013;
+  --foreground: #ffffff;
+  --background-base: #0f1013;
+  --background-elevated:#1b1c20;
+  --background-sunken:#0f1013;
+  --surface-primary:#222327;
+  --surface-secondary:#343539;
+  --surface-tertiary:#48494d;
+  --surface-overlay:#0f1013b8;
+  --ancient-blue: #eb808b;
+  --ancient-cyan: #eb808b;
+  --ancient-purple: #eb808b;
+  --ancient-gold: #F5C542;
+  --success-blue: #28C76F;
+  --success-muted: #1F9E59;
+  --warning-base: #FF9F43;
+  --warning-muted: #D97F34;
+  --error-base: #EA5455;
+  --error-muted: #C74444;
+  --button-primary: #eb808b;
+  --button-hover: #eb808b;
+  --button-disabled-bg: #58595d;
+  --text-muted: #a5a5aa;
+  --tab-active-bg: rgba(167, 139, 250, 0.12);
+  --tab-active-bg-alt: rgba(167, 139, 250, 0.24);
+  --border-subtle: rgba(167, 139, 250, 0.12);
+  --divider-color: rgba(167, 139, 250, 0.24);
+  --link-blue: #dcdce1;
+  --checkbox-checked-border: #eb808b;
+  --highlight:rgba(167,139,250,0.12);
+  --primary-400: #dcdce1;
+  --pack-gold: #ffbc02;
+  --pack-red: #ff0a0a;
+  --pack-pink: #eb808b;
+  --pack-purple: #eb808b;
+  --pack-blue: #eb808b;
+  --pack-common: #6c6c71;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-background-base: var(--background-base);
+  --color-background-elevated: var(--background-elevated);
+  --color-background-sunken: var(--background-sunken);
+  --color-surface-primary: var(--surface-primary);
+  --color-surface-secondary: var(--surface-secondary);
+  --color-surface-tertiary: var(--surface-tertiary);
+  --color-surface-overlay: var(--surface-overlay);
+  --color-ancient-blue: var(--ancient-blue);
+  --color-ancient-cyan: var(--ancient-cyan);
+  --color-ancient-purple: var(--ancient-purple);
+  --color-ancient-gold: var(--ancient-gold);
+  --color-success-blue: var(--success-blue);
+  --color-success-muted: var(--success-muted);
+  --color-warning-base: var(--warning-base);
+  --color-warning-muted: var(--warning-muted);
+  --color-error-base: var(--error-base);
+  --color-error-muted: var(--error-muted);
+  --color-button-primary: var(--button-primary);
+  --color-button-hover: var(--button-hover);
+  --color-button-disabled-bg: var(--button-disabled-bg);
+  --color-text-muted: var(--text-muted);
+  --color-tab-active-bg: var(--tab-active-bg);
+  --color-tab-active-bg-alt: var(--tab-active-bg-alt);
+  --color-border-subtle: var(--border-subtle);
+  --color-divider: var(--divider-color);
+  --color-link-blue: var(--link-blue);
+  --color-checkbox-checked-border: var(--checkbox-checked-border);
+  --color-primary-400: var(--primary-400);
+  --color-highlight: var(--highlight);
+  --color-pack-gold: var(--pack-gold);
+  --color-pack-red: var(--pack-red);
+  --color-pack-pink: var(--pack-pink);
+  --color-pack-purple: var(--pack-purple);
+  --color-pack-blue: var(--pack-blue);
+  --color-pack-common: var(--pack-common);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-archivo: var(--font-archivo);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0f1013;
+    --foreground: #ffffff;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Hide scrollbar but keep functionality */
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}

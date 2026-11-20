@@ -16,6 +16,10 @@ router.use((req, res, next) => {
     next();
 });
 
+router.use('/instant', require('./house'));
+// New rooms are retired; existing join/bot routes remain for legacy rounds.
+router.post('/create', isAuthed, (req,res)=>res.status(410).json({error:'HOUSE_MODE_ONLY'}));
+
 router.post('/create', isAuthed, apiLimiter, async (req, res) => {
     console.log("=== COINFLIP CREATE START ===");
     console.log("User ID:", req.userId);

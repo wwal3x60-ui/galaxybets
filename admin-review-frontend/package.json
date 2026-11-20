@@ -1,0 +1,39 @@
+{
+  "name": "galaxybets-crimson-arena",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev-server.cjs",
+    "build": "next build --webpack",
+    "start": "next start",
+    "lint": "eslint",
+    "test:collection": "node --test scripts/collection.test.cjs"
+  },
+  "dependencies": {
+    "@heroui/react": "^2.8.7",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@react-oauth/google": "^0.13.4",
+    "axios": "^1.13.2",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.24.10",
+    "next": "16.1.1",
+    "qrcode.react": "^4.2.0",
+    "react": "19.2.3",
+    "react-canvas-confetti": "^2.0.7",
+    "react-dom": "19.2.3",
+    "socket.io-client": "^4.8.3",
+    "tailwind-merge": "^3.4.0",
+    "zustand": "^5.0.9"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.1",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

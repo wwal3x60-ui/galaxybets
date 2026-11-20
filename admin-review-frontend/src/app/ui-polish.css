@@ -1,0 +1,92 @@
+/* Presentation only. Fonts are bundled locally, including their OFL licenses. */
+@font-face{font-family:Manrope;src:url('/assets/fonts/Manrope-Variable.ttf') format('truetype');font-style:normal;font-weight:200 800;font-display:swap}
+@font-face{font-family:'Space Grotesk';src:url('/assets/fonts/SpaceGrotesk-Variable.ttf') format('truetype');font-style:normal;font-weight:300 700;font-display:swap}
+body.galaxy-theme{--font-geist-sans:Manrope,ui-sans-serif,system-ui,sans-serif;--font-heading:'Space Grotesk',Manrope,ui-sans-serif,system-ui,sans-serif;--font-archivo:var(--font-heading);font-family:var(--font-geist-sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body.galaxy-theme :is(button,input,select,textarea){font-family:inherit}
+body.galaxy-theme :is(h1,h2,h3){font-family:var(--font-heading);letter-spacing:-.025em;line-height:1.25}
+.galaxy .mcLogo{font-family:var(--font-heading);letter-spacing:-.045em}
+.galaxy .mcHeader .gxDesktopNav>a,.galaxy .gxGamesMenu>summary{font-size:13px;font-weight:600}
+.galaxy .mcHeader .gxDesktopNav{gap:2px}
+.gxUiIcon>svg{width:100%;height:100%;display:block}
+.galaxy .mcIconButton>svg,.galaxy .gxDrawerLink>svg,.galaxy .mcMobileNav svg{flex-shrink:0}
+.galaxy .mcDrawer{max-width:calc(100vw - 24px);overscroll-behavior:contain}
+.galaxy .gxDrawerLink{min-height:46px;font-size:14px}
+.galaxy .gxDrawerLink>svg{width:21px;height:21px}
+.galaxy .gxDrawerCart{width:100%;text-align:left;cursor:pointer;background:transparent}
+.galaxy .mcDrawerTop .mcIconButton{width:44px;height:44px}
+.galaxy .mcHeaderActions .mcLogin,.galaxy .mcHeaderActions .mcJoin{min-height:40px;font-size:13px}
+.galaxy .gxCategoryTabs{flex-wrap:wrap}
+.galaxy .gxCategoryTabs button{min-height:38px;font-size:12px}
+.galaxy .gxSectionHeader h2{font-family:var(--font-heading);font-size:23px;font-weight:650}
+.galaxy .gxViewAll{font-size:12px}
+.galaxy .mcHow h2{font-size:23px}
+.galaxy .mcHow h3{font-size:15px}
+.galaxy .mcHow p{font-size:13px;line-height:1.7}
+@media(min-width:1024px) and (max-width:1250px){
+ .galaxy .mcHeader{gap:10px;padding-inline:12px}
+ .galaxy .mcHeader .gxDesktopNav>a,.galaxy .gxGamesMenu>summary{font-size:12px;padding-inline:7px}
+ .galaxy .mcHeaderActions{gap:6px}
+ .galaxy .mcHeader .gxOriginalLogo{width:140px}
+}
+@media(max-width:767px){
+ .galaxy{--mc-header:72px}
+ .galaxy .mcHeader{padding:env(safe-area-inset-top,0px) 12px 0;height:calc(72px + env(safe-area-inset-top,0px));gap:8px}
+ .galaxy .mcHeader .gxOriginalLogo{width:130px;height:44px}
+ .galaxy .mcHeader .mcIconButton{height:44px;width:44px;border-radius:7px}
+ .galaxy .mcBrand{gap:8px;min-width:0}
+ .galaxy .mcHeaderActions{gap:7px}
+ .galaxy .mcHeaderActions .mcLogin{min-height:44px;font-size:12px;padding-inline:6px}
+ .galaxy .mcHeaderActions .mcJoin{min-height:44px;font-size:12px;padding-inline:12px}
+ .galaxy .mcWorkspace{padding-top:calc(88px + env(safe-area-inset-top,0px));padding-bottom:24px}
+ .galaxy .mcMobileNav{padding:8px 6px calc(8px + env(safe-area-inset-bottom,0px));gap:2px}
+ .galaxy .mcMobileNav a,.galaxy .mcMobileNav button{position:relative;min-height:50px;font-size:12px;font-weight:600;gap:5px;border-radius:7px}
+ .galaxy .mcMobileNav svg{width:22px;height:22px}
+ .galaxy .mcMobileNav .isActive{background:#eb808b17;color:#e0e0e5}
+ .galaxy .mcMobileNav .isActive:before{content:'';position:absolute;top:-9px;left:calc(50% - 11px);width:22px;height:2px;background:#eb808b;border-radius:2px}
+ .galaxy .mcFooter{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px));font-size:12px}
+ .galaxy .mcFooter nav>a{display:inline-flex;align-items:center;min-height:44px}
+ .galaxy .gxSectionHeader{align-items:center;row-gap:12px;margin-bottom:16px}
+ .galaxy .gxSectionHeader h2{font-size:21px;flex:1}
+ .galaxy .gxCategoryTabs{order:3;flex-basis:100%;gap:6px}
+ .galaxy .gxCategoryTabs button{min-height:44px;font-size:12px;padding:8px 14px}
+ .galaxy .gxViewAll{display:inline-flex;align-items:center;min-height:44px;font-size:12px}
+ .galaxy .mcHow h2{font-size:21px}
+ .galaxy .mcHow article{padding:20px}
+ .galaxy .mcHow h3{font-size:15px}
+ .galaxy .mcHow p{font-size:13px;line-height:1.65}
+ body.galaxy-theme :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea,select),
+ body.galaxy-theme [data-slot=input]{font-size:16px}
+ body.galaxy-theme [role=dialog]{max-width:calc(100vw - 24px);max-height:calc(100dvh - 24px)}
+ body.galaxy-theme [role=dialog] [data-slot=body]{overscroll-behavior:contain}
+ .galaxy .mcDrawer{padding-top:calc(18px + env(safe-area-inset-top,0px));padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));max-height:100dvh}
+}
+@media(max-width:389px){
+ .galaxy .mcHeader{padding-inline:9px;gap:5px}
+ .galaxy .mcHeader .gxOriginalLogo{width:108px}
+ .galaxy .mcBrand{gap:5px}
+ .galaxy .mcHeader .mcIconButton{width:40px}
+ .galaxy .mcHeaderActions{gap:4px}
+ .galaxy .mcHeaderActions .mcJoin{padding-inline:9px;font-size:12px}
+ .galaxy .mcHeaderActions .mcLogin{font-size:12px;padding-inline:4px}
+}
+@media(prefers-reduced-motion:reduce){body.galaxy-theme{scroll-behavior:auto}}
+/* Keep the drawer as an additional navigation option on every screen. */
+.galaxy .gxMenuButton{display:grid}
+@media(min-width:1024px) and (max-width:1399px){
+ .galaxy .gxDesktopNav{display:flex;gap:0;margin-left:0}
+ .galaxy .mcHeader{gap:12px;padding-inline:12px}
+ .galaxy .mcHeader .gxOriginalLogo{width:140px;height:44px}
+ .galaxy .mcHeader .mcBrand{gap:8px}
+ .galaxy .mcHeader .gxDesktopNav>a,.galaxy .gxGamesMenu>summary{font-size:12px;padding:8px 7px}
+ .galaxy .mcHeader .gxMenuButton{height:36px;width:36px}
+ .galaxy .mcCart{display:none}
+ .galaxy .mcWalletDesktop{display:none}
+ .galaxy .mcWalletMobile{display:block}
+}
+@media(min-width:1024px) and (max-width:1199px){
+ .galaxy .mcHeader .gxHeaderSearch,.galaxy .mcHeaderActions>.gxSoundControl{display:none}
+ .galaxy .mcHeader{gap:9px}
+ .galaxy .mcHeader .gxOriginalLogo{width:130px}
+}
+
+@media(max-width:767px){.galaxy .mcWalletMobile{min-width:0}.galaxy .mcHeaderActions{min-width:0}.galaxy .mcHeader:has(.mcWalletMobile) .mcHeaderActions{flex-shrink:1}}

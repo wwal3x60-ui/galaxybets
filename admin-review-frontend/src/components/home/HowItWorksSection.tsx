@@ -1,0 +1,3 @@
+import {CircuitIcon} from '@/components/layout/MidnightShell';
+const steps=[{icon:'packs',title:'Choose your case',text:'Browse the contents, prices and displayed odds.'},{icon:'games',title:'Reveal your item',text:'Each opening reveals a virtual item from the case.'},{icon:'account',title:'Keep it or sell it',text:'Keep items in your cart or sell them for site balance. Physical delivery is not available.'}] as const;
+export default function HowItWorksSection(){return <section className="mcHow"><h2>How it works</h2><div>{steps.map((s,i)=><article key={s.title}><span className="mcStepNumber">0{i+1}</span><CircuitIcon name={s.icon} size={22}/><h3>{s.title}</h3><p>{s.text}</p></article>)}</div></section>}

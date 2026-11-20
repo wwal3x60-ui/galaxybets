@@ -1,0 +1,10 @@
+'use strict';
+const {spawn}=require('node:child_process');
+const args=process.argv.slice(2);
+const get=(key,fallback)=>{const i=args.indexOf(key);return i>=0&&args[i+1]?args[i+1]:fallback;};
+const port=get('--port',process.env.PORT||'3000');
+const hostname=get('--host',get('--hostname','127.0.0.1'));
+const child=spawn(process.execPath,[require.resolve('next/dist/bin/next'),'dev','--webpack','--hostname',hostname,'--port',port],{stdio:'inherit',env:{...process.env,GB_LOCAL_PREVIEW:'1'}});
+child.on('error',()=>{console.error('The development server could not start.');process.exitCode=1;});
+child.on('exit',code=>{process.exitCode=code??1;});
+for(const signal of ['SIGINT','SIGTERM'])process.on(signal,()=>child.kill(signal));

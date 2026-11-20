@@ -1,0 +1,4 @@
+import Image from 'next/image';
+import Link from 'next/link';
+export const originalGames=[{id:'mines',name:'Mines',description:'Reveal gems. Choose your moment.'},{id:'roulette',name:'Roulette',description:'Pick a symbol. Follow the reel.'},{id:'coinflip',name:'Coinflip',description:'Two sides. One result.'},{id:'jackpot',name:'Jackpot',description:'One shared pot. One winning ticket.'}] as const;
+export default function GameTiles({ lobby = false }: { lobby?: boolean }){return <div className="crGameGrid">{originalGames.map(game=><Link className="crGameTile" href={`/${game.id}`} key={game.id}><Image src={`/assets/crimson/games/${game.id}.webp`} alt="" width={1672} height={941} quality={90} sizes={lobby ? "(max-width:650px) 100vw, (max-width:1600px) 50vw, 760px" : "(max-width:650px) 100vw, (max-width:1000px) 50vw, 25vw"}/><div><h3>{game.name}</h3><p>{game.description}</p></div></Link>)}</div>;}

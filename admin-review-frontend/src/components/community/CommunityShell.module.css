@@ -1,0 +1,1 @@
+.shell{display:grid;grid-template-columns:minmax(0,1fr);width:100%;flex:1;align-items:start}.content{min-width:0;background:transparent}.open{grid-template-columns:minmax(0,1fr)370px;gap:14px;padding-right:14px}@media(max-width:1279px){.open{grid-template-columns:minmax(0,1fr);padding:0;gap:0}.open>.content{padding-bottom:50dvh}}

@@ -1,0 +1,10 @@
+import type { CSSProperties } from 'react';
+import { RouletteToken } from '@/components/games/GameVisuals';
+import RouletteDesignReel from '@/components/games/RouletteDesignReel';
+import OriginalsNav from '@/components/games/OriginalsNav';
+export const metadata={title:'Roulette design preview'};
+export default function RoulettePreview(){
+ const reel=[{color:2},{color:1},{color:0},{color:3,specialColor:2},{color:1},{color:3,specialColor:1},{color:2},{color:0},{color:1},{color:2},{color:0}] as const;
+ const bets=[{name:'Red',multiplier:2,color:2,tint:'#f26172',rule:'Any red result, including red 7×.'},{name:'Green',multiplier:2,color:1,tint:'#62dba5',rule:'Any green result, including green 7×.'},{name:'Gold',multiplier:14,color:0,tint:'#efc775',rule:'The gold symbol only.'},{name:'Special',multiplier:7,color:3,tint:'#f5f5f6',rule:'Either the red 7× or green 7× symbol.'}] as const;
+ return <main className="crRoulettePreview"><OriginalsNav active="roulette"/><header className="crPreviewTitle"><div><span className="crEyebrow">GALAXYBETS ORIGINALS</span><h1>Roulette</h1><p>Design preview · Illustrative symbols, no live round.</p></div><span className="crPreviewBadge">REVIEW DESIGN</span></header><RouletteDesignReel/><div className="crPreviewCaption"><span>Red and green retain their color on special results.</span><span>Multipliers include the stake.</span></div><section className="crPreviewBetGrid" aria-label="Proposed payout panels">{bets.map(bet=><article key={bet.name} className="crPreviewBet" style={{'--bet-color':bet.tint} as CSSProperties}><div><h2>{bet.name} {bet.multiplier}×</h2>{bet.color===3?<span className="crSpecialPair"><RouletteToken color={3} specialColor={2}/><RouletteToken color={3} specialColor={1}/></span>:<RouletteToken color={bet.color}/>}</div><p>{bet.rule}</p><button disabled type="button">Design preview</button></article>)}</section><div className="crPreviewRules"><strong>Red 7× also wins Red 2×.</strong><strong>Green 7× also wins Green 2×.</strong></div><p className="crPreviewEmpty">Preview only. No bets, balances or live results are generated here.</p></main>;
+}

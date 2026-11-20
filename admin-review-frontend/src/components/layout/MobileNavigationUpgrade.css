@@ -1,0 +1,16 @@
+/* Mobile navigation targets and text remain readable at default zoom. */
+@media(max-width:767px){
+ .galaxy .mcMobileNav{padding:7px 8px calc(7px + env(safe-area-inset-bottom,0px));gap:4px}
+ .galaxy .mcMobileNav a,.galaxy .mcMobileNav button{min-height:52px;font-size:14px;line-height:1.2;gap:5px;border-radius:10px;color:#cfcfd4}
+ .galaxy .mcMobileNav .isActive{background:#d83e4a55;color:#f4f4f8}
+ .galaxy .mcMobileNav svg{width:21px;height:21px}
+ .galaxy .mcMobileNav a:focus-visible,.galaxy .mcMobileNav button:focus-visible{outline:2px solid #dfdfe4;outline-offset:1px}
+ .galaxy .mcHeader .gxMenuButton{min-width:44px;min-height:44px}
+ .galaxy .mcLogin,.galaxy .mcJoin{min-height:44px;font-size:14px;display:inline-flex;align-items:center;justify-content:center}
+ .galaxy .mcWorkspace{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))}
+ .galaxy .mcFooter{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))}
+ .galaxy .mcDrawer{max-height:100dvh;overflow-y:auto}
+ .galaxy .mcDrawer .gxDrawerLink{min-height:48px;font-size:16px}
+ .galaxy .mcDrawer .mcIconButton{min-width:44px;min-height:44px}
+}
+@media(max-width:380px){.galaxy .mcHeaderActions{gap:4px}.galaxy .mcLogin{padding-inline:3px}.galaxy .mcJoin{padding-inline:8px}.galaxy .mcLogo{font-size:17px;gap:4px}.galaxy .mcBrand{gap:2px}}

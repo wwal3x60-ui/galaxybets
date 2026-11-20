@@ -1,0 +1,34 @@
+"use client";
+import {useEffect,useRef,useState,type FormEvent} from 'react';
+import {useAuthStore} from '@/store/auth.store';
+import {apiClient} from '@/lib/api/client';
+import {ProfilePhotoEditor} from './ProfilePhotoEditor';
+import {accountError,useAccountData,type AccountProfile} from './AccountData';
+import AccountIcon from './AccountIcon';
+import styles from './AccountSystem.module.css';
+type Fields=Pick<AccountProfile,'firstName'|'lastName'|'birthday'|'address'|'addressAlt'|'city'|'state'|'country'|'phone'>;
+const empty:Fields={firstName:'',lastName:'',birthday:'',address:'',addressAlt:'',city:'',state:'',country:'',phone:''};
+const formOf=(p:AccountProfile):Fields=>Object.fromEntries(Object.keys(empty).map(k=>[k,p[k as keyof Fields]||''])) as Fields;
+export function ProfilePage(){
+ const {token,user}=useAuthStore(),{refresh}=useAccountData();
+ const [profile,setProfile]=useState<AccountProfile|null>(null),[form,setForm]=useState<Fields>(empty),[username,setUsername]=useState(''),[loading,setLoading]=useState(true),[saving,setSaving]=useState(''),[error,setError]=useState(''),[notice,setNotice]=useState(''),[retry,setRetry]=useState(0);
+ const lock=useRef(false),epoch=useRef(0),userId=user?.id;
+ useEffect(()=>{const current=++epoch.current,controller=new AbortController();lock.current=false;setSaving('');setProfile(null);setForm(empty);setUsername('');setError('');setNotice('');setLoading(true);
+  apiClient.get<AccountProfile>('/user/account/profile',{signal:controller.signal,headers:{Authorization:token}}).then(res=>{if(current!==epoch.current||useAuthStore.getState().token!==token||String(res.data.id)!==String(userId))return;setProfile(res.data);setForm(formOf(res.data));setUsername(res.data.username);}).catch(e=>{if(!controller.signal.aborted&&current===epoch.current)setError(accountError(e));}).finally(()=>{if(current===epoch.current)setLoading(false);});return()=>{epoch.current++;controller.abort();};
+ },[token,userId,retry]);
+ const save=async(event:FormEvent,kind:'username'|'details')=>{event.preventDefault();if(lock.current||!profile||!token||String(profile.id)!==String(userId)||useAuthStore.getState().token!==token)return;const expected=token,current=epoch.current;lock.current=true;setSaving(kind);setError('');setNotice('');
+  try{const res=await apiClient.patch<AccountProfile>('/user/account/profile',kind==='username'?{username:username.trim()}:form,{headers:{Authorization:expected}});if(current!==epoch.current||useAuthStore.getState().token!==expected)return;setProfile(res.data);if(kind==='details')setForm(formOf(res.data));if(kind==='username')setUsername(res.data.username);const p=res.data;useAuthStore.getState().updateUser({username:p.username,name:p.username,firstName:p.firstName,lastName:p.lastName,birthday:p.birthday,address:p.address,addressAlt:p.addressAlt,city:p.city,state:p.state,country:p.country,phone:p.phone});setNotice(kind==='username'?'Username saved.':'Profile details saved.');void refresh();}
+  catch(e){if(current===epoch.current)setError(accountError(e));}finally{if(current===epoch.current){lock.current=false;setSaving('');}}
+ };
+ const changed=!!profile&&JSON.stringify(form)!==JSON.stringify(formOf(profile));
+ const field=(key:keyof Fields,label:string,type='text',maxLength=100)=><label className={styles.field} key={key}><span>{label}</span><input name={key} type={type} value={form[key]||''} onChange={e=>setForm(v=>({...v,[key]:e.target.value}))} disabled={loading||saving!==''} maxLength={maxLength} {...(type==='date'?{min:'1900-01-01',max:new Date().toISOString().slice(0,10)}:{})}/></label>;
+ return <section className={styles.profilePage}><header className={styles.pageTitle}><div><span className={styles.kicker}>YOUR PLAYER IDENTITY</span><h1>My profile</h1><p>Manage your picture, username and optional personal details.</p></div><AccountIcon name="user"/></header>
+  {error&&<div className={styles.error} role="alert"><p>{error}</p>{!profile&&<button className={styles.secondary} type="button" disabled={loading} onClick={()=>setRetry(v=>v+1)}>Try again</button>}</div>}{notice&&<p className={styles.notice} role="status"><AccountIcon name="check"/>{notice}</p>}
+  <div className={styles.photoPanel}><ProfilePhotoEditor/></div>
+  {loading?<p className={styles.empty} role="status">Loading your profile…</p>:profile&&String(profile.id)===String(userId)&&<>
+   <div className={styles.identityGrid}><form className={styles.panel} onSubmit={e=>void save(e,'username')}><div className={styles.panelHeading}><h2>Public username</h2><AccountIcon name="user"/></div><p className={styles.helpText}>Shown on your games, battles and public activity.</p><label className={styles.field}><span>Username</span><input name="username" value={username} onChange={e=>setUsername(e.target.value)} minLength={3} maxLength={20} pattern="[A-Za-z0-9_]+" autoComplete="username" required disabled={saving!==''}/></label><div className={styles.formActions}><button className={styles.primary} type="submit" disabled={saving!==''||username.trim()===profile.username}>{saving==='username'?'Saving…':'Save username'}</button><small>3–20 letters, numbers or underscores.</small></div></form>
+   <article className={styles.panel}><div className={styles.panelHeading}><h2>Account details</h2><AccountIcon name="shield"/></div><dl className={styles.accountDetails}><div><dt>Email address</dt><dd>{profile.email}</dd></div><div><dt>Player ID</dt><dd>#{profile.id}</dd></div><div><dt>Joined</dt><dd>{new Date(profile.createdAt).toLocaleDateString()}</dd></div></dl><p className={styles.finePrint}>Sign-in email changes are handled through support.</p></article></div>
+   <form className={styles.panel} onSubmit={e=>void save(e,'details')}><div className={styles.panelHeading}><h2>Personal information</h2><span className={styles.statusChip}>Optional · private</span></div><p className={styles.helpText}>These details are not displayed on your public player profile.</p><div className={styles.formGrid}>{field('firstName','First name')}{field('lastName','Last name')}{field('birthday','Date of birth','date')}{field('phone','Phone number','tel',40)}</div><div className={styles.formDivider}/><div className={styles.panelHeading}><h2>Address information</h2></div><div className={styles.formGrid}>{field('address','Address','text',255)}{field('addressAlt','Address line 2','text',255)}{field('city','City')}{field('state','State / region')}{field('country','Country')}</div><div className={styles.formActions}><button type="submit" className={styles.primary} disabled={!changed||saving!==''}>{saving==='details'?'Saving…':'Save profile'}</button><button type="button" className={styles.secondary} disabled={!changed||saving!==''} onClick={()=>{setForm(formOf(profile));setError('');setNotice('');}}>Discard changes</button></div></form>
+  </>}
+ </section>;
+}

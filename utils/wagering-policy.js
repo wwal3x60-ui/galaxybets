@@ -1,6 +1,6 @@
 'use strict';
 const VERSION='weighted-wagering-v1';
-const HOUSE_GAMES=new Set(['mines','keno','roulette','jackpot','coinflip','crash','blackjack','upgrader','upgrade']);
+const HOUSE_GAMES=new Set(['mines','keno','roulette','jackpot','coinflip','coinflip_house','crash','blackjack','upgrader','upgrade']);
 const PACK_GAMES=new Set(['case','battle']);
 function halfCentRate(game){return PACK_GAMES.has(game)?2n:HOUSE_GAMES.has(game)?1n:0n;}
 // All inputs are integer cents/half-cents. A carry belongs to one requirement,

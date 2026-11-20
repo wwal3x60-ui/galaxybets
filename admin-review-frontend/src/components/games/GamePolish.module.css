@@ -1,0 +1,105 @@
+/* Shared material language. State, transforms, timing and payouts belong to the game. */
+.mines,.roulette,.coinflip,.jackpot{color:#f5eefb}
+.mines>header,.roulette>header,.coinflip>header,.jackpot>header{position:relative;margin-bottom:24px}
+.mines h1,.roulette h1,.coinflip h1,.jackpot h1{font-size:29px!important;font-weight:750;letter-spacing:-.045em}
+.mines>header>span{position:absolute;right:0;top:0}
+.mines>header p,.coinflip>header p{font-size:12px;color:#b4b4b9}
+.mines aside,.mines [aria-label="Mines game board"],.coinflip aside,.coinflip article,.roulette [aria-label="Live Roulette round"],.roulette [aria-label="Place Roulette bet"],.jackpot>div>section,.jackpot>div>aside{border:1px solid #a4a4a939;border-radius:17px;background:#1f2024;box-shadow:inset 0 1px 0 #ffffff07,0 8px 28px #0f101322}
+.mines aside,.coinflip aside{background:linear-gradient(145deg,#27282c,#191a1e);padding:22px}
+.mines input,.mines select,.roulette input,.coinflip input,.coinflip select{background:#111216!important;color:#f3eafc;border:1px solid #a4a4a947!important;border-radius:10px!important;box-shadow:inset 0 2px 4px #0f101333}
+.mines input:focus,.mines select:focus,.roulette input:focus{border-color:#c7c7cc!important;outline:2px solid #eb808b33;outline-offset:2px}
+.mines :global(.mcPrimary),.coinflip :global(.mcPrimary){min-height:46px;border-radius:10px;font-weight:700}
+.mines [aria-label="Mines game board"]{background:radial-gradient(ellipse at 50% 30%,#393a3e33,transparent 65%),#18191d;padding:22px 24px 16px;overflow:hidden}
+.mines [aria-label="Mines game board"]>div:nth-child(2){max-width:540px;gap:11px}
+.mines [aria-label="Mines game board"]>div:first-child{margin-bottom:22px}
+.mines button[aria-label^="Tile"]{isolation:isolate;overflow:visible;border-radius:13px;border:1px solid #bababf42;background:linear-gradient(145deg,#424347,#313236 65%);box-shadow:inset 0 1px 0 #ede4ff1a,inset 0 -2px 0 #14151966,0 5px 0 #0f1013,0 7px 9px #0003;transform:translateY(0);transition:transform 140ms,background 160ms,border-color 160ms,box-shadow 160ms}
+.mines button[aria-label^="Tile"]:before{content:'';position:absolute;inset:5px;border:1px solid #dadadf11;border-radius:9px;pointer-events:none}
+.mines button[data-tile-state=hidden]:enabled:hover{transform:translateY(-3px);background:linear-gradient(145deg,#58595d,#393a3e);border-color:#c1c1c68c;box-shadow:inset 0 1px 0 #ffffff22,0 8px 0 #0f1013,0 10px 13px #0004}
+.mines button[data-tile-state=hidden]:enabled:active{transform:translateY(3px);box-shadow:inset 0 1px 0 #ffffff14,0 2px 0 #0f1013}
+.mines button[data-tile-state=safe]{background:radial-gradient(ellipse at center,#2a685b55,#142b29 80%);border-color:#72bea473;box-shadow:inset 0 1px 0 #baffdf1c,0 3px 0 #091613}
+.mines button[data-tile-state=hit]{background:radial-gradient(#8a352e88,#351b26);border-color:#f4ac8e99;box-shadow:inset 0 1px 0 #ffceb026,0 3px 0 #1f0c12;animation:impact 350ms ease-out}
+.mines button[data-tile-state=mine]{background:#1c1d21;border-color:#a1717847;box-shadow:inset 0 1px 0 #ffffff05,0 3px 0 #0f1013}
+.mines button[data-tile-state=mine]>span{opacity:.5}
+.mines button[data-tile-state=unpicked]{background:#1c1d21;border-color:#74747933;box-shadow:inset 0 1px 0 #ffffff04,0 3px 0 #0f1013}
+.mines button[data-tile-state=pending]{border-color:#c2c2c78c;background:#38393d;box-shadow:inset 0 1px 0 #ffffff10,0 3px 0 #0f1013}
+.mines button[aria-label^="Tile"]:focus-visible{outline:2px solid #e0e0e5;outline-offset:4px}
+.mines [aria-label="Mines game board"]>div:nth-child(3){margin-top:26px;padding-top:20px;gap:10px}
+.mines [aria-label="Mines game board"]>div:nth-child(3)>div{border:1px solid #a3a3a827;border-radius:11px;padding:12px 5px;background:#26272b66}
+.mines [aria-label="Mines game board"]>div:nth-child(3) p:last-child{font-size:19px;line-height:1.2}
+.mines [aria-label="Mines game board"][data-phase=won]>div:nth-child(3)>div:last-child{border-color:#7bc2a966;background:#1c3c324d}
+.roulette [aria-label="Live Roulette round"]{overflow:hidden;background:linear-gradient(160deg,#2b2c30,#18191d)}
+.roulette [aria-label="Roulette reel"],.roulette [aria-label="Roulette rolling"]{background:linear-gradient(#101115,#25262a 60%,#101115);border:1px solid #aaaaaf44;border-radius:14px;box-shadow:inset 0 8px 18px #0f101388,inset 0 -1px 0 #e0e0e50c}
+.roulette [aria-label="Place Roulette bet"]{background:#1f2024;padding:22px}
+.roulette [aria-label="Place Roulette bet"]>div:nth-last-child(2)>div{border-radius:13px}
+.roulette [aria-label="Live bets by color"]>div{border-radius:14px;border-color:#a3a3a840;box-shadow:inset 0 1px 0 #ffffff06}
+.roulette button{transition:filter 140ms,transform 120ms}
+.roulette button:enabled:active{transform:translateY(1px)}
+.coinflip aside{position:sticky;top:105px}
+.coinflip article{background:linear-gradient(115deg,#2a2b2f,#191a1e);transition:border-color 150ms,box-shadow 150ms}
+.coinflip article:hover{border-color:#bdbdc26b;box-shadow:inset 0 1px 0 #ffffff0a,0 9px 25px #0f101344}
+.coinflip article>div:nth-child(2){grid-template-columns:minmax(0,1fr) 72px minmax(0,1fr);padding-block:22px}
+.coinflip article div[style*="perspective"]{width:72px;height:72px}
+.coinflip button[aria-pressed=true]{border-color:#d0d0d5aa;box-shadow:inset 0 1px 0 #fff2,0 3px 0 #0f1013}
+.coinflip article>div:last-child{background:#141519;border-color:#a9a9ae27}
+.jackpot [aria-label="Jackpot wheel"]>div:nth-child(2),.jackpot [aria-label^="Spinning to the server-selected winner"]>div:nth-child(2){border:1px solid #d6d6db70;background:linear-gradient(135deg,#626367,#17181c 35%,#85858a 70%,#27282c);box-shadow:0 0 0 5px #101115,0 0 0 6px #b4b4b940,0 14px 32px #0006}
+.jackpot [aria-label="Jackpot wheel"]>div:nth-child(2)>div:last-child,.jackpot [aria-label^="Spinning to the server-selected winner"]>div:nth-child(2)>div:last-child{background:radial-gradient(circle at 30% 20%,#3b3c40,#191a1e 75%);box-shadow:0 0 0 4px #17181c77,0 7px 24px #0f101388,inset 0 1px 0 #f5f5f818}
+.jackpot [aria-label="Jackpot players"]>div:last-child>div{border-radius:13px;border-color:#b0b0b53d;background:#222327}
+@media(min-width:1024px){.mines>div[class*="lg:grid-cols-"]{grid-template-columns:minmax(0,1fr) 280px;gap:20px}.mines>div[class*="lg:grid-cols-"]>aside{grid-column:2;grid-row:1;position:sticky;top:105px}.mines>div[class*="lg:grid-cols-"]>section{grid-column:1;grid-row:1}}
+@media(max-width:1023px){.mines>div[class*="lg:grid-cols-"]>aside{grid-column:1;grid-row:2}.mines>div[class*="lg:grid-cols-"]>section{grid-column:1;grid-row:1}.coinflip aside{position:static}}
+@media(max-width:639px){.mines h1,.roulette h1,.coinflip h1,.jackpot h1{font-size:25px!important}.mines>header,.roulette>header,.coinflip>header,.jackpot>header{margin-bottom:19px}.mines [aria-label="Mines game board"]{padding:15px 11px}.mines [aria-label="Mines game board"]>div:nth-child(2){gap:7px}.mines button[aria-label^="Tile"]{border-radius:10px;box-shadow:inset 0 1px 0 #ede4ff14,0 4px 0 #0f1013}.mines button[aria-label^="Tile"]:before{inset:4px;border-radius:7px}.mines aside,.coinflip aside{padding:18px}.mines [aria-label="Mines game board"]>div:nth-child(3){gap:5px;margin-top:22px}.mines [aria-label="Mines game board"]>div:nth-child(3) p:last-child{font-size:15px}.mines [aria-label="Mines game board"]>div:nth-child(3)>div{padding:10px 3px}.roulette [aria-label="Place Roulette bet"]{padding:16px}.coinflip article>div:nth-child(2){grid-template-columns:minmax(0,1fr) 56px minmax(0,1fr);padding:16px 10px;gap:7px}.coinflip article div[style*="perspective"]{width:56px;height:56px}}
+@keyframes impact{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}55%{transform:translateX(4px)}80%{transform:translateX(-2px)}}
+@media(prefers-reduced-motion:reduce){.mines button[aria-label^="Tile"],.coinflip article,.roulette button{animation:none;transition:none}.mines button[aria-label^="Tile"]:enabled:hover,.mines button[aria-label^="Tile"]:enabled:active,.roulette button:enabled:active{transform:none}}
+/* Crimson Arena game rooms: one typography, one control language, distinct boards. */
+.mines,.roulette,.coinflip,.jackpot{max-width:1440px;padding:24px 32px 48px;color:#f5f5f6}
+.mines>header,.roulette>header,.coinflip>header,.jackpot>header{padding:24px 0 20px;border-bottom:1px solid #2e3035;margin:0 0 24px}
+.mines h1,.roulette h1,.coinflip h1,.jackpot h1{font-family:'Barlow Condensed',sans-serif;font-size:54px!important;font-style:italic;font-weight:700;line-height:1;letter-spacing:-.015em;text-transform:uppercase}
+.mines>header>span{top:24px}
+.mines>header p,.roulette>header p,.coinflip>header p,.jackpot>header p{font-size:14px;line-height:1.6;color:#9ca0aa}
+.mines aside,.coinflip aside,.jackpot>div>aside{border-radius:6px;background:#191b1f;border:1px solid #303238;box-shadow:none;padding:24px}
+.mines [aria-label="Mines game board"],.roulette [aria-label="Live Roulette round"],.roulette [aria-label="Place Roulette bet"],.coinflip article,.jackpot>div>section{border:1px solid #303238;border-radius:6px;box-shadow:none;background:#16181c}
+.mines input,.mines select,.roulette input,.coinflip input,.coinflip select,.jackpot input{border-radius:4px!important;background:#101215!important;min-height:44px;font-size:16px;border-color:#383a42!important}
+.mines input:focus,.mines select:focus,.roulette input:focus{outline:2px solid #d6334566;border-color:#e74858!important}
+.mines :global(.mcPrimary),.coinflip :global(.mcPrimary),.jackpot :global(.mcPrimary){border-radius:4px;background:#d63345!important;color:white;min-height:48px;font-size:15px;font-weight:700}
+.mines label,.roulette label,.coinflip label,.jackpot label{font-size:13px!important;letter-spacing:.07em}
+.mines aside p,.coinflip aside p,.jackpot aside p{font-size:13px;line-height:1.6}
+.mines [aria-label="Mines game board"]{background:radial-gradient(ellipse at 50% 45%,#25272d 0%,#15171b 70%);padding:24px 32px}
+.mines [aria-label="Mines game board"]>div:nth-child(2){max-width:550px;gap:12px}
+.mines button[aria-label^="Tile"]{border-radius:6px;background:linear-gradient(145deg,#34373f,#262930);border-color:#444852;box-shadow:inset 0 1px #ffffff10,0 4px #0d0f12;min-height:0}
+.mines button[aria-label^="Tile"]:before{inset:6px;border-radius:3px;border-color:#ffffff08}
+.mines button[data-tile-state=hidden]:enabled:hover{border-color:#d63345;background:linear-gradient(145deg,#493039,#30252c);box-shadow:inset 0 1px #ffffff10,0 6px #0d0f12}
+.mines button[data-tile-state=safe]{border-color:#47b990;background:radial-gradient(ellipse,#235145,#142922);box-shadow:0 3px #091613}
+.mines button[data-tile-state=hit]{border-color:#f04d5c;background:radial-gradient(#6a2631,#2d1920)}
+.mines [aria-label="Mines game board"]>div:nth-child(3)>div{background:#101215;border-color:#303238;border-radius:4px;padding:16px 8px}
+.roulette [aria-label="Live Roulette round"]{background:#16181c}
+.roulette [aria-label="Roulette reel"],.roulette [aria-label="Roulette rolling"]{border-radius:0;border-inline:0;background:repeating-linear-gradient(90deg,transparent 0 71px,#ffffff03 71px 72px),linear-gradient(#101215,#1b1e23,#101215);box-shadow:inset 0 18px 24px #0004}
+.roulette [aria-label="Place Roulette bet"]{background:#191b1f;padding:24px}
+.roulette [aria-label="Live bets by color"]>div{border-radius:4px;background:#16181c;box-shadow:none}
+.roulette [aria-label="Place Roulette bet"] button{border-radius:4px;font-size:14px}
+.roulette [aria-label="Place Roulette bet"]>div>div>div>p{font-size:14px}
+.roulette [aria-label="Place Roulette bet"]>div:nth-last-child(2)>div{border-radius:4px}
+.coinflip article{background:linear-gradient(110deg,#1c1e23,#14161a)}
+.coinflip article:hover{border-color:#6a3b44;box-shadow:none}
+.coinflip article>div:nth-child(2){padding-block:28px;grid-template-columns:minmax(0,1fr) 90px minmax(0,1fr)}
+.coinflip article div[style*="perspective"]{width:90px;height:90px}
+.coinflip article>div:last-child{background:#111316}
+.coinflip button[aria-pressed=true]{border-color:#e04454;box-shadow:inset 0 0 0 1px #e0445433;background:#d6334514}
+.jackpot [aria-label="Live Jackpot"]>div:nth-child(3){background:radial-gradient(ellipse,#332129,#14161a 70%)}
+.jackpot [aria-label="Jackpot wheel"]>div:nth-child(2),.jackpot [aria-label^="Spinning to the server-selected winner"]>div:nth-child(2){border-color:#9d555d;background:linear-gradient(135deg,#a94754,#17191e 35%,#ba6871 70%,#292d35);box-shadow:0 0 0 5px #101215,0 0 0 6px #5e333b,0 14px 32px #0006}
+.jackpot [aria-label="Jackpot players"]>div:last-child>div{border-radius:4px;background:#191b1f;border-color:#303238}
+@media(min-width:1024px){.mines>div[class*="lg:grid-cols-"]{grid-template-columns:minmax(0,1fr) 310px;gap:24px}.coinflip>div[class*="lg:grid-cols-"]{grid-template-columns:310px minmax(0,1fr);gap:24px}}
+@media(max-width:767px){.mines,.roulette,.coinflip,.jackpot{padding:16px 14px 32px}.mines h1,.roulette h1,.coinflip h1,.jackpot h1{font-size:40px!important}.mines>header,.roulette>header,.coinflip>header,.jackpot>header{padding-block:20px}.mines [aria-label="Mines game board"]{padding:18px 12px}.mines [aria-label="Mines game board"]>div:nth-child(2){gap:8px}.mines aside,.coinflip aside,.jackpot>div>aside,.roulette [aria-label="Place Roulette bet"]{padding:18px}.mines [aria-label="Mines game board"]>div:nth-child(3)>div{padding:12px 4px}.coinflip article>div:nth-child(2){grid-template-columns:minmax(0,1fr) 56px minmax(0,1fr);padding:20px 12px}.coinflip article div[style*="perspective"]{width:56px;height:56px}}
+.roulette [data-roulette-reel=true]{border-radius:0;border-inline:0;background:repeating-linear-gradient(90deg,transparent 0 71px,#ffffff03 71px 72px),linear-gradient(#101215,#1b1e23,#101215);box-shadow:inset 0 18px 24px #0004}
+.mines [class*="text-[9px]"],.roulette [class*="text-[9px]"],.coinflip [class*="text-[9px]"],.jackpot [class*="text-[9px]"]{font-size:12px}
+.mines [class*="text-[10px]"],.roulette [class*="text-[10px]"],.coinflip [class*="text-[10px]"],.jackpot [class*="text-[10px]"]{font-size:13px}
+/* Mines v3: raised ceramic tiles, engraved brand mark, readable gem/mine materials. */
+.mines [aria-label="Mines game board"]{border-radius:10px;border-color:#394251;padding:24px 30px;background:radial-gradient(ellipse at 50% 42%,#27303e 0,#141a24 72%);box-shadow:inset 0 1px #ffffff08}
+.mines [aria-label="Mines game board"]>div:nth-child(2){max-width:560px;gap:13px;padding:4px 2px 8px}
+.mines button[aria-label^="Tile"]{border-radius:10px;border:1px solid #4a5669;background:linear-gradient(145deg,#394557,#293342);box-shadow:inset 0 2px #8396b324,inset 0 -3px #131a2666,0 5px #0c111a,0 9px 10px #0003}
+.mines button[aria-label^="Tile"]:before{inset:5px;border-radius:6px;border-color:#9daac011}
+.mines button[data-tile-state=hidden]:enabled:hover{transform:translateY(-3px);background:linear-gradient(145deg,#4b4657,#342936);border-color:#e45775;box-shadow:inset 0 2px #f492a333,0 8px #0c111a}
+.mines button[data-tile-state=safe]{background:radial-gradient(#196a5c88,#102c2a);border-color:#39bf9b;box-shadow:inset 0 1px #9affda22,0 4px #061b18}
+.mines button[data-tile-state=hit]{background:radial-gradient(#782f43,#301a28);border-color:#f45778;box-shadow:0 4px #210813}
+.mines button[data-tile-state=mine],.mines button[data-tile-state=unpicked]{background:#141e2a;border-color:#354357;box-shadow:0 3px #0c111a}
+.mines [aria-label="Mines game board"]>div:nth-child(3)>div{background:#101720;border-color:#344153;border-radius:5px;padding:16px 8px}
+.mines aside{background:#1a202a;border:1px solid #394251;border-radius:8px}.mines aside input,.mines aside select{background:#101720!important;border-color:#465269!important}.mines aside select{font-size:15px}.mines aside p{color:#a6b1c2}.mines [aria-label="Mines game board"]>div:first-child{margin-bottom:24px}.mines [aria-label="Mines game board"]>div:first-child>span:first-child{border:1px solid #3c4b61;background:#1d2837;color:#bbc9dc;border-radius:5px;font-size:12px}
+@media(max-width:650px){.mines [aria-label="Mines game board"]{padding:16px 12px}.mines [aria-label="Mines game board"]>div:nth-child(2){gap:8px}.mines button[aria-label^="Tile"]{border-radius:7px;box-shadow:inset 0 1px #8396b324,0 4px #0c111a}.mines button[aria-label^="Tile"]:before{inset:4px;border-radius:4px}.mines [aria-label="Mines game board"]>div:first-child{flex-wrap:wrap;gap:12px}.mines [aria-label="Mines game board"]>div:nth-child(3)>div{padding:12px 4px}}

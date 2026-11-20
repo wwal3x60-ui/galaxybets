@@ -1,0 +1,155 @@
+.page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px 28px 56px;
+  color: #ece9f1;
+  font-family: inherit;
+}
+.tabs { display: flex; gap: 30px; border-bottom: 1px solid #2a2b2f; }
+.tabs button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  padding: 14px 0;
+  border: 0;
+  background: none;
+  color: #938c9e;
+  font: inherit;
+  font-size:13px;
+  cursor: pointer;
+}
+.tabs button.active { color: #ece9f1; }
+.tabs button.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: #a9a9ae; }
+.tabPool { color: #828287; font-size:12px; font-variant-numeric: tabular-nums; }
+.hero { display: grid; grid-template-columns: 1fr 342px; column-gap: 40px; align-items: center; padding: 28px 0 25px; }
+.eyebrow { grid-column: 1; align-self: end; color: #908898; font-size:12px; }
+.hero h1 { grid-column: 1; margin: 9px 0 11px; font-size: clamp(28px, 3vw, 37px); font-weight: 650; line-height: 1.2; letter-spacing: -.02em; }
+.hero h1 > span { color: #dfdfe4; }
+.hero > p { grid-column: 1; align-self: start; color: #938b9d; font-size:13px; line-height: 1.6; margin: 0; }
+.countdownBlock { grid-column: 2; grid-row: 1 / span 3; padding: 17px 20px 13px; border: 1px solid #2f3034; border-radius: 10px; background: #121317; text-align: center; }
+.countdownLabel { display: block; color: #9d95a6; font-size:12px; margin-bottom: 12px; }
+.countdown { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.countdown > div + div { border-left: 1px solid #2c2d31; }
+.countdown strong { display: block; font-size:26px; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.countdown span { display: block; font-size:12px; color: #a6a6ab; margin-top: 6px; }
+.deadline { display: block; margin-top: 14px; color: #a4a4a9; font-size:12px; line-height: 1.6; }
+.prizes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: end; padding-top: 12px; margin-bottom: 25px; }
+.prizeCard { display: flex; flex-direction: column; position: relative; min-width: 0; padding: 22px 24px; background: #141519; border: 1px solid #313236; border-radius:7px; }
+.place1 { grid-column: 2; grid-row: 1; padding-top: 30px; padding-bottom: 30px; background: #1a1b1f; border-color: #727277; }
+.place2 { grid-column: 1; grid-row: 1; }
+.place3 { grid-column: 3; grid-row: 1; }
+.podiumHeading { display: flex; align-items: center; gap: 9px; margin-bottom: 21px; }
+.rankMark { display: inline-flex; align-items: center; justify-content: center; min-width: 25px; height: 23px; padding: 0 5px; border: 1px solid #434448; border-radius: 6px; color: #bcb0c7; font-size:12px; font-weight: 550; }
+.place1 .rankMark { border-color: #747479; color: #e7e7ec; background: #343539; }
+.prizeLabel { color: #b6aabd; font-size:12px; }
+.playerAvatar { position: relative; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; overflow: hidden; width: 46px; height: 46px; border: 1px solid #424347; border-radius: 50%; background: #27282c; color: #c4c4c9; font-size:14px; font-weight: 550; }
+.playerAvatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.playerAvatar > span { display: inline-flex; align-items: center; justify-content: center; }
+.playerAvatar svg { width: 22px; height: 22px; }
+.podiumPlayer { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.podiumIdentity { min-width: 0; }
+.prizeCard h2 { max-width: 100%; margin: 0; color: #e5deeb; font-size:14px; font-weight: 550; overflow-wrap: anywhere; }
+.prizeCard p { color: #acacb1; font-size:12px; line-height: 1.6; margin: 5px 0 0; }
+.prizeFooter { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 22px; padding-top: 17px; border-top: 1px solid #313236; }
+.place1 .prizeFooter { border-color: #424347; }
+.prizeAmount { display: block; color: #efebf3; font-size:30px; font-weight: 600; line-height: 1.2; letter-spacing: -.025em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.place1 .prizeAmount { color: #e5e5ea; font-size:33px; }
+.prizeCaption { color: #afafb4; font-size:12px; }
+.board { overflow: hidden; background: #121317; border: 1px solid #2e2f33; border-radius:7px; }
+.boardHeading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px 22px; }
+.boardHeading h2 { color: #ded8e6; font-size:16px; font-weight: 550; margin: 0; }
+.boardHeading p { color: #87878c; font-size:12px; margin: 6px 0 0; }
+.boardHeading button, .error button { padding: 8px 12px; border: 1px solid #424347; border-radius: 7px; background: #202125; color: #c4c4c9; font: inherit; font-size:12px; cursor: pointer; }
+.page button:disabled { opacity: .5; cursor: default; }
+.page button:focus-visible { outline: 2px solid #bbbbc0; outline-offset: 4px; }
+.tableScroll { overflow-x: auto; }
+.page table { width: 100%; border-collapse: collapse; text-align: left; font-size:12px; white-space: nowrap; }
+.page th { padding: 11px 22px; border-top: 1px solid #2d2e32; border-bottom: 1px solid #2d2e32; background: #0f1013; color: #8a8a8f; font-size:12px; font-weight: 500; }
+.page td { padding: 13px 22px; border-bottom: 1px solid #2a2b2f; color: #b7adbf; }
+.page th:nth-child(3), .page td:nth-child(3), .page th:last-child, .page td:last-child { text-align: right; }
+.tablePlayer { display: flex; align-items: center; gap: 10px; }
+.tableAvatar { width: 27px; height: 27px; font-size:12px; border-color: #36373b; }
+.topRank { color: #ceced3; font-size:12px; }
+.otherRank { color: #85858a; }
+.page td.reward { color: #cfcfd4; font-weight: 550; }
+.empty { padding: 30px 20px; text-align: center; color: #9a9a9f; font-size:12px; }
+.empty strong { display: block; color: #c3b6ce; font-size:13px; font-weight: 550; }
+.empty p { margin: 8px 0 0; color: #9e9ea3; font-size:12px; line-height: 1.6; }
+.updated { color: #828287; padding: 12px 22px; margin: 0; font-size:12px; line-height: 1.6; }
+.history { margin-top: 26px; }
+.history h2, .rules h2 { color: #b6aabe; font-size:13px; font-weight: 550; margin: 0 0 14px; }
+.history > div { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.history article { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 15px; background: #131418; border: 1px solid #2e2f33; border-radius: 8px; font-size:12px; }
+.history span { overflow-wrap: anywhere; }
+.history strong { color: #d1d1d6; font-weight: 550; }
+.rules { margin-top: 24px; padding-top: 18px; border-top: 1px solid #28292d; }
+.rules summary { color: #c5c5ca; font-size:12px; cursor: pointer; padding: 0 0 16px; }
+.rules > div { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.rules p { color: #828287; font-size:12px; line-height: 1.75; margin: 0; }
+.rules b { display: block; color: #a3a3a8; font-size:12px; font-weight: 550; margin-bottom: 6px; }
+.error { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px; margin-bottom: 18px; border: 1px solid #5c3648; border-radius: 8px; background: #251520; color: #d4adbe; font-size:12px; }
+@media (max-width: 850px) {
+  .page { padding: 20px 18px 40px; }
+  .hero { grid-template-columns: 1fr 285px; column-gap: 20px; }
+  .hero h1 { font-size:29px; }
+  .hero > p { font-size:12px; }
+  .countdownBlock { padding: 16px 12px 12px; }
+  .prizeCard { padding-left: 16px; padding-right: 16px; }
+  .prizeFooter { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .prizeAmount { font-size: clamp(23px, 3.8vw, 30px); }
+  .place1 .prizeAmount { font-size: clamp(25px, 4vw, 33px); }
+  .podiumPlayer { gap: 9px; }
+  .prizeCard h2 { font-size:13px; }
+  .prizeCard p { font-size:12px; }
+  .rules > div { grid-template-columns: 1fr; gap: 14px; }
+}
+@media (max-width: 620px) {
+  .hero { display: block; padding: 25px 0 23px; }
+  .hero h1 { margin: 8px 0 10px; font-size:32px; }
+  .countdownBlock { margin-top: 21px; padding: 15px 14px 12px; text-align: left; }
+  .countdownLabel { margin-bottom: 13px; }
+  .countdown { text-align: center; }
+  .countdown strong { font-size:25px; }
+  .deadline { text-align: center; }
+  .prizes { grid-template-columns: 1fr; padding-top: 0; gap: 11px; }
+  .prizeCard { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px 12px; padding: 18px; }
+  .place1, .place2, .place3 { grid-column: auto; grid-row: auto; }
+  .podiumHeading { grid-column: 1 / -1; margin: 0; }
+  .podiumPlayer { grid-column: 1; grid-row: 2; }
+  .prizeFooter { grid-column: 2; grid-row: 2; flex-direction: column-reverse; align-items: flex-end; gap: 4px; padding: 0; margin: 0; border: 0; }
+  .place1 .prizeFooter { border: 0; }
+  .prizeAmount, .place1 .prizeAmount { font-size:25px; }
+  .playerAvatar { width: 40px; height: 40px; }
+  .boardHeading { padding: 18px 15px; }
+  .boardHeading h2 { font-size:15px; }
+  .boardHeading p { font-size:12px; }
+  .boardHeading button { font-size:12px; padding: 8px; }
+  .page th, .page td { padding: 12px 14px; }
+  .history > div { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .page { padding: 16px 15px 35px; }
+  .tabs { gap: 24px; }
+  .tabs button { font-size:12px; gap: 7px; }
+  .tabPool { font-size:12px; }
+  .prizes { margin-bottom: 22px; }
+  .prizeCard { padding: 16px; }
+  .prizeLabel { font-size:12px; }
+  .prizeCard h2 { font-size:12px; }
+  .prizeCard p { font-size:12px; }
+  .prizeAmount, .place1 .prizeAmount { font-size:23px; }
+  .prizeCaption { font-size:12px; }
+  .page table { table-layout: fixed; font-size:12px; }
+  .page th, .page td { padding: 12px 9px; }
+  .page th { white-space: normal; font-size:12px; }
+  .page th:nth-child(1) { width: 12%; }
+  .page th:nth-child(2) { width: 32%; }
+  .page th:nth-child(3) { width: 32%; }
+  .page th:nth-child(4) { width: 24%; }
+  .tablePlayer { gap: 5px; }
+  .tablePlayer > span:last-child { overflow-wrap: anywhere; white-space: normal; }
+  .updated { padding: 12px 14px; font-size:12px; }
+}
+.tableAvatar { width: 27px; height: 27px; font-size:12px; border-color: #36373b; }
+@media (max-width: 480px) { .tableAvatar { width: 20px; height: 20px; font-size:12px; } }

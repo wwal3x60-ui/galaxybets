@@ -1,0 +1,4 @@
+import Link from 'next/link';
+import GameTiles from '@/components/crimson/GameTiles';
+export const metadata={title:'Originals'};
+export default function GamesPage(){return <main className="crPage"><header className="crPageTitle"><div><span className="crEyebrow">GALAXYBETS ORIGINALS</span><h1>Find your game</h1><p>A collection of familiar formats with a distinct GalaxyBets finish.</p></div><Link href="/cases" className="crButton crButtonOutline">Explore cases</Link></header><div className="crGamesLobby"><GameTiles lobby/></div><section className="crOriginalsInfo"><h2>Know your game</h2><p>Check the rules and payouts before you play. Set a budget and take breaks.</p><Link href="/fairness">Explore result verification</Link></section><div className="crUnavailable"><strong>Keno</strong><span>Temporarily unavailable</span><p>We’ll bring it back when it’s ready.</p></div></main>;}

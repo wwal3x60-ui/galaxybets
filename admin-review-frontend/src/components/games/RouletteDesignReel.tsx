@@ -1,0 +1,4 @@
+'use client';
+import {useState} from 'react';
+import {RouletteToken} from './GameVisuals';
+export default function RouletteDesignReel(){const[countdown,setCountdown]=useState(true);const reel=[{color:2},{color:1},{color:0},{color:3,specialColor:2},{color:1},{color:3,specialColor:1},{color:2},{color:0},{color:1},{color:2},{color:0}] as const;return <><div className="crReelPreviewMode"><span>Illustrative preview · No live round</span><div><button type="button" aria-pressed={countdown} onClick={()=>setCountdown(true)}>Countdown</button><button type="button" aria-pressed={!countdown} onClick={()=>setCountdown(false)}>Reel symbols</button></div></div><section className="crPreviewReel" data-counting={countdown?'true':'false'} aria-label="Illustrative roulette reel"><div className="crPreviewTokens">{reel.map((token,i)=><RouletteToken key={i} {...token}/>)}</div>{countdown&&<div className="crReelCountdown"><span>Rolling in</span><strong>3.4</strong></div>}</section></>;}
