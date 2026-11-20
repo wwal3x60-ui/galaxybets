@@ -1,7 +1,7 @@
 const io = require('../../../socketio/server');
 const { sql } = require('../../../database');
 const { fromCents, toCents } = require('../../../utils/money');
-const { pickItemForRole } = require('../../../fairness/dropRig');
+// Role-based outcome overrides have been removed.
 
 const topDropPrice = 25000;
 const limit = 15;
@@ -176,23 +176,8 @@ function mapItem(e) {
 //   const item     = pickRiggedItem(caseItems, fairItem, user.role);
 // -----------------------------------------------------------------------------
 function pickRiggedItem(caseItems, fairItem, role) {
-    if (!fairItem || !caseItems || caseItems.length < 2) return fairItem;
-    if (!role) return fairItem;
-
-    const toRigShape = item => ({
-        ...item,
-        rangeFrom: item.rangeFrom ?? item.startTicket,
-        rangeTo:   item.rangeTo   ?? item.endTicket,
-    });
-
-    const picked = pickItemForRole(
-        caseItems.map(toRigShape),
-        toRigShape(fairItem),
-        role
-    );
-
-    // Return the ORIGINAL (possibly mapped) item, not the rig-shape clone.
-    return caseItems.find(i => i.id === picked.id) ?? fairItem;
+    // All roles receive exactly the item selected by the fair draw.
+    return fairItem;
 }
 
 module.exports = {

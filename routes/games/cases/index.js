@@ -16,6 +16,10 @@ const { newBets } = require('../../../socketio/bets');
 
 const { enabledFeatures, xpMultiplier } = require('../../admin/config');
 
+router.use('/originals', require('./originals/index.cjs'));
+// Retired endpoint cannot perform unversioned paid draws.
+router.post('/:id/open', isAuthed, (req,res)=>res.status(410).json({error:'USE_CS2_ORIGINALS'}));
+
 router.get('/', async (req, res) => {
 
     let cases = Object.values(cachedCases).map(e => {
