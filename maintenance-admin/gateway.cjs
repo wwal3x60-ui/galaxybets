@@ -12,9 +12,9 @@ function send(req,res,status,data) {
   res.writeHead(status,{...security,'Content-Type':'application/json; charset=utf-8'});
   res.end(req.method === 'HEAD' ? undefined : JSON.stringify(data));
 }
-async function bodyJson(req) {
+async function bodyJson(req, limit=8192) {
   const parts=[]; let size=0;
-  for await (const part of req) { size+=part.length; if(size>8192) throw Object.assign(new Error('Request too large'),{code:'BODY_TOO_LARGE'}); parts.push(part); }
+  for await (const part of req) { size+=part.length; if(size>limit) throw Object.assign(new Error('Request too large'),{code:'BODY_TOO_LARGE'}); parts.push(part); }
   return JSON.parse(Buffer.concat(parts).toString('utf8'));
 }
 function createGateway({auth, upstreamPort, clock=Date.now}) {
@@ -33,7 +33,7 @@ function createGateway({auth, upstreamPort, clock=Date.now}) {
   const server=http.createServer(async(req,res)=>{
     let pathname;
     try { pathname=new URL(req.url,'http://maintenance.invalid').pathname; } catch { return send(req,res,400,{error:'BAD_REQUEST'}); }
-    if(pathname==='/health' && ['GET','HEAD'].includes(req.method)) return send(req,res,200,{ok:true,maintenance:true,adminOnly:true,version:'gb-admin-maint-v1',arenaVersion:'gb-cs2-arena-v1',arenaPolishVersion:'gb-cs2-arena-v3',raceVersion:'gb-monthly-race-v2',legacyBattleRetirement:'gb-legacy-retire-v1',refundDatabaseFingerprint:require('./retire-legacy.cjs').status().databaseFingerprint,crossOriginAdminPolling:true});
+    if(pathname==='/health' && ['GET','HEAD'].includes(req.method)) return send(req,res,200,{ok:true,maintenance:true,adminOnly:true,version:'gb-admin-maint-v1',arenaVersion:'gb-cs2-arena-v1',arenaPolishVersion:'gb-cs2-arena-v3',raceVersion:'gb-monthly-race-v2',slotsCallbackVersion:'gb-slots-hmac-gateway-v1',legacyBattleRetirement:'gb-legacy-retire-v1',refundDatabaseFingerprint:require('./retire-legacy.cjs').status().databaseFingerprint,crossOriginAdminPolling:true});
     // Browser polling uses a JWT Authorization header across the Vercel/Render origins.
     // A successful preflight exposes no game data; every real poll is admin-verified.
     if(pathname==='/socket.io/' && req.method==='OPTIONS' && socketOrigins.has(req.headers.origin)) {
@@ -50,6 +50,23 @@ function createGateway({auth, upstreamPort, clock=Date.now}) {
         console.error('Maintenance login unavailable:',error.code||'UNKNOWN');
         return send(req,res,503,{error:'ADMIN_AUTH_UNAVAILABLE',message:'Admin verification is temporarily unavailable. Try again shortly.'});
       }
+    }
+    // Server-to-server wallet callbacks authenticate with provider HMAC, not an admin cookie.
+    const walletKind=req.method==='POST'&&req.url==='/slots/wallet/Cash/Get'?'get':req.method==='POST'&&req.url==='/slots/wallet/Cash/TransferInOut'?'transfer':null;
+    if(walletKind){
+      let payload;
+      try{
+        payload=await bodyJson(req,32768);
+        const config=require('../slots/config.cjs')();
+        require('../slots/protocol.cjs').authenticate(payload,walletKind,config);
+      }catch(e){return send(req,res,e instanceof SyntaxError?400:e.status||503,{error:e.publicError||'INVALID_PROVIDER_CALLBACK'});}
+      const data=Buffer.from(JSON.stringify(payload));
+      const upstream=http.request({host:'127.0.0.1',port:upstreamPort,path:req.url,method:'POST',headers:{'Content-Type':'application/json','Content-Length':data.length}},incoming=>{
+        res.writeHead(incoming.statusCode,{...incoming.headers,'Cache-Control':'no-store'});incoming.pipe(res);
+      });
+      upstream.setTimeout(15000,()=>upstream.destroy());
+      upstream.on('error',()=>{if(!res.headersSent)send(req,res,503,{error:'WALLET_BACKEND_UNAVAILABLE'});else res.destroy();});
+      req.on('aborted',()=>upstream.destroy());upstream.end(data);return;
     }
     const token=tokenFrom(req); let user=null;
     try { if(token)user=await auth.verify(token); }
