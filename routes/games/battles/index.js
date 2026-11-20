@@ -1,7 +1,9 @@
+// GB_CS2_ARENA_V1
 // GB_LEGACY_RETIRE_V1
 const {MAX_BET_USD}=require('../../../utils/bet-limits');
 const express = require('express');
 const router = express.Router();
+router.use('/arena/v1',require('./arena/index.cjs')); // Separate CS2 engine; legacy routes stay closed.
 router.use((req,res)=>res.status(503).set('Cache-Control','no-store').json({error:'LEGACY_BATTLES_RETIRED',message:'Legacy battles are closed.'}));
 
 const { isAuthed, apiLimiter } = require('../../auth/functions');

@@ -1,8 +1,9 @@
+// GB_CS2_ARENA_V1
 // GB_LEGACY_RETIRE_V1
 'use strict';
 const {cents,decimal,GAMES}=require('./wager-rewards');
 const VERSION='galaxy-account-v1';
-const DASHBOARD_GAMES=[...new Set([...GAMES,'cs2_case','coinflip_house'])];
+const DASHBOARD_GAMES=[...new Set([...GAMES,'cs2_case','coinflip_house','cs2_battle'])];
 const zero='0.00';
 const remaining=(required,progress)=>cents(required)>cents(progress)?cents(required)-cents(progress):0n;
 const signed=n=>n<0n?'-'+decimal(-n):decimal(n);

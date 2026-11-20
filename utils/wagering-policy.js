@@ -1,7 +1,8 @@
+// GB_CS2_ARENA_V1
 'use strict';
 const VERSION='weighted-wagering-v1';
 const HOUSE_GAMES=new Set(['mines','keno','roulette','jackpot','coinflip','coinflip_house','crash','blackjack','upgrader','upgrade']);
-const PACK_GAMES=new Set(['cs2_case', 'case','battle']);
+const PACK_GAMES=new Set(['cs2_case', 'case','battle','cs2_battle']);
 function halfCentRate(game){return PACK_GAMES.has(game)?2n:HOUSE_GAMES.has(game)?1n:0n;}
 // All inputs are integer cents/half-cents. A carry belongs to one requirement,
 // so wagering before a later deposit cannot leak into that later obligation.
