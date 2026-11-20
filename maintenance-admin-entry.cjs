@@ -1,3 +1,4 @@
+// GB_LEGACY_RETIRE_V1
 'use strict';
 const path=require('node:path');
 const {fork}=require('node:child_process');
@@ -6,6 +7,8 @@ function boot(){
   const {createAuth}=require('./maintenance-admin/auth.cjs');
   const {createGateway}=require('./maintenance-admin/gateway.cjs');
   const {sql}=require('./database');
+  const retirement=require('./maintenance-admin/retire-legacy.cjs').start({pool:sql,quote:(...args)=>require('./utils/funded-battles').quote(...args)});
+  process.once('SIGTERM',()=>retirement.stop());process.once('SIGINT',()=>retirement.stop());
   const port=Number(process.env.PORT||3001);
   const upstreamPort=port===3002?3003:3002;
   const auth=createAuth({pool:sql,jwt:require('jsonwebtoken'),bcrypt:require('bcrypt'),speakeasy:require('speakeasy'),secret:process.env.JWT_SECRET});

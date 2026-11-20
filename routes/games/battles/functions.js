@@ -1,8 +1,10 @@
+// GB_LEGACY_RETIRE_V1
 const { creditAffiliateGameBets, emitAffiliateCredits, withAffiliateSettlement } = require('../../../utils/affiliate-commission');
 const { roundDecimal, sleep, sendLog } = require('../../../utils');
 const { fromCents } = require('../../../utils/money');
 const io = require('../../../socketio/server');
 const { sql, doTransaction } = require('../../../database');
+require('../../../maintenance-admin/retire-legacy.cjs').start({pool:sql,quote:(...args)=>require('../../../utils/funded-battles').quote(...args)});
 const { mapItem, pickRiggedItem } = require('../cases/functions');
 const { getEOSBlockNumber, waitForEOSBlock } = require('../../../fairness/eos');
 const { newBets } = require('../../../socketio/bets');
@@ -12,6 +14,8 @@ const { getRoleWeightedWinner } = require('../../../fairness/weightedRng');
 const cachedBattles = {};
 
 async function getBattle(battleId, privKey) {
+    return false; // Legacy battles are permanently retired.
+
 
     if (!privKey) privKey = null;
     const cached = cachedBattles[battleId];
@@ -132,6 +136,8 @@ function battleEnded(battleId, winnerTeam, serverSeed, clientSeed) {
 }
 
 async function cacheBattles() {
+    return false; // Legacy battles are permanently retired.
+
 
     const [battles] = await sql.query(`
         SELECT * FROM battles WHERE endedAt IS NULL ORDER BY id DESC
@@ -258,11 +264,15 @@ const rollTime = 6500;
 
 const runningBattles=new Set();
 async function startBattle(battle,players){
+    return false; // Legacy battles are permanently retired.
+
     const id=String(battle.id);if(runningBattles.has(id))return;runningBattles.add(id);
     try{const [[current]]=await sql.query('SELECT * FROM battles WHERE id=?',[id]);if(!current||current.endedAt||current.cancelledAt)return;await runBattle(current,players);}
     finally{runningBattles.delete(id);}
 }
 async function runBattle(battle, players) {
+    return false; // Legacy battles are permanently retired.
+
     const rollTime=battle.fastBattle?1600:6500;
 
     const [cases] = await sql.query(`

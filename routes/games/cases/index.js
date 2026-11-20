@@ -1,7 +1,9 @@
+// GB_LEGACY_RETIRE_V1
 const {MAX_BET_USD}=require('../../../utils/bet-limits');
 const { creditAffiliateGameBets, emitAffiliateCredits } = require('../../../utils/affiliate-commission');
 const express = require('express');
 const router = express.Router();
+router.use((req,res,next)=>{if(/^\/originals(?:\/|$)/.test(req.path))return next();return res.status(410).set('Cache-Control','no-store').json({error:'LEGACY_PACKS_RETIRED'});});
 
 const { sql, doTransaction } = require('../../../database');
 

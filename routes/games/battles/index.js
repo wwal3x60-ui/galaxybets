@@ -1,6 +1,8 @@
+// GB_LEGACY_RETIRE_V1
 const {MAX_BET_USD}=require('../../../utils/bet-limits');
 const express = require('express');
 const router = express.Router();
+router.use((req,res)=>res.status(503).set('Cache-Control','no-store').json({error:'LEGACY_BATTLES_RETIRED',message:'Legacy battles are closed.'}));
 
 const { isAuthed, apiLimiter } = require('../../auth/functions');
 const { roundDecimal, getUserLevel, sendLog, xpChanged } = require('../../../utils');
