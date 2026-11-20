@@ -2,6 +2,7 @@
 const http = require('node:http');
 const {tokenFrom} = require('./auth.cjs');
 const notice = {error:'SITE_MAINTENANCE',message:'GalaxyBets is under maintenance. Please check back soon.'};
+const socketOrigins = new Set(['https://galaxybets.casino','https://www.galaxybets.casino','http://localhost:3000','http://127.0.0.1:3000',process.env.FRONTEND_URL].filter(Boolean));
 const security = {'Cache-Control':'no-store','CDN-Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow','X-Content-Type-Options':'nosniff','Retry-After':'300'};
 const html = '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GalaxyBets | Maintenance</title><style>body{margin:0;min-height:100svh;display:grid;place-items:center;background:#101113;color:#f6f6f6;font:16px system-ui}main{max-width:560px;padding:40px}b{color:#ed4055}h1{font-size:44px;letter-spacing:-2px}p{color:#adb0b8;line-height:1.7}</style><main><strong>GALAXY<b>BETS</b></strong><h1>We’ll be back soon.</h1><p>We’re working on GalaxyBets. Please check back soon.</p></main></html>';
 function send(req,res,status,data) {
@@ -30,7 +31,13 @@ function createGateway({auth, upstreamPort, clock=Date.now}) {
   const server=http.createServer(async(req,res)=>{
     let pathname;
     try { pathname=new URL(req.url,'http://maintenance.invalid').pathname; } catch { return send(req,res,400,{error:'BAD_REQUEST'}); }
-    if(pathname==='/health' && ['GET','HEAD'].includes(req.method)) return send(req,res,200,{ok:true,maintenance:true,adminOnly:true,version:'gb-admin-maint-v1'});
+    if(pathname==='/health' && ['GET','HEAD'].includes(req.method)) return send(req,res,200,{ok:true,maintenance:true,adminOnly:true,version:'gb-admin-maint-v1',crossOriginAdminPolling:true});
+    // Browser polling uses a JWT Authorization header across the Vercel/Render origins.
+    // A successful preflight exposes no game data; every real poll is admin-verified.
+    if(pathname==='/socket.io/' && req.method==='OPTIONS' && socketOrigins.has(req.headers.origin)) {
+      res.writeHead(204,{...security,'Access-Control-Allow-Origin':req.headers.origin,'Access-Control-Allow-Methods':'GET,POST,OPTIONS','Access-Control-Allow-Headers':'Authorization,Content-Type','Access-Control-Max-Age':'600','Vary':'Origin'});
+      return res.end();
+    }
     if(pathname==='/maintenance/login' && req.method==='POST') {
       if(!loginAllowed(req)) return send(req,res,429,{error:'TOO_MANY_ATTEMPTS',message:'Wait one minute before trying again.'});
       try {
