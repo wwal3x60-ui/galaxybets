@@ -3,8 +3,12 @@
 const DAY = 86400000;
 const definitions = Object.freeze({
     weekly: Object.freeze({ title: 'Weekly Race', pool: '500.00', prizes: ['300.00', '150.00', '50.00'] }),
-    monthly: Object.freeze({ title: 'Monthly Race', pool: '10000.00', prizes: ['6000.00', '3000.00', '1000.00'] })
+    monthly: Object.freeze({ title: 'Monthly Race', pool: '5000.00', prizes: ['3000.00', '1500.00', '500.00'] })
 });
+function sumPrizes(prizes) {
+    const cents = prizes.reduce((n, value) => n + BigInt(String(value).replace('.', '')), 0n);
+    return (cents / 100n).toString() + '.' + (cents % 100n).toString().padStart(2, '0');
+}
 const dateFormat = '%Y-%m-%d %H:%i:%s.%f';
 const sqlDate = ms => new Date(ms).toISOString().slice(0, 23).replace('T', ' ');
 function millis(value) {
@@ -128,7 +132,7 @@ function makeRaceService({ sql, doTransaction, io, logger = console }) {
                     round = await createRound(connection, type, millis(round.endsAt), Number(round.roundNumber) + 1, series.anchorDay);
                     caughtUp++;
                 }
-                const rows = await ranking(connection, round);
+                const rows = await ranking(connection, round, type === 'monthly' ? 10 : 50);
                 const [last] = await connection.query(
                     `SELECT CAST(p.userId AS CHAR) AS id, u.username, u.anon, p.position,
                             CAST(p.wagered AS CHAR) AS wagered, CAST(p.amount AS CHAR) AS reward,
@@ -144,7 +148,8 @@ function makeRaceService({ sql, doTransaction, io, logger = console }) {
                     startsAt: new Date(millis(round.startsAt)).toISOString(), endsAt: new Date(millis(round.endsAt)).toISOString(),
                     serverNow: new Date(now).toISOString(), endsIn: Math.max(0, millis(round.endsAt) - now),
                     status: millis(round.endsAt) > now ? 'active' : 'catching_up',
-                    prizePool: definitions[type].pool, prizes,
+                    prizePool: sumPrizes(prizes), prizes,
+                    nextRoundPrizePool: definitions[type].pool, nextRoundPrizes: definitions[type].prizes,
                     users: publicRows(rows, prizes),
                     previousWinners: last.map(row => ({...row, username: row.anon ? 'Anonymous' : row.username, anon: undefined})),
                 };

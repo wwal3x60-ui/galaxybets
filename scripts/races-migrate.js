@@ -2,12 +2,12 @@
 const path = require('path');
 require('dotenv').config({path:path.join(__dirname, '../.env')});
 const {sql, doTransaction} = require('../database');
-const {makeRaceService} = require('../routes/leaderboard/race-service');
+const {makeRaceService,definitions} = require('../routes/leaderboard/race-service');
 async function main() {
     const apply = process.argv.includes('--apply');
     const [tables] = await sql.query(`SELECT TABLE_NAME FROM information_schema.TABLES
         WHERE TABLE_SCHEMA = DATABASE() AND LOWER(TABLE_NAME) IN ('gbraceseries','gbracerounds','gbraceprizes')`);
-    console.log({mode:apply?'apply':'audit',existingRaceTables:tables.length,weeklyPrizes:['300.00','150.00','50.00'],monthlyPrizes:['6000.00','3000.00','1000.00']});
+    console.log({mode:apply?'apply':'audit',existingRaceTables:tables.length,weeklyPrizes:definitions.weekly.prizes,monthlyPrizes:definitions.monthly.prizes});
     if (!apply) return;
     await sql.query(`CREATE TABLE IF NOT EXISTS gbRaceSeries (
         type VARCHAR(16) NOT NULL, currentRoundId BIGINT UNSIGNED DEFAULT NULL,

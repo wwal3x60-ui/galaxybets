@@ -33,7 +33,7 @@ function createGateway({auth, upstreamPort, clock=Date.now}) {
   const server=http.createServer(async(req,res)=>{
     let pathname;
     try { pathname=new URL(req.url,'http://maintenance.invalid').pathname; } catch { return send(req,res,400,{error:'BAD_REQUEST'}); }
-    if(pathname==='/health' && ['GET','HEAD'].includes(req.method)) return send(req,res,200,{ok:true,maintenance:true,adminOnly:true,version:'gb-admin-maint-v1',arenaVersion:'gb-cs2-arena-v1',arenaPolishVersion:'gb-cs2-arena-v3',legacyBattleRetirement:'gb-legacy-retire-v1',refundDatabaseFingerprint:require('./retire-legacy.cjs').status().databaseFingerprint,crossOriginAdminPolling:true});
+    if(pathname==='/health' && ['GET','HEAD'].includes(req.method)) return send(req,res,200,{ok:true,maintenance:true,adminOnly:true,version:'gb-admin-maint-v1',arenaVersion:'gb-cs2-arena-v1',arenaPolishVersion:'gb-cs2-arena-v3',raceVersion:'gb-monthly-race-v2',legacyBattleRetirement:'gb-legacy-retire-v1',refundDatabaseFingerprint:require('./retire-legacy.cjs').status().databaseFingerprint,crossOriginAdminPolling:true});
     // Browser polling uses a JWT Authorization header across the Vercel/Render origins.
     // A successful preflight exposes no game data; every real poll is admin-verified.
     if(pathname==='/socket.io/' && req.method==='OPTIONS' && socketOrigins.has(req.headers.origin)) {
