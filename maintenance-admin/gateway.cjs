@@ -17,7 +17,7 @@ async function bodyJson(req, limit=8192) {
   for await (const part of req) { size+=part.length; if(size>limit) throw Object.assign(new Error('Request too large'),{code:'BODY_TOO_LARGE'}); parts.push(part); }
   return JSON.parse(Buffer.concat(parts).toString('utf8'));
 }
-function createGateway({auth, upstreamPort, clock=Date.now}) {
+function createGateway({auth, upstreamPort, publicAccess=false, clock=Date.now}) {
   const attempts=new Map(); const tunnels=new Set();
   function loginAllowed(req) {
     // Render supplies X-Forwarded-For; the rightmost client-facing hop is used.
@@ -33,7 +33,7 @@ function createGateway({auth, upstreamPort, clock=Date.now}) {
   const server=http.createServer(async(req,res)=>{
     let pathname;
     try { pathname=new URL(req.url,'http://maintenance.invalid').pathname; } catch { return send(req,res,400,{error:'BAD_REQUEST'}); }
-    if(pathname==='/health' && ['GET','HEAD'].includes(req.method)) return send(req,res,200,{ok:true,maintenance:true,adminOnly:true,version:'gb-admin-maint-v1',arenaVersion:'gb-cs2-arena-v1',arenaPolishVersion:'gb-cs2-arena-v3',raceVersion:'gb-monthly-race-v2',slotsCallbackVersion:'gb-slots-hmac-gateway-v1',legacyBattleRetirement:'gb-legacy-retire-v1',refundDatabaseFingerprint:require('./retire-legacy.cjs').status().databaseFingerprint,crossOriginAdminPolling:true});
+    if(pathname==='/health' && ['GET','HEAD'].includes(req.method)) return send(req,res,200,{ok:true,maintenance:!publicAccess,adminOnly:!publicAccess,publicLaunchVersion:publicAccess?'gb-public-launch-v1':null,version:'gb-admin-maint-v1',arenaVersion:'gb-cs2-arena-v1',arenaPolishVersion:'gb-cs2-arena-v3',raceVersion:'gb-monthly-race-v2',slotsCallbackVersion:'gb-slots-hmac-gateway-v1',legacyBattleRetirement:'gb-legacy-retire-v1',refundDatabaseFingerprint:require('./retire-legacy.cjs').status().databaseFingerprint,crossOriginAdminPolling:true});
     // Browser polling uses a JWT Authorization header across the Vercel/Render origins.
     // A successful preflight exposes no game data; every real poll is admin-verified.
     if(pathname==='/socket.io/' && req.method==='OPTIONS' && socketOrigins.has(req.headers.origin)) {
@@ -69,10 +69,10 @@ function createGateway({auth, upstreamPort, clock=Date.now}) {
       req.on('aborted',()=>upstream.destroy());upstream.end(data);return;
     }
     const token=tokenFrom(req); let user=null;
-    try { if(token)user=await auth.verify(token); }
+    try { if(token&&(!publicAccess||pathname==='/maintenance/access'))user=await auth.verify(token); }
     catch(error) { console.error('Maintenance access unavailable:',error.code||'UNKNOWN'); return send(req,res,503,{error:'ADMIN_AUTH_UNAVAILABLE'}); }
     if(pathname==='/maintenance/access' && ['GET','HEAD'].includes(req.method)) return send(req,res,user?200:401,user?{admin:true,user}:{error:'UNAUTHORIZED'});
-    if(!user) {
+    if(!user&&!publicAccess) {
       if((req.headers.accept||'').includes('text/html') && ['GET','HEAD'].includes(req.method)) {
         res.writeHead(503,{...security,'Content-Type':'text/html; charset=utf-8','Content-Security-Policy':"default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'"});
         return res.end(req.method==='HEAD'?undefined:html);
@@ -80,7 +80,7 @@ function createGateway({auth, upstreamPort, clock=Date.now}) {
       return send(req,res,503,notice);
     }
     // No application request is forwarded until current admin authority is verified.
-    const headers={...req.headers,authorization:token};delete headers['proxy-authorization'];
+    const headers={...req.headers,...(user?{authorization:token}:{})};delete headers['proxy-authorization'];
     const upstream=http.request({host:'127.0.0.1',port:upstreamPort,path:req.url,method:req.method,headers},incoming=>{
       res.writeHead(incoming.statusCode,{...incoming.headers,'Cache-Control':'no-store'});incoming.pipe(res);
     });
@@ -91,16 +91,16 @@ function createGateway({auth, upstreamPort, clock=Date.now}) {
   server.headersTimeout=15000;server.requestTimeout=30000;
   server.on('upgrade',async(req,socket,head)=>{
     const token=tokenFrom(req);let user;
-    try { user=await auth.verify(token); } catch {}
-    if(!user || !req.url.startsWith('/socket.io/'))return socket.end('HTTP/1.1 503 Service Unavailable\r\nConnection: close\r\nContent-Length: 0\r\n\r\n');
-    const upstream=http.request({host:'127.0.0.1',port:upstreamPort,path:req.url,headers:{...req.headers,authorization:token}});
+    try { if(!publicAccess)user=await auth.verify(token); } catch {}
+    if((!publicAccess&&!user) || !req.url.startsWith('/socket.io/'))return socket.end('HTTP/1.1 503 Service Unavailable\r\nConnection: close\r\nContent-Length: 0\r\n\r\n');
+    const upstream=http.request({host:'127.0.0.1',port:upstreamPort,path:req.url,headers:{...req.headers,...(!publicAccess?{authorization:token}:{})}});
     upstream.on('upgrade',(response,remote,remoteHead)=>{
       const lines=Object.entries(response.headers).flatMap(([k,v])=>Array.isArray(v)?v.map(x=>k+': '+x):[k+': '+v]);
       socket.write('HTTP/1.1 101 Switching Protocols\r\n'+lines.join('\r\n')+'\r\n\r\n');
       if(remoteHead.length)socket.write(remoteHead);if(head.length)remote.write(head);
       tunnels.add(socket);socket.pipe(remote).pipe(socket);
       let checking=false;
-      const timer=setInterval(async()=>{if(checking)return;checking=true;try{if(!await auth.verify(token))socket.destroy();}catch{socket.destroy();}finally{checking=false;}},15000);
+      const timer=publicAccess?null:setInterval(async()=>{if(checking)return;checking=true;try{if(!await auth.verify(token))socket.destroy();}catch{socket.destroy();}finally{checking=false;}},15000);
       function close(){clearInterval(timer);tunnels.delete(socket);socket.destroy();remote.destroy();}
       socket.on('close',close);remote.on('close',close);socket.on('error',close);remote.on('error',close);
     });

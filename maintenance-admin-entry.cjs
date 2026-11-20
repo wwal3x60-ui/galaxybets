@@ -12,10 +12,10 @@ function boot(){
   const port=Number(process.env.PORT||3001);
   const upstreamPort=port===3002?3003:3002;
   const auth=createAuth({pool:sql,jwt:require('jsonwebtoken'),bcrypt:require('bcrypt'),speakeasy:require('speakeasy'),secret:process.env.JWT_SECRET});
-  const server=createGateway({auth,upstreamPort});
+  const server=createGateway({auth,upstreamPort,publicAccess:true});
   let child;
   server.listen(port,'0.0.0.0',()=>{
-    console.log('GalaxyBets maintenance is ON. Public access closed; verified admins only. Listening on port '+port);
+    console.log('GalaxyBets public access is ON. Application authentication remains enforced. Listening on port '+port);
     // The public maintenance listener starts before the app or its caches.
     child=fork(path.join(__dirname,'app.js'),[],{env:{...process.env,PORT:String(upstreamPort),HOST:'127.0.0.1',ENABLE_JACKPOT_BOTS:'0'},stdio:'inherit'});
     child.on('error',error=>console.error('Admin backend unavailable:',error.code||'UNKNOWN'));
