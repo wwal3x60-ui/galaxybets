@@ -59,7 +59,7 @@ async function tip(userId,input){
       AND x.createdAt>=? AND x.createdAt<? FOR UPDATE`,[userId,clock.startsAt,clock.endsAt]);
    const total=today.reduce((sum,row)=>sum+units(row.amount),0n);
    const person=today.filter(row=>String(row.toUserId)===String(to.id)).reduce((sum,row)=>sum+units(row.amount),0n);
-   if(total+amountCents>3000n)fail('STREAMER_DAILY_TIP_LIMIT');
+   if(total+amountCents>1000n)fail('STREAMER_DAILY_TIP_LIMIT');
    if(person+amountCents>250n)fail('STREAMER_RECIPIENT_DAILY_TIP_LIMIT');
   }
   if(exempt)await c.query('UPDATE users SET balance=balance-? WHERE id=?',[amount,userId]);
