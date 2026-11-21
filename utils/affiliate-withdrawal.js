@@ -1,4 +1,5 @@
 'use strict';
+const { periods } = require('./referral-switch');
 const { positiveId, units, decimal } = require('./affiliate-commission');
 const minDepositors = 8;
 const minClaim = 5;
@@ -14,7 +15,7 @@ function failure(code) {
 async function getQualifiedDepositors(connection, userId) {
     const [[row]] = await connection.query(
         `SELECT COUNT(DISTINCT a.userId) AS count
-         FROM affiliates a
+         FROM ${periods} a
          JOIN users player ON player.id = a.userId
          WHERE a.affiliateId = ? AND a.userId <> a.affiliateId
            AND player.role <> 'BOT'
@@ -23,6 +24,7 @@ async function getQualifiedDepositors(connection, userId) {
                WHERE t.userId = a.userId AND t.type = 'crypto_deposit'
                  AND t.status = 'approved' AND t.amount > 0
                  AND t.createdAt >= a.createdAt
+                 AND (a.endedAt IS NULL OR t.createdAt < a.endedAt)
            )`, [positiveId(userId)]
     );
     return Number(row.count);

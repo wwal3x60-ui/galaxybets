@@ -12,7 +12,12 @@ const { minClaim, minDepositors, getQualifiedDepositors, withdrawAffiliateEarnin
 const { withAffiliateSettlement, emitAffiliateCredits } = require('../../utils/affiliate-commission');
 const { firstEligibleBetId: affiliateFirstEligibleBetId } = require('../../utils/affiliate-config');
 
+const referralSwitch = require('../../utils/referral-switch');
 let cachedAffiliates = {};
+router.get('/referral-policy', apiLimiter, async (_req,res) => {
+ try { await sql.query('SELECT id FROM affiliateReferralHistory LIMIT 0');res.json({version:referralSwitch.VERSION,cooldownDays:15}); }
+ catch { res.status(503).json({error:'REFERRAL_SWITCH_NOT_READY'}); }
+});
 
 async function getAffiliateData(userId) {
     if (cachedAffiliates[userId]?.affiliateCode) {
@@ -180,106 +185,26 @@ router.post('/claim', [isAuthed, apiLimiter], async (req, res) => {
 });
 
 router.post('/', [isAuthed, apiLimiter], async (req, res) => {
-    const rawCode = req.body?.code;
-    const code = typeof rawCode === 'string' ? rawCode.toLowerCase().trim() : '';
-
-    if (
-        !code ||
-        typeof code != 'string' ||
-        code.length < 2 ||
-        code.length > 20 ||
-        !onlyLettersAndNumbers(code)
-    ) {
-        return res.status(400).json({ error: 'INVALID_CODE' });
-    }
-
     try {
-        await doTransaction(async (connection, commit) => {
-            const [[affiliate]] = await connection.query(
-                'SELECT id, username, role FROM users WHERE LOWER(affiliateCode) = LOWER(?) FOR UPDATE',
-                [code]
-            );
-
-            if (!affiliate || affiliate.role === 'BOT') {
-                return res.status(404).json({ error: 'CODE_NOT_FOUND' });
-            }
-
-            const [[affiliated]] = await connection.query(
-                // A shared IP is audit information, not an account identity.
-                'SELECT userId, affiliateId FROM affiliates WHERE userId = ? FOR UPDATE',
-                [req.userId]
-            );
-
-            if (affiliated?.userId) {
-                if (String(affiliated.affiliateId) === String(affiliate.id)) {
-                    await commit();
-                    return res.json({ success: true, reward: 0, reused: true });
-                }
-                return res.status(400).json({
-                    error: 'ALREADY_AFFILIATED'
-                });
-            }
-
-            const [[user]] = await connection.query(
-                'SELECT id, username, accountLock, sponsorLock, role FROM users WHERE id = ? FOR UPDATE',
-                [req.userId]
-            );
-
-            if (!user || user.accountLock || user.sponsorLock || user.role === 'BOT') {
-                return res.status(400).json({
-                    error: 'ACCOUNT_LOCKED'
-                });
-            }
-
-            if (user.id == affiliate.id) {
-                return res.status(400).json({
-                    error: 'CANT_REDEEM_OWN_CODE'
-                });
-            }
-
-            const [[existingReferral]] = await connection.query(
-                'SELECT userId FROM affiliates WHERE userId = ? FOR UPDATE', [user.id]
-            );
-            if (existingReferral) return res.status(400).json({ error: 'ALREADY_AFFILIATED' });
-            const [[lastBet]] = await connection.query(
-                'SELECT CAST(id AS CHAR) AS id FROM bets WHERE userId = ? ORDER BY id DESC LIMIT 1 FOR UPDATE',
-                [user.id]
-            );
-            const firstBetId = (BigInt(lastBet?.id || '0') + 1n).toString();
-
-            const [result] = await connection.query(
-                'INSERT INTO affiliates (userId, affiliateId, affiliateReward, ip, firstBetId) VALUES (?, ?, 0, ?, ?)',
-                [user.id, affiliate.id, req.ip || req.socket?.remoteAddress || '', firstBetId]
-            );
-
+        const result = await doTransaction(async (connection, commit) => {
+            const value = await referralSwitch.applyCode(connection, req.userId, req.body?.code, req.ip || req.socket?.remoteAddress || '');
             await commit();
-
-            sendLog(
-                'affiliate',
-                `*${user.username}* (\`${user.id}\`) used code \`${code}\` of *${affiliate.username}* (\`${affiliate.id}\`) - #${result.insertId}`
-            );
-
-            // Keep reward: 0 for compatibility; linking never credits a balance.
-            res.json({ success: true, reward: 0 });
+            return value;
         });
-    } catch (e) {
-        if (e.code === 'ER_DUP_ENTRY') return res.status(400).json({ error: 'ALREADY_AFFILIATED' });
-        console.error(e);
-        if (!res.headersSent) res.status(500).json({ error: 'INTERNAL_ERROR' });
+        for (const id of [req.userId,result.previousAffiliateId,result.affiliateId]) if(id!=null) delete cachedAffiliates[id];
+        res.json({success:true,reward:0,reused:result.reused,code:result.code});
+        if(!result.reused) sendLog('affiliate', `*${result.userName}* (\`${req.userId}\`) linked code \`${result.code}\` of *${result.ownerName}* (\`${result.affiliateId}\`).`);
+    } catch(error) {
+        if(error.publicError)return res.status(error.status||400).json({error:error.publicError,changeAvailableAt:error.changeAvailableAt});
+        if(error.code==='ER_DUP_ENTRY')return res.status(409).json({error:'AFFILIATE_LINK_CONFLICT'});
+        console.error('Referral update failed:',error.code||error.message);
+        if(!res.headersSent)res.status(500).json({error:'INTERNAL_ERROR'});
     }
 });
 
 router.get('/usedCode', isAuthed, async (req, res) => {
-    const [[user]] = await sql.query(
-        'SELECT users.affiliateCode, CAST(users.id AS CHAR) AS affiliateId FROM users JOIN affiliates ON affiliates.affiliateId = users.id WHERE affiliates.userId = ?',
-        [req.userId]
-    );
-
-    if (!user) {
-        return res.json({ code: null });
-    }
-
-    res.json({ code: user.affiliateCode, affiliateId: user.affiliateId });
+    try { res.json(referralSwitch.publicLink(await referralSwitch.readLink(sql,req.userId))); }
+    catch(error) { res.status(error.status||500).json({error:error.publicError||'INTERNAL_ERROR'}); }
 });
 
 const blacklistedCodes = [
@@ -399,10 +324,11 @@ async function getAffiliateInfo(userId, offsetAmount, connection = sql) {
             COALESCE(SUM(CASE WHEN bets.id < ? AND bets.createdAt > ?
                 THEN bets.edge ELSE 0 END), 0) AS legacyUnclaimedEdge,
             MIN(affiliates.createdAt) AS affiliatedAt
-         FROM affiliates
+         FROM ${referralSwitch.periods} AS affiliates
          INNER JOIN users ON users.id = affiliates.userId
          LEFT JOIN bets ON bets.userId = users.id
-            AND bets.createdAt >= affiliates.createdAt AND bets.completed = 1
+            AND bets.createdAt >= affiliates.createdAt AND (bets.id >= affiliates.firstBetId OR bets.id < ${affiliateFirstEligibleBetId})
+            AND (affiliates.endBetId IS NULL OR bets.id < affiliates.endBetId) AND bets.completed = 1
          WHERE affiliates.affiliateId = ?
          GROUP BY users.id, users.username, users.xp
          ORDER BY totalEdge DESC`,
@@ -411,8 +337,8 @@ async function getAffiliateInfo(userId, offsetAmount, connection = sql) {
 
     const [deposits] = await connection.query(
         `SELECT a.userId,COALESCE(SUM(t.amount),0) AS totalDeposited,COUNT(t.id) AS depositCount
-         FROM affiliates a LEFT JOIN transactions t ON t.userId=a.userId
-           AND t.createdAt>=a.createdAt AND t.status='approved' AND t.type IN ('deposit','crypto_deposit')
+         FROM ${referralSwitch.periods} a LEFT JOIN transactions t ON t.userId=a.userId
+           AND t.createdAt>=a.createdAt AND (a.endedAt IS NULL OR t.createdAt<a.endedAt) AND t.status='approved' AND t.type IN ('deposit','crypto_deposit')
          WHERE a.affiliateId=? GROUP BY a.userId`,[userId]
     );
     const depositsByUser=new Map(deposits.map(row=>[String(row.userId),row]));

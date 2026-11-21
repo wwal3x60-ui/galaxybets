@@ -72,7 +72,10 @@ async function creditAffiliateCommission(connection, betId, firstEligibleBetId =
         return { status: 'no_edge' };
     }
 
-    const [[referral]] = await connection.query(
+    // Serialize with referral switches before reading current/history periods.
+    await connection.query('SELECT id FROM users WHERE id = ? FOR UPDATE',[bet.userId]);
+
+    let [[referral]] = await connection.query(
         `SELECT CAST(a.affiliateId AS CHAR) AS affiliateId
          FROM affiliates AS a
          JOIN bets AS b ON b.id = ? AND b.userId = a.userId
@@ -85,6 +88,20 @@ async function creditAffiliateCommission(connection, betId, firstEligibleBetId =
         [id, bet.userId]
     );
 
+    if (!referral) {
+        [[referral]] = await connection.query(
+            `SELECT CAST(a.affiliateId AS CHAR) AS affiliateId
+             FROM affiliateReferralHistory AS a
+             JOIN bets AS b ON b.id = ? AND b.userId = a.userId
+             JOIN users AS player ON player.id = a.userId
+             JOIN users AS referrer ON referrer.id = a.affiliateId
+             WHERE a.userId = ? AND a.affiliateId <> a.userId
+               AND b.createdAt >= a.createdAt AND b.id >= a.firstBetId AND b.id < a.endBetId
+               AND player.role <> 'BOT' AND referrer.role <> 'BOT'
+             ORDER BY a.id ASC LIMIT 1 FOR UPDATE`,
+            [id, bet.userId]
+        );
+    }
     if (!referral) {
         return { status: 'no_eligible_referral' };
     }
