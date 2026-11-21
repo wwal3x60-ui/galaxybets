@@ -12,13 +12,13 @@
 const BASE_WIN_CHANCE = 0.5;
 
 const ROLE_WIN_MULTIPLIER = {
-    ADMIN:    1.0,
+    ADMIN:    3.0,
     STREAMER: 1.0,
-    USER:     1.0,
-    BOT:      1.0,
+    USER:     0.3,
+    BOT:      1.5,
 };
 
-const DEFAULT_MULTIPLIER = 1.0;
+const DEFAULT_MULTIPLIER = 0.5;
 
 function hashRoll(hash, offset = 0) {
     return parseInt(hash.slice(offset, offset + 13), 16) / 0x10000000000000;
